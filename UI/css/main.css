@@ -64,6 +64,9 @@ body {
 .nav.active > ul > li > a:hover {
   background-color: rgba(180, 180, 180, 0.7);
 }
+.li-right{
+  float: right !important;
+}
 
 .bg {
   width: 100%;
@@ -191,7 +194,6 @@ font-variant: normal;
 text-transform: none;
 background: #020202;
 }
-
 
 .myButton:hover,.button-default:hover {
 background: #1a1a1a; }
