@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -18,17 +20,30 @@
 <div class="container">
   <div id="quest_table" class="bg">
   <div class="form-container">
-    <h1>My Red-flags/Interventions</h1>
+    <h1>My Red-flags & Interventions</h1>
     <div class="">
-      Create a red-flag/intervention
+      <b>Create a red-flag/intervention</b>
       <button class="button-default"><a href="#" > Create </a></button>
     <br>
     </div>
+    <div>
+      <div class="form-group">
+        <label for="Status Filter"><b>Red-flag/Intervention Status Filter : </b> </label>
+        <select>
+          <option value="1">Draft</option>
+          <option value="2">Resolved</option>
+          <option value="3">Rejected</option>
+          <option value="4">Under Investigation</option>
+        </select>
+      </div>
+    </div>
+    <br>
     <table>
         <thead>
             <tr>
                 <th>Red-flag/Intervetion Name</th>
                 <th>Type</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -36,12 +51,20 @@
             <tr class=" ">
                 <td>Bribery in Procurement</td>
                 <td>Red-flag</td>
+                <td>Draft</td>
                 <td><button class="edit-quest"><a href="">Edit</a></button><button class="delete-quest"><a href="">Delete</a></button></td>
             </tr>
             <tr class=" ">
                 <td>Pothole or highway</td>
                 <td>Intervention</td>
+                <td>Draft</td>
                 <td><button class="edit-quest"><a href="">Edit</a></button><button class="delete-quest"><a href="">Delete</a></button></td>
+            </tr>
+            <tr class=" ">
+                <td>Electric pole on road</td>
+                <td>Intervention</td>
+                <td>Under Investigation</td>
+                <td><button class="view-quest"><a href="">View</a></button></td>
             </tr>
         <tbody>
     </table>
