@@ -149,6 +149,10 @@ body {
   max-width: 500px;
 }
 
+#quest_table{
+  background-color: #141414;
+}
+
 label {
     opacity: 1;
     transform: translateY(0);
@@ -165,6 +169,7 @@ input[type='text'],
 input[type='password'],
 input[type='number'],
 input[type='date'],
+input[type='file'],
 select{
     display: block;
     width: 100%;
@@ -182,7 +187,7 @@ select{
   margin: 4px;
 }
 
-.myButton,.button-default {
+.myButton,.button-default,.edit-quest,.delete-quest {
 color: white;
 font-size: 16px;
 line-height: 10px;
@@ -201,6 +206,42 @@ background: #1a1a1a; }
 .myButton:active,.button-default:active {
 background: #252525; }
 
+.edit-quest {
+  background-color: #0084c3;
+  color: white;
+  padding: 11px;
+  margin:2px;
+}
+
+.edit-quest:hover {
+  background-color: #003e5c;
+  color: white;
+
+}
+
+.edit-quest:active {
+  background-color: #003e5c;
+  color: white;
+
+}
+
+.delete-quest {
+  background-color: #c50000;
+  color: white;
+  padding: 11px;
+  margin:2px;
+}
+
+.delete-quest:hover {
+  background-color: #7b0000;
+  color: white;
+}
+
+.delete-quest:active {
+  background-color: #7b0000;
+  color: white;
+}
+
 input:placeholder-shown + label {
     opacity: 0;
     transform: translateY(1rem);
@@ -208,4 +249,15 @@ input:placeholder-shown + label {
 
 #quest_create{
       background-color: #250303;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
 }
