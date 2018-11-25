@@ -80,7 +80,18 @@ body {
   align-items: center;
 }
 
-.bg > div {
+.bg-alt {
+  width: 100%;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bg> div ,.bg-alt>div{
     color: white;
     font-family: Montserrat, sans-serif;
     text-align: center;
@@ -270,4 +281,8 @@ td, th {
 .button-default>a,.edit-quest>a,.delete-quest>a,.view-quest>a{
   text-decoration: none;
   color: inherit;
+}
+
+.table-container {
+  width: 90%;
 }
