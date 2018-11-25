@@ -204,3 +204,7 @@ input:placeholder-shown + label {
     opacity: 0;
     transform: translateY(1rem);
 }
+
+#quest_create{
+      background-color: #250303;
+}
