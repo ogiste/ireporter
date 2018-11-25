@@ -263,7 +263,7 @@ input:placeholder-shown + label {
     transform: translateY(1rem);
 }
 
-#quest_create{
+#quest_create,#quest_edit{
       background-color: #250303;
 }
 
@@ -285,4 +285,12 @@ td, th {
 
 .table-container {
   width: 90%;
+}
+
+.map-container{
+  height:400px;
+  width:550px;
+}
+#map {
+  height: 100%;
 }
