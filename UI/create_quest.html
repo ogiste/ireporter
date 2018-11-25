@@ -17,7 +17,7 @@
   </ul>
 </div>
 <div class="container">
-  <div id="quest_create" class="bg">
+  <div id="quest_create" class="bg-alt">
   <div class="form-container">
     <h1>Create A Red-flag/Intervention</h1>
       <form class="quest_form" action="" method="post">
@@ -43,6 +43,18 @@
           <label for="quest_video">Add a video</label>
           <input type="file" name="quest_video" accept="video/*">
         </div>
+        <div class="form-group ">
+          <label for="quest_video">Select a Location On The Map</label>
+          <div class="map-container">
+            <div id="map"></div>
+          </div>
+          <label for="Location">Location</label>
+          <input type="text" disabled id="loc" placeholder="Location">
+          <label for="Latiture">Latitude</label>
+          <input type="text" disabled id="lat" placeholder="Latitude">
+          <label for="Longitude">Longitude</label>
+          <input type="text" disabled id="lng" placeholder="Longitude">
+        </div>
         <div class="form-group">
           <input type="submit" class="button-default" name="Create" value="Create">
         </div>
@@ -56,5 +68,7 @@
     <li class="li-right"><a href="#logout">Logout</a></li>
   </div>
 </div>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLjJJ8MEg85s3CU2eyQdZ_4H5Uaz0oud0&callback=initMap"
+    async defer></script>
   </body>
 </html>
