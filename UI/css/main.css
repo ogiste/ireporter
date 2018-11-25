@@ -187,7 +187,7 @@ select{
   margin: 4px;
 }
 
-.myButton,.button-default,.edit-quest,.delete-quest {
+.view-quest,.myButton,.button-default,.edit-quest,.delete-quest {
 color: white;
 font-size: 16px;
 line-height: 10px;
@@ -201,10 +201,15 @@ text-transform: none;
 background: #020202;
 }
 
-.myButton:hover,.button-default:hover {
+.view-quest:hover,.myButton:hover,.button-default:hover {
 background: #1a1a1a; }
-.myButton:active,.button-default:active {
+.view-quest:active,.myButton:active,.button-default:active {
 background: #252525; }
+
+.view-quest{
+  padding: 11px;
+  margin:2px;
+}
 
 .edit-quest {
   background-color: #0084c3;
@@ -262,8 +267,7 @@ td, th {
     padding: 8px;
 }
 
-
-.button-default>a,.edit-quest>a,.delete-quest>a{
+.button-default>a,.edit-quest>a,.delete-quest>a,.view-quest>a{
   text-decoration: none;
   color: inherit;
 }
