@@ -155,7 +155,7 @@ label {
     transition: all 0.2s ease-out;
 }
 
-input {
+input,select {
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: 0.75rem;
@@ -164,7 +164,8 @@ input {
 input[type='text'],
 input[type='password'],
 input[type='number'],
-input[type='date']{
+input[type='date'],
+select{
     display: block;
     width: 100%;
     height: 2rem;
