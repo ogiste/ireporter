@@ -261,3 +261,9 @@ td, th {
     text-align: left;
     padding: 8px;
 }
+
+
+.button-default>a,.edit-quest>a,.delete-quest>a{
+  text-decoration: none;
+  color: inherit;
+}
