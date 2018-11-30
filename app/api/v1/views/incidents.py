@@ -40,4 +40,17 @@ class IncidentView(Resource, IncidentModel):
             return make_response(jsonify({
                 "data":[incident],
                 "status_code":200
-            }),200)  
+            }),200)
+
+    def patch(self,id,prop):
+        new_data = request.get_json()
+        if id != None and prop != None:
+            incident_data = self.db.update_incident(id,prop, new_data["prop_value"])
+            return make_response(jsonify({
+                "data":[incident_data],
+                "status_code":204
+            }),200)
+        else:
+            return make_response(jsonify({
+                "error":"Bad request"
+            }),400)

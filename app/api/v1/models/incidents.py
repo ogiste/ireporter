@@ -29,3 +29,9 @@ class IncidentModel():
         for incident in self.db:
             if incident["id"]==id:
                 return incident
+                
+    def update_incident(self,id,prop, prop_val):
+        for incident in self.db:
+            if incident["id"]==id:
+                incident[prop]=prop_val
+                return incident
