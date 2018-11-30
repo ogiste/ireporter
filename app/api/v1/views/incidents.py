@@ -29,8 +29,15 @@ class IncidentView(Resource, IncidentModel):
         }),201)
 
     def get(self):
-        incidents_data = self.db.get_incidents()
-        return make_response(jsonify({
-            "data":incidents_data,
-            "status_code":200
-        }),200)    
+        if id is None:
+            incidents_data = self.db.get_incidents()
+            return make_response(jsonify({
+                "data":incidents_data,
+                "status_code":200
+            }),200)
+        else:
+            incident = self.db.get_incident(id)
+            return make_response(jsonify({
+                "data":[incident],
+                "status_code":200
+            }),200)  
