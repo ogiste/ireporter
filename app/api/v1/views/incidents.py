@@ -54,3 +54,11 @@ class IncidentView(Resource, IncidentModel):
             return make_response(jsonify({
                 "error":"Bad request"
             }),400)
+
+    def delete(self, id):
+        if id != None:
+            deleted_incident =  self.db.delete_incident(id)
+            return make_response(jsonify({
+                "data":[deleted_incident],
+                "status_code":202
+            }),202)
