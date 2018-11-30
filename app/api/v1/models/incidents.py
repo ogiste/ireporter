@@ -24,3 +24,8 @@ class IncidentModel():
 
     def get_incidents(self):
         return self.db
+
+    def get_incident(self, id):
+        for incident in self.db:
+            if incident["id"]==id:
+                return incident
