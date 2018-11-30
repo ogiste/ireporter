@@ -21,3 +21,6 @@ class IncidentModel():
 
         self.db.append(data)
         return self.db
+
+    def get_incidents(self):
+        return self.db

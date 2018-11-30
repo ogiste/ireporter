@@ -27,3 +27,10 @@ class IncidentView(Resource, IncidentModel):
             "data":incidents_data,
             "status_code":201
         }),201)
+
+    def get(self):
+        incidents_data = self.db.get_incidents()
+        return make_response(jsonify({
+            "data":incidents_data,
+            "status_code":200
+        }),200)    
