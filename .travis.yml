@@ -24,7 +24,7 @@ script: true
 
  # Another command/method to run tests
 script:
-  - pytest
+  - pytest --cov-report --cov=app app/test
 
 # Using codecov to get coverage
 after_success:
