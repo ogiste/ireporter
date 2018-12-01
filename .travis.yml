@@ -5,6 +5,8 @@ language: python
 python:
   - "2.7"
 
+before_script:
+  - easy_install distribute
 
 # command to install dependencies in the requirements file
 # You can also install the coverage here to avoid it being in the requirements file
