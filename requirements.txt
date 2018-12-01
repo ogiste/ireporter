@@ -28,7 +28,6 @@ py==1.7.0
 pycurl==7.43.0
 pylint==1.5.2
 pytest==4.0.1
-python-apt==1.1.0b1+ubuntu0.16.4.2
 pytz==2018.7
 reportlab==3.3.0
 requests==2.20.1
