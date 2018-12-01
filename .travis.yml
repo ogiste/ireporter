@@ -14,7 +14,7 @@ install:
 
  # Another command/method to run tests
 script:
-  - py.test --cov-report term-missing --cov app
+  - nosetests --with-coverage --cover-package=app
 
 # Using codecov to get coverage
 after_success:
