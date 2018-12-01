@@ -5,20 +5,18 @@ language: python
 python:
   - "2.7"
 
-before_script:
-  - easy_install distribute
-
 # command to install dependencies in the requirements file
 # You can also install the coverage here to avoid it being in the requirements file
 # It is important to avoid things like coverage, pep8 that are not required to run the app
 install:
   - pip install -r requirements.txt
-  - pip install coverage
+  - pip install coveralls codecov
 
  # Another command/method to run tests
 script:
-  - pytest --cov-report --cov=app app/test
+  - pytest --cov-report term-missing --cov app
 
 # Using codecov to get coverage
 after_success:
-  - codecov
+  - codecov --token=fd579b72-a230-4a0f-8f6d-f2ce849543f5
+  - coveralls
