@@ -11,4 +11,4 @@ iReporter is a web based platform that enables any/every citizen to bring any fo
 ## Test Coverage
 
 ### Codecov
-[![codecov.io](https://codecov.io/github/ogiste/ireporter.svg?branch=develop)](https://codecov.io/github/ogiste/ireporter.svg?branch=develop)
+[![codecov.io](https://codecov.io/github/ogiste/ireporter/coverage.svg?branch=develop)](https://codecov.io/github/ogiste/ireporter?branch=develop)
