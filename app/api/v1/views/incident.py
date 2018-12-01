@@ -25,20 +25,23 @@ class IncidentView(Resource, IncidentModel):
         incidents_data = self.db.save(new_incident)
         return make_response(jsonify({
             "data":incidents_data,
+            "msg":"success",
             "status_code":201
         }),201)
 
-    def get(self):
+    def get(self,id=None):
         if id is None:
             incidents_data = self.db.get_incidents()
             return make_response(jsonify({
                 "data":incidents_data,
+                "msg":"success",
                 "status_code":200
             }),200)
         else:
             incident = self.db.get_incident(id)
             return make_response(jsonify({
                 "data":[incident],
+                "msg":"success",
                 "status_code":200
             }),200)
 
@@ -48,17 +51,19 @@ class IncidentView(Resource, IncidentModel):
             incident_data = self.db.update_incident(id,prop, new_data["prop_value"])
             return make_response(jsonify({
                 "data":[incident_data],
-                "status_code":204
+                "msg":"success",
+                "status_code":200
             }),200)
         else:
             return make_response(jsonify({
-                "error":"Bad request"
+                "error":"Bad request",
+                "msg":"fail",
             }),400)
-
     def delete(self, id):
         if id != None:
             deleted_incident =  self.db.delete_incident(id)
             return make_response(jsonify({
                 "data":[deleted_incident],
+                "msg":"success",
                 "status_code":202
             }),202)
