@@ -5,7 +5,7 @@ from flask_restful import Resource
 
 #Local imports
 
-from app.api.v1.models import IncidentModel
+from app.api.v1.models.incident import IncidentModel
 
 
 class IncidentView(Resource, IncidentModel):
