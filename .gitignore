@@ -1,5 +1,9 @@
 UI/images
 instance/
+bin/
+lib/
+local/
+include/
 __pycache__/
 *.py[cod]
 *$py.class
