@@ -68,4 +68,6 @@ API endpoints :
         PATCH  /api/v1/incidents/<int:id>/<property_name>
         DELETE /api/v1/incidents/<int:id>
 
+View the [published collection](https://documenter.getpostman.com/view/764347/RzffJ9Y8
+) for more details
   
