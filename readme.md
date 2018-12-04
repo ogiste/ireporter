@@ -70,4 +70,15 @@ API endpoints :
 
 View the [published collection](https://documenter.getpostman.com/view/764347/RzffJ9Y8
 ) for more details
-  
+
+# Run tests using nosetests
+
+Install nosetest, codecov and coverage:
+
+ ```pip install nose```
+ ```pip install coverage```
+ ```pip install codecov```
+ 
+Within the root repository directory run the tests using nosetest with codecov for coverage:
+ ```nosetests --with-coverage --cover-package=app/```
+
