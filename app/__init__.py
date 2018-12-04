@@ -8,7 +8,7 @@
 """
 
 from flask import Flask
-from instance.config import app_config, DevelopmentConfig, TestingConfig, ProductionConfig
+from instance.config import app_config
 from .api.v1 import v1 as version_one
 
 def create_app(config_name="development"):
@@ -16,5 +16,6 @@ def create_app(config_name="development"):
     app.url_map.strict_slashes = False
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile("config.py", silent=False)
+    app.config['BUNDLE_ERRORS'] = True
     app.register_blueprint(version_one)
     return app
