@@ -77,7 +77,7 @@ class IncidentView(Resource, IncidentModel):
                 "status_code":200
             }),200)
         else:
-            incident = self.db.get_incident(id)
+            incident = self.db.get_single_incident(id)
             return make_response(jsonify({
                 "data":[incident],
                 "msg":"success",
