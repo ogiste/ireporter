@@ -6,28 +6,30 @@ import datetime
 import json
 
 from app import create_app
-from app.api.v1.models import IncidentModel
+from app.api.v1.models.incident import IncidentModel
 
 
 class TestIncidents(unittest.TestCase):
 
     """
-    This class represents the redflag test cases
+    Represents the incident test cases
+
     """
 
     def setUp(self):
         """
-        This method will be called before all tests
+        Method that is called before all tests
+        Defines dummy incident data and sets application configuration.
         """
         self.app = create_app('testing')
         self.client = self.app.test_client
 
         self.comment = {
-            'prop_value': 'Corruption in hiring process'
+            'prop_val': 'Corruption in hiring process'
         }
 
         self.location = {
-            'prop_value': '-4.333333, 25.333333',
+            'prop_val': '-4.333333, 25.333333',
         }
 
         self.redflag = {
@@ -56,14 +58,23 @@ class TestIncidents(unittest.TestCase):
 
 
     def test_redflag_create(self):
+        """
+        Method tests the view endpoint used in creating a new incident.
+        """
 
-        res = self.client().post('/api/v1/incidents', data=json.dumps(self.redflag),content_type='application/json')
+        res = self.client().post('/api/v1/incidents',
+        data=json.dumps(self.redflag),content_type='application/json')
         data=json.loads(res.get_data())
         self.assertEqual(res.status_code, 201)
         self.assertIn('success',data["msg"])
 
     def test_get_single_redflag(self):
-        res = self.client().post('/api/v1/incidents',data=json.dumps(self.redflag),content_type='application/json')
+        """
+        Method tests the view endpoint used in get a single incident record.
+        """
+
+        res = self.client().post('/api/v1/incidents',
+        data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
         res = self.client().get('/api/v1/incidents/1')
         self.assertEqual(res.status_code, 200)
@@ -71,11 +82,17 @@ class TestIncidents(unittest.TestCase):
         self.assertIn('success',str(data["msg"]))
 
     def test_get_all_redflags(self):
-        res = self.client().post('/api/v1/incidents', data=json.dumps(self.redflag),content_type='application/json')
+        """
+        Method tests the view endpoint used in getting all incident records.
+        """
+
+        res = self.client().post('/api/v1/incidents',
+        data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data())
         self.assertIn('success',str(data["msg"]))
-        res = self.client().post('/api/v1/incidents', data=json.dumps(self.redflag2),content_type='application/json')
+        res = self.client().post('/api/v1/incidents',
+        data=json.dumps(self.redflag2),content_type='application/json')
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data())
         self.assertIn('success',str(data["msg"]))
@@ -85,36 +102,60 @@ class TestIncidents(unittest.TestCase):
         self.assertIn('Corruption in tender procurement', str(data))
 
     def test_update_comment(self):
-        res = self.client().post('/api/v1/incidents', data=json.dumps(self.redflag),content_type='application/json')
+        """
+        Method tests the view endpoint used in updating a single incident
+        record comment property.
+        """
+
+        res = self.client().post('/api/v1/incidents',
+        data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
-        res = self.client().patch('/api/v1/incidents/1/comment', data=json.dumps(self.comment), content_type='application/json')
+        res = self.client().patch('/api/v1/incidents/1/comment',
+        data=json.dumps(self.comment), content_type='application/json')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data())
         self.assertIn('success',str(data["msg"]))
         updated_incident = self.client().get('/api/v1/incidents/1')
         self.assertEqual(updated_incident.status_code, 200)
         data=json.loads(updated_incident.get_data())
-        self.assertIn('Corruption in hiring process', str(data))
+        self.assertIn(self.comment['prop_val'], str(data))
 
     def test_update_location(self):
-        res = self.client().post('/api/v1/incidents', data=json.dumps(self.redflag),content_type='application/json')
+        """
+        Method tests the view endpoint used in creating a new incident
+        record location property.
+        """
+
+        res = self.client().post('/api/v1/incidents',
+        data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
-        res = self.client().patch('/api/v1/incidents/1/location', data=json.dumps(self.location), content_type='application/json')
+        res = self.client().patch('/api/v1/incidents/1/location',
+        data=json.dumps(self.location), content_type='application/json')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data())
         self.assertIn('success',str(data["msg"]))
         updated_incident = self.client().get('/api/v1/incidents/1')
         self.assertEqual(updated_incident.status_code, 200)
         data=json.loads(updated_incident.get_data())
-        self.assertIn('-4.333333, 25.333333', str(data))
+        self.assertIn(self.location['prop_val'], str(data))
 
     def test_delete_incident(self):
-        res = self.client().post('/api/v1/incidents', data=json.dumps(self.redflag),content_type='application/json')
+        """
+        Method tests the view endpoint used in deleting a single incident.
+        """
+        res = self.client().post('/api/v1/incidents',
+        data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
-        res = self.client().delete('/api/v1/incidents/1', data=None, content_type='application/json')
+        res = self.client().delete('/api/v1/incidents/1', data=None,
+        content_type='application/json')
         self.assertEqual(res.status_code, 202)
         data=json.loads(res.get_data())
         self.assertIn('success',str(data["msg"]))
 
     def tearDown(self):
+        """
+        Method is called after all tests and resets the list database
+        used in storing the incident records the
+        """
+
         IncidentModel.red_flag_list = []
