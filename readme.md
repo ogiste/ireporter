@@ -8,6 +8,9 @@ iReporter is a web based platform that enables any/every citizen to bring any fo
 ### Travis-CI
 [![Build Status](https://travis-ci.org/ogiste/ireporter.svg?branch=develop)](https://travis-ci.org/ogiste/ireporter)
 
+### Code Climate
+[![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/ogiste/ireporter)
+
 ## Test Coverage
 
 ### Codecov
