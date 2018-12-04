@@ -25,11 +25,11 @@ class TestIncidents(unittest.TestCase):
         self.client = self.app.test_client
 
         self.comment = {
-            'prop_val': 'Corruption in hiring process'
+            'prop_value': 'Corruption in hiring process'
         }
 
         self.location = {
-            'prop_val': '-4.333333, 25.333333',
+            'prop_value': '-4.333333, 25.333333',
         }
 
         self.redflag = {
@@ -93,7 +93,7 @@ class TestIncidents(unittest.TestCase):
         self.assertIn('success',str(data["msg"]))
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag2),content_type='application/json')
-        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.status_code, 201)prop_value
         data=json.loads(res.get_data())
         self.assertIn('success',str(data["msg"]))
         res = self.client().get('/api/v1/incidents')
@@ -118,7 +118,7 @@ class TestIncidents(unittest.TestCase):
         updated_incident = self.client().get('/api/v1/incidents/1')
         self.assertEqual(updated_incident.status_code, 200)
         data=json.loads(updated_incident.get_data())
-        self.assertIn(self.comment['prop_val'], str(data))
+        self.assertIn(self.comment['prop_value'], str(data))
 
     def test_update_location(self):
         """
@@ -137,7 +137,7 @@ class TestIncidents(unittest.TestCase):
         updated_incident = self.client().get('/api/v1/incidents/1')
         self.assertEqual(updated_incident.status_code, 200)
         data=json.loads(updated_incident.get_data())
-        self.assertIn(self.location['prop_val'], str(data))
+        self.assertIn(self.location['prop_value'], str(data))
 
     def test_delete_incident(self):
         """
