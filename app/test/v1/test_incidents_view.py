@@ -93,7 +93,7 @@ class TestIncidents(unittest.TestCase):
         self.assertIn('success',str(data["msg"]))
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag2),content_type='application/json')
-        self.assertEqual(res.status_code, 201)prop_value
+        self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data())
         self.assertIn('success',str(data["msg"]))
         res = self.client().get('/api/v1/incidents')
