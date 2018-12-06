@@ -35,8 +35,9 @@ class UserModel():
         """
         Constructor that initializes the user records database object
         """
-        self.db = connect(db_name)
-        self.cur = self.db.cursor()
+        print db_name
+        self.conn = connect(db_name)
+        self.cursor = self.conn.cursor()
         self.NOT_FOUND = "The user was not found with username - "
         self.NOT_CREATED = "The user was not created. Please try again "
 
@@ -84,8 +85,8 @@ class UserModel():
         FROM users WHERE username='{username}';
         """.format(username=username)
         try:
-            self.cur.execute(select_user_statement)
-            result = self.cur.fetchone()
+            self.cursor.execute(select_user_statement)
+            result = self.cursor.fetchone()
             user_details = self.get_formated_user_dict(result)
             return user_details
         except IntegrityError as e:
@@ -133,7 +134,7 @@ class UserModel():
                                 createdOn=new_user["createdOn"],
                                 isAdmin=new_user["isAdmin"])
         try:
-            self.cur.execute(insert_user_statement)
+            self.cursor.execute(insert_user_statement)
             print "User created"
             return self.get_single_user_by_username(new_user["username"])
         except IntegrityError as e:

@@ -6,7 +6,7 @@ import datetime
 import json
 
 from app import create_app
-from app.db_config import create_tables, drop_tables
+from app.db_config import connect, create_tables, drop_tables
 from app.api.v2.models.user import UserModel
 
 
@@ -23,8 +23,8 @@ class TestUser(unittest.TestCase):
         """
         self.app = create_app('testing')
         self.client = self.app.test_client
-        UserModel(db_name="ireporter_test")
-        create_tables()
+        self.user_db = UserModel(db_name="ireporter_test")
+        create_tables(self.user_db.conn)
         self.user = {
 
             "fname": "Jacob",
@@ -51,7 +51,9 @@ class TestUser(unittest.TestCase):
         }
 
     def test_user_create(self):
-
+        """
+        Method tests the POST endpoint user to create a new user
+        """
         res = self.client().post('/api/v2/users', data=json.dumps(self.user),content_type='application/json')
         data=json.loads(res.get_data())
         user_details = data["data"][0]
@@ -64,4 +66,4 @@ class TestUser(unittest.TestCase):
         self.assertIn(self.messages["created"],data["msg"])
 
     def tearDown(self):
-        drop_tables()
+        drop_tables(self.user_db.conn)

@@ -1,5 +1,6 @@
 import datetime
 import types
+import os
 
 from flask import Flask, make_response, jsonify,request
 from flask_restful import Resource
@@ -72,7 +73,8 @@ class UserView(Resource, UserModel):
         Constructor that sets the UserView instance.db to the database
         from the User Module class
         """
-        self.db = UserModel()
+        db_name = os.getenv("DB_NAME", default="ireporter")
+        self.db = UserModel(db_name)
         self.messages = {
             "deleted": "User successfully deleted",
             "created": "User successfully created",

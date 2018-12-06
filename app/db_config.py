@@ -60,9 +60,14 @@ def connection(db_name=None):
         conn = psycopg2.connect(db_uri)
         conn.autocommit = True
         pprint("Database Connection established")
-    except Exception:
+        return conn
+    except Exception as e:
         pprint("Cannot connect to database")
-    return conn
+        if hasattr(e, 'message'):
+            print(e.message)
+        else:
+            print(e)
+
 
 
 def connect(db_name=None):
@@ -89,7 +94,6 @@ def create_tables(conn=None):
         queries = get_create_queries()
         for query in queries:
             cur.execute(query)
-        conn.close()
         return pprint("Tables created")
     return pprint("Connection object is a None type cannot create tables")
 
@@ -114,7 +118,6 @@ def get_create_queries():
     isAdmin BOOLEAN NOT NULL DEFAULT false,
     createdOn DATE NOT NULL
     );
-
     SET datestyle = "ISO, YMD";
     """
     create_incident_table = """
@@ -143,7 +146,6 @@ def drop_tables(conn=None):
         queries = get_drop_queries()
         for query in queries:
             cur.execute(query)
-        conn.close()
         return pprint("Tables dropped")
     return pprint("Connection object is a None type cannot drop tables")
 
