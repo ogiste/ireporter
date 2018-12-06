@@ -67,6 +67,9 @@ class UserModel():
                                                            candidate_pass)
                 print "verify password authentication: ", authenticated
                 return authenticated
+            print "result of verify pass cursor: "
+            pprint(result)
+            return None
         except Exception as e:
             pprint("verify_pass raised exception: ")
             if hasattr(e, 'message'):

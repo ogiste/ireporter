@@ -2,7 +2,7 @@ import datetime
 import types
 import os
 
-from flask import Flask, make_response, jsonify,request
+from flask import make_response, jsonify
 from flask_restful import Resource
 
 # Local imports
@@ -13,12 +13,12 @@ from app.api.v2.models.user import UserModel
 auth_parser = parser.copy()
 
 auth_parser.add_argument('username', type=str, required=True,
-                             location='json',
-                             help='Your username is a required field')
+                         location='json',
+                         help='Your username is a required field')
 
 auth_parser.add_argument('password', type=str, required=True,
-                             location='json',
-                             help='Your password is a required field')
+                         location='json',
+                         help='Your password is a required field')
 
 
 class AuthView(Resource, UserModel):
@@ -41,7 +41,8 @@ class AuthView(Resource, UserModel):
         self.db = UserModel(db_name)
         self.messages = {
             "authenticated": "User successfully signed in",
-            "failed":" User failed to authenticate "
+            "failed": "Could not sign you in,ensure you have the right entered the right username and password",
+            "not_found": "User doesnot exist, please check the username spelling."
         }
 
     def post(self):
@@ -66,7 +67,7 @@ class AuthView(Resource, UserModel):
                     get_error(" username and password cannot be empty strings",
                           400)), 400)
         authenticated = self.db.verify_pass(user_credentials)
-        if isinstance(authenticated, types.BooleanType):
+        if isinstance(authenticated, types.BooleanType) and authenticated is True:
             user_details = self.db.get_single_user_by_username(user_credentials["username"])
             return make_response(jsonify({
                 "data": [{
@@ -76,6 +77,16 @@ class AuthView(Resource, UserModel):
                 "msg": self.messages["authenticated"],
                 "status_code": 200
             }), 200)
+
+        if authenticated is False:
+            return make_response(jsonify(get_error(self.messages["failed"],
+                                                    400))
+                                 , 400)
+
+        if authenticated is None:
+            return make_response(jsonify(get_error(self.messages["not_found"],
+                                                    400))
+                                 , 400)
 
         if isinstance(authenticated, types.StringType):
             return make_response(jsonify(get_error(authenticated, 400))
