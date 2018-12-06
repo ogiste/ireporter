@@ -90,7 +90,7 @@ def create_tables(conn=None):
         for query in queries:
             cur.execute(query)
         conn.close()
-        pprint("Tables created")
+        return pprint("Tables created")
     return pprint("Connection object is a None type cannot create tables")
 
 def get_create_queries():
@@ -141,7 +141,7 @@ def drop_tables(conn=None):
         for query in queries:
             cur.execute(query)
         conn.close()
-        pprint("Tables dropped")
+        return pprint("Tables dropped")
     return pprint("Connection object is a None type cannot drop tables")
 
 
