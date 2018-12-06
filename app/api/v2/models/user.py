@@ -2,6 +2,8 @@
 from app.db_config import connect
 from pprint import pprint
 from psycopg2 import IntegrityError
+from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
 
 
 class UserModel():
@@ -31,15 +33,52 @@ class UserModel():
 
     """
 
-    def __init__(self,db_name="ireporter"):
+    def __init__(self, db_name="ireporter"):
         """
         Constructor that initializes the user records database object
         """
-        print db_name
+        print "User Model using db_name:  ", db_name
         self.conn = connect(db_name)
         self.cursor = self.conn.cursor()
+        self.bcrypt = Bcrypt()
         self.NOT_FOUND = "The user was not found with username - "
         self.NOT_CREATED = "The user was not created. Please try again "
+
+    def verify_pass(self, user_credentials):
+        """
+        A method that compares a candidate password to a users password
+
+        Returns
+        -------
+            True if the verification was successful
+            False if the verification failed
+        """
+        username = user_credentials["username"]
+        candidate_pass = user_credentials["password"]
+        select_credentials_statement = """
+        SELECT username,password FROM users WHERE username='{username}'
+        """.format(username=username)
+        try:
+            self.cursor.execute(select_credentials_statement)
+            result = self.cursor.fetchone()
+            if result is not None:
+                username = result[0]
+                pw_hash = result[1]
+                authenticated = self.bcrypt.check_password_hash(pw_hash,
+                                                           candidate_pass)
+                print "verify password authentication: ", authenticated
+                return authenticated
+            print "result of verify pass cursor: "
+            pprint(result)
+            return None
+        except Exception as e:
+            pprint("verify_pass raised exception: ")
+            if hasattr(e, 'message'):
+                print(e.message)
+            else:
+                print(e)
+            return self.NOT_FOUND + str(username) \
+            + " Record could not be found , doesnot exist"
 
     def get_formated_user_dict(self, user_tuple, allInfo=False):
         """
@@ -90,7 +129,7 @@ class UserModel():
             user_details = self.get_formated_user_dict(result)
             return user_details
         except IntegrityError as e:
-            pprint("Raised exception: ")
+            pprint("User model raised exception: ")
             if hasattr(e, 'message'):
                 print(e.message)
             else:
@@ -120,6 +159,7 @@ class UserModel():
             "createdOn": new_user["createdOn"],
             "isAdmin": new_user["isAdmin"]
         }
+        pw_hash = self.bcrypt.generate_password_hash(new_user["password"])
         insert_user_statement = """INSERT INTO users(
         fname,lname,othername,username,email,phone,password,createdOn,isAdmin)
         VALUES ('{fname}','{lname}','{othername}','{username}','{email}',
@@ -130,7 +170,7 @@ class UserModel():
                                 username=new_user["username"],
                                 email=new_user["email"],
                                 phone=new_user["phone"],
-                                password=new_user["password"],
+                                password=pw_hash,
                                 createdOn=new_user["createdOn"],
                                 isAdmin=new_user["isAdmin"])
         try:
@@ -138,7 +178,7 @@ class UserModel():
             print "User created"
             return self.get_single_user_by_username(new_user["username"])
         except IntegrityError as e:
-            pprint("Raised exception: ")
+            pprint("User model raised an integrity exception: ")
             if hasattr(e, 'message'):
                 print(e.message)
             else:

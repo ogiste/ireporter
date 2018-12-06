@@ -12,7 +12,8 @@ from instance.config import app_config
 from .api.v1 import v1 as version_one
 from .api.v2 import v2 as version_two
 from app.db_config import connect, create_tables
-
+from flask_bcrypt import Bcrypt
+bcrypt = None
 
 def create_app(config_name="development"):
     conn=connect()
@@ -23,4 +24,5 @@ def create_app(config_name="development"):
     app.config['BUNDLE_ERRORS'] = True
     app.register_blueprint(version_one)
     app.register_blueprint(version_two)
+    bcrypt = Bcrypt(app)
     return app
