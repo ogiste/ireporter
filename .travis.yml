@@ -9,6 +9,7 @@ services:
   - postgresql
 
 before_script:
+  - export DB_NAME=ireporter_test DB_USER=test_user DB_PASS=test_ireporter
   - psql -c 'CREATE DATABASE ireporter_test;' -U postgres
   - psql -c "CREATE USER test_user WITH PASSWORD 'test_ireporter';" -U postgres
   - psql -c "GRANT ALL PRIVILEGES on database ireporter_test to test_user;" -U postgres
