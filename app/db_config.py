@@ -50,6 +50,9 @@ def connection(db_name=None):
         db_name = os.getenv("DB_NAME", default="ireporter")
     db_uri = "dbname={} host={} user={} password={} port={} ".\
         format(db_name, db_host, db_user, db_pass, db_port)
+    if db_name is "ireporter_test":
+        db_uri = "dbname={} host={} user={} password={}".\
+            format(db_name, "localhost", 'test_user', 'test_ireporter')
     try:
         conn = psycopg2.connect(db_uri)
         conn.autocommit = True

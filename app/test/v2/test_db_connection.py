@@ -6,7 +6,7 @@ import StringIO
 import sys
 import types
 
-from app.db_config import connect, create_tables, drop_tables,\
+from app.db_config import connect, connection, create_tables, drop_tables,\
     get_create_queries, get_drop_queries
 
 
@@ -20,6 +20,8 @@ class TestIncidents(unittest.TestCase):
         Method that is called to set the default connection and messages for
         for testing.
         """
+
+        connection("ireporter_test")
         self.conn = connect("ireporter_test")
         self.create_tables_message = "Tables created"
         self.drop_tables_message = "Tables dropped"
