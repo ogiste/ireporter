@@ -5,6 +5,14 @@ language: python
 python:
   - "2.7"
 
+services:
+  - postgresql
+
+before_script:
+  - psql -c 'CREATE DATABASE ireporter_test;' -U postgres
+  - psql -c "CREATE USER test_user WITH PASSWORD 'test_ireporter';" -U postgres
+  - psql -c "GRANT ALL PRIVILEGES on database ireporter_test to test_user;" -U postgres
+
 # command to install dependencies in the requirements file
 # You can also install the coverage here to avoid it being in the requirements file
 # It is important to avoid things like coverage, pep8 that are not required to run the app
