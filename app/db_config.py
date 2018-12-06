@@ -33,6 +33,7 @@ from pprint import pprint
 conn = None
 db_name_init = None
 
+
 def connection(db_name=None):
     """
     Function that creates a database connection using psycopg2 library to
@@ -79,18 +80,18 @@ def connect(db_name=None):
     return conn
 
 
-def create_tables():
+def create_tables(conn=None):
     """
     Function to create all tables relevant to the database
     """
-    conn = connect(db_name_init)
-    cur = conn.cursor()
-    queries = get_create_queries()
-    for query in queries:
-        cur.execute(query)
-    conn.close()
-    pprint("Tables created")
-
+    if conn is not None:
+        cur = conn.cursor()
+        queries = get_create_queries()
+        for query in queries:
+            cur.execute(query)
+        conn.close()
+        pprint("Tables created")
+    return pprint("Connection object is a None type cannot create tables")
 
 def get_create_queries():
     """
@@ -130,20 +131,21 @@ def get_create_queries():
     return [create_user_table, create_incident_table]
 
 
-def drop_tables():
+def drop_tables(conn=None):
     """
     Function that drops all created tables
     """
-    conn = connect(db_name_init)
-    cur = conn.cursor()
-    queries = get_drop_queries()
-    for query in queries:
-        cur.execute(query)
-    conn.close()
-    pprint("Tables dropped")
+    if conn is not None:
+        cur = conn.cursor()
+        queries = get_drop_queries()
+        for query in queries:
+            cur.execute(query)
+        conn.close()
+        pprint("Tables dropped")
+    return pprint("Connection object is a None type cannot drop tables")
 
 
-def get_drop_queries():
+def get_drop_queries(conn=None):
     """
     Function that gets all queries defining the drop statements for db tables
 
