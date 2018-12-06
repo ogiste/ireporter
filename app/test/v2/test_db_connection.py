@@ -20,6 +20,7 @@ class TestIncidents(unittest.TestCase):
         Method that is called to set the default connection and messages for
         for testing.
         """
+
         self.conn = connect("ireporter_test")
         self.create_tables_message = "Tables created"
         self.drop_tables_message = "Tables dropped"

@@ -31,7 +31,7 @@ import os
 import psycopg2
 from pprint import pprint
 conn = None
-
+db_name_init = None
 
 def connection(db_name=None):
     """
@@ -48,8 +48,13 @@ def connection(db_name=None):
     db_port = os.getenv("DB_PORT", default=5432)
     if db_name is None:
         db_name = os.getenv("DB_NAME", default="ireporter")
+        db_name_init = db_name
     db_uri = "dbname={} host={} user={} password={} port={} ".\
         format(db_name, db_host, db_user, db_pass, db_port)
+    if db_name is "ireporter_test":
+        db_name_init = db_name
+        db_uri = "dbname={} host={} user={} password={}".\
+            format(db_name, "localhost", 'test_user', 'test_ireporter')
     try:
         conn = psycopg2.connect(db_uri)
         conn.autocommit = True
@@ -67,6 +72,9 @@ def connect(db_name=None):
     -------
         psycopg2 connection object
     """
+    if db_name != None:
+        db_name_init = db_name
+        conn = connection(db_name)
     conn = connection(db_name)
     return conn
 
@@ -75,7 +83,7 @@ def create_tables():
     """
     Function to create all tables relevant to the database
     """
-    conn = connect()
+    conn = connect(db_name_init)
     cur = conn.cursor()
     queries = get_create_queries()
     for query in queries:
@@ -126,7 +134,7 @@ def drop_tables():
     """
     Function that drops all created tables
     """
-    conn = connect()
+    conn = connect(db_name_init)
     cur = conn.cursor()
     queries = get_drop_queries()
     for query in queries:
