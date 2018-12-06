@@ -108,7 +108,7 @@ class IncidentView(Resource, IncidentModel):
                 " comment and location cannot be empty strings", 400)),400)
 
 
-        new_incident["createdOn"] = datetime.datetime.today().strftime('%Y-%m-%d')
+        new_incident["createdOn"] = datetime.datetime.today().strftime('%Y/%m/%d')
         new_incident["createdBy"] = (len(self.db.get_incidents())+1)
         new_incident["status"] = "draft"
         new_incident["images"] = ["/url/image1","url/image2"]
