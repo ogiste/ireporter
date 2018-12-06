@@ -31,6 +31,7 @@ import os
 import psycopg2
 from pprint import pprint
 conn = None
+db_name_init = None
 
 
 def connection(db_name=None):
@@ -48,15 +49,25 @@ def connection(db_name=None):
     db_port = os.getenv("DB_PORT", default=5432)
     if db_name is None:
         db_name = os.getenv("DB_NAME", default="ireporter")
+        db_name_init = db_name
     db_uri = "dbname={} host={} user={} password={} port={} ".\
-        format(db_name, db_host, db_user, db_pass, db_port)
+            format(db_name, db_host, db_user, db_pass, db_port)
+    if db_name is "ireporter_test":
+        db_name_init = db_name
+        db_uri = "dbname={} host={} user={} password={}".\
+            format(db_name, "localhost", 'test_user', 'test_ireporter')
     try:
         conn = psycopg2.connect(db_uri)
         conn.autocommit = True
         pprint("Database Connection established")
-    except Exception:
+        return conn
+    except Exception as e:
         pprint("Cannot connect to database")
-    return conn
+        if hasattr(e, 'message'):
+            print(e.message)
+        else:
+            print(e)
+
 
 
 def connect(db_name=None):
@@ -67,22 +78,24 @@ def connect(db_name=None):
     -------
         psycopg2 connection object
     """
+    if db_name != None:
+        db_name_init = db_name
+        conn = connection(db_name)
     conn = connection(db_name)
     return conn
 
 
-def create_tables():
+def create_tables(conn=None):
     """
     Function to create all tables relevant to the database
     """
-    conn = connect()
-    cur = conn.cursor()
-    queries = get_create_queries()
-    for query in queries:
-        cur.execute(query)
-    conn.close()
-    pprint("Tables created")
-
+    if conn is not None:
+        cur = conn.cursor()
+        queries = get_create_queries()
+        for query in queries:
+            cur.execute(query)
+        return pprint("Tables created")
+    return pprint("Connection object is a None type cannot create tables")
 
 def get_create_queries():
     """
@@ -105,7 +118,6 @@ def get_create_queries():
     isAdmin BOOLEAN NOT NULL DEFAULT false,
     createdOn DATE NOT NULL
     );
-
     SET datestyle = "ISO, YMD";
     """
     create_incident_table = """
@@ -125,20 +137,20 @@ def get_create_queries():
     return [create_user_table, create_incident_table]
 
 
-def drop_tables():
+def drop_tables(conn=None):
     """
     Function that drops all created tables
     """
-    conn = connect()
-    cur = conn.cursor()
-    queries = get_drop_queries()
-    for query in queries:
-        cur.execute(query)
-    conn.close()
-    pprint("Tables dropped")
+    if conn is not None:
+        cur = conn.cursor()
+        queries = get_drop_queries()
+        for query in queries:
+            cur.execute(query)
+        return pprint("Tables dropped")
+    return pprint("Connection object is a None type cannot drop tables")
 
 
-def get_drop_queries():
+def get_drop_queries(conn=None):
     """
     Function that gets all queries defining the drop statements for db tables
 

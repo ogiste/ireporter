@@ -20,6 +20,7 @@ class TestIncidents(unittest.TestCase):
         Method that is called to set the default connection and messages for
         for testing.
         """
+
         self.conn = connect("ireporter_test")
         self.create_tables_message = "Tables created"
         self.drop_tables_message = "Tables dropped"
@@ -30,7 +31,7 @@ class TestIncidents(unittest.TestCase):
         """
         capturedOutput = StringIO.StringIO()          # Create StringIO object
         sys.stdout = capturedOutput                   # and redirect stdout.
-        create_tables()                               # Call unchanged function
+        create_tables(self.conn)                               # Call unchanged function
         sys.stdout = sys.__stdout__                   # Reset redirect.
         print 'Captured', capturedOutput.getvalue()   # Now works as before.
         self.assertIn(self.create_tables_message, capturedOutput.getvalue())
@@ -41,7 +42,7 @@ class TestIncidents(unittest.TestCase):
         """
         capturedOutput = StringIO.StringIO()          # Create StringIO object
         sys.stdout = capturedOutput                   # and redirect stdout.
-        drop_tables()                               # Call unchanged function
+        drop_tables(self.conn)                               # Call unchanged function
         sys.stdout = sys.__stdout__                   # Reset redirect.
         print 'Captured ', capturedOutput.getvalue()   # Now works as before.
         self.assertIn(self.drop_tables_message, capturedOutput.getvalue())
