@@ -24,7 +24,7 @@ user_parser.add_argument('username', type=str, required=True,
                              help='Your username is a required field')
 
 user_parser.add_argument('othername', type=str,
-                             location='json',
+                             location='json', default="",
                              help='Your other name is an optional field')
 
 user_parser.add_argument('email', type=str, required=True,
@@ -113,7 +113,7 @@ class UserView(Resource, UserModel):
         create_results = self.db.save(new_user)
         if isinstance(create_results, types.DictType):
             return make_response(jsonify({
-                "data": create_results,
+                "data": [create_results],
                 "msg": self.messages["created"],
                 "status_code": 201
             }), 201)

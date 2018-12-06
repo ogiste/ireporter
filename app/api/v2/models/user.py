@@ -31,11 +31,11 @@ class UserModel():
 
     """
 
-    def __init__(self):
+    def __init__(self,db_name="ireporter"):
         """
         Constructor that initializes the user records database object
         """
-        self.db = connect()
+        self.db = connect(db_name)
         self.cur = self.db.cursor()
         self.NOT_FOUND = "The user was not found with username - "
         self.NOT_CREATED = "The user was not created. Please try again "
@@ -61,13 +61,12 @@ class UserModel():
             "email": user_details[5],
             "createdOn": user_details[6],
             "isAdmin": user_details[7],
-            "phone": user_details[8],
-            "password": user_details[9]
+            "phone": user_details[8]
         }
         if allInfo is True:
             return user_details
 
-        del user_details["password"],user_details["isAdmin"]
+        del user_details["isAdmin"]
         return user_details
 
     def get_single_user_by_username(self, username):
@@ -81,8 +80,7 @@ class UserModel():
         """
 
         select_user_statement = """
-        SELECT id,username,fname,lname,othername,email,createdOn,isAdmin,phone,
-        password
+        SELECT id,username,fname,lname,othername,email,createdOn,isAdmin,phone
         FROM users WHERE username='{username}';
         """.format(username=username)
         try:
