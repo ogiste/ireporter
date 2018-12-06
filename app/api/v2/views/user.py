@@ -101,7 +101,7 @@ class UserView(Resource, UserModel):
         new_user["password"] = new_user["password"].lstrip()
         new_user["password"] = new_user["password"].rstrip()
         non_empty_items = [new_user["fname"], new_user["lname"],
-                           new_user["othername"], new_user["email"],
+                           new_user["email"],
                            new_user["username"], new_user["phone"],
                            new_user["password"]]
         for user_item in non_empty_items:

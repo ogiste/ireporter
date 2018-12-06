@@ -3,6 +3,7 @@ from app.db_config import connect
 from pprint import pprint
 from psycopg2 import IntegrityError
 from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
 
 
 class UserModel():
@@ -177,7 +178,7 @@ class UserModel():
             print "User created"
             return self.get_single_user_by_username(new_user["username"])
         except IntegrityError as e:
-            pprint("Raised exception: ")
+            pprint("User model raised an integrity exception: ")
             if hasattr(e, 'message'):
                 print(e.message)
             else:
