@@ -62,7 +62,7 @@ def connection(db_name=None):
         pprint("Database Connection established")
         return conn
     except Exception as e:
-        pprint("Cannot connect to database")
+        pprint("DB Config Cannot connect to database")
         if hasattr(e, 'message'):
             print(e.message)
         else:
