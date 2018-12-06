@@ -97,13 +97,16 @@ def get_create_queries():
     id serial PRIMARY KEY,
     fname VARCHAR(30) NOT NULL,
     lname VARCHAR(30) NOT NULL,
-    othername VARCHAR(30) NOT NULL,
-    email VARCHAR(60) NOT NULL,
-    phone VARCHAR(12) NOT NULL,
+    othername VARCHAR(30),
+    username VARCHAR(30) NOT NULL UNIQUE,
+    email VARCHAR(60) NOT NULL UNIQUE,
+    phone VARCHAR(12) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     isAdmin BOOLEAN NOT NULL DEFAULT false,
     createdOn DATE NOT NULL
     );
+
+    SET datestyle = "ISO, YMD";
     """
     create_incident_table = """
     CREATE TABLE IF NOT EXISTS incidents(

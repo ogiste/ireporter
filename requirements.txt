@@ -1,2 +1,15 @@
-Flask_RESTful==0.3.6
+aniso8601==4.0.1
+bcrypt==3.1.4
+cffi==1.11.5
+Click==7.0
 Flask==1.0.2
+Flask-Bcrypt==0.7.1
+Flask-RESTful==0.3.6
+itsdangerous==1.1.0
+Jinja2==2.10
+MarkupSafe==1.1.0
+psycopg2-binary==2.7.6.1
+pycparser==2.19
+pytz==2018.7
+six==1.11.0
+Werkzeug==0.14.1

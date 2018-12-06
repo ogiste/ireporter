@@ -141,7 +141,7 @@ class IncidentModel():
             update_incident = update_incident_list[0]
             update_incident[prop]=prop_value
             return update_incident
-        elif indx==(len(self.db)-1):
-            error_msg=self.NOT_FOUND + str(id) \
+
+        error_msg=self.NOT_FOUND + str(id) \
              + "Could not update a non-existent record"
-            return error_msg
+        return error_msg
