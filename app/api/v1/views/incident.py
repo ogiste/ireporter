@@ -189,8 +189,12 @@ class IncidentView(Resource, IncidentModel):
                 location = 'json',
                 help = "The new value of the comment or location must be provided")
             new_data = patch_parser.parse_args()
-            new_data["prop_value"] = self.validator.\
-                remove_whitespace(new_data["prop_value"])
+            if prop == "location":
+                new_data["prop_value"] = self.validator.\
+                    remove_whitespace(new_data["prop_value"])
+            if prop == "comment":
+                new_data["prop_value"] = self.validator.\
+                    remove_lr_whitespace(new_data["prop_value"])
             if id != None and prop != None and new_data["prop_value"] != "":
                 if prop == "location" and not self.validator.is_valid_location(new_data["prop_value"]):
                     return make_response(jsonify(

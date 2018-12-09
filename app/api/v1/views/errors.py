@@ -52,6 +52,7 @@ class Validation():
     is_string(var)
     is_in_limit(strvar,max,min)
     remove_whitespace(strvar)
+    remove_lr_whitespace(strvar)
     is_valid_email(strvar)
     is_valid_location(strvar)
     is_valid_phone(strvar)
@@ -109,6 +110,21 @@ class Validation():
         """
         if self.is_string(strvar):
             strvar = strvar.replace(" ", "")
+            return strvar
+        return None
+
+    def remove_lr_whitespace(self, strvar):
+        """
+        Method used to remove leadin and trailing whitespace from a strvar
+
+        Returns
+        --------
+         String without leading and trailing whitespaces if successfully
+         removed or None otherwise
+        """
+        if self.is_string(strvar):
+            strvar = strvar.lstrip()
+            strvar = strvar.rstrip()
             return strvar
         return None
 
