@@ -36,7 +36,7 @@ class TestIncidents(unittest.TestCase):
 
         }
         self.location = {
-            'prop_value': '-4.333333, 25.333333',
+            'prop_value': '-4.333333,25.333333',
         }
 
         self.redflag = {
@@ -45,7 +45,7 @@ class TestIncidents(unittest.TestCase):
             'title':"Corruption",
             'createdBy': 1,
             'createdOn':datetime.datetime.today().strftime('%Y-%m-%d'),
-            'location': '-2.333333, 35.333333',
+            'location': '-2.333333,35.333333',
             'status': 'draft',
             'images': ['/new.jpg'],
             'videos': ['/new.mp4'],
@@ -58,7 +58,7 @@ class TestIncidents(unittest.TestCase):
             'title':"Corruption",
             'createdBy': 1,
             'createdOn':datetime.datetime.today().strftime('%Y-%m-%d'),
-            'location': '-2.333333, 35.333333',
+            'location': '-2.333333,35.333333',
             'status': 'rejected',
             'images': ['/new2.jpg'],
             'videos': ['/new2.mp4'],

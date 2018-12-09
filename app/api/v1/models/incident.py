@@ -108,7 +108,9 @@ class IncidentModel():
         string
             string defining an error message
         """
-
+        if len(self.db) == 0:
+             return self.NOT_FOUND + str(id) \
+             + " Could not delete a non-existent record"
         for indx,incident in enumerate(self.db):
             if incident["id"]==id:
                  self.db.remove(incident)
@@ -134,7 +136,10 @@ class IncidentModel():
         dictionary
             dictionary contaiing an error message and the success status of the update.
         """
-        update_incident_list=[incident for incident in self.db if incident["id"]==id ]
+        if(id >= len(self.db)):
+            print "Item does not exist in incident list"
+            return None
+        update_incident_list = [incident for incident in self.db if incident["id"]==id ]
         print update_incident_list
         update_incident = update_incident_list[0]
         if (len(update_incident_list)>=1):
