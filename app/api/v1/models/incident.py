@@ -1,6 +1,12 @@
 
 incident_list = []
 
+def is_in_db(id,db):
+    if(id <= len(db) and len(db) > 0):
+        print "Item does not exist in incident db"
+        return False
+    return True
+
 class IncidentModel():
     """
     IncidentModel used to view, edit and delete incident records
@@ -89,7 +95,8 @@ class IncidentModel():
         string
             string describing error if incident was not found
         """
-
+        if is_in_db(id,self.db):
+            return None
         for indx,incident in enumerate(self.db):
             if incident["id"]==id:
                 return incident
@@ -108,9 +115,13 @@ class IncidentModel():
         string
             string defining an error message
         """
+        if is_in_db(id,self.db):
+            return None
+        (id,self.db)
         if len(self.db) == 0:
              return self.NOT_FOUND + str(id) \
              + " Could not delete a non-existent record"
+
         for indx,incident in enumerate(self.db):
             if incident["id"]==id:
                  self.db.remove(incident)
@@ -136,8 +147,7 @@ class IncidentModel():
         dictionary
             dictionary contaiing an error message and the success status of the update.
         """
-        if(id >= len(self.db)):
-            print "Item does not exist in incident list"
+        if is_in_db(id,self.db):
             return None
         update_incident_list = [incident for incident in self.db if incident["id"]==id ]
         print update_incident_list

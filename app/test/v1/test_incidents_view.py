@@ -76,10 +76,10 @@ class TestIncidents(unittest.TestCase):
         data=json.loads(res.get_data())
         print data
         self.assertEqual(res.status_code, 201)
-        self.assertEqual(data["data"]["type"], self.redflag["type"])
-        self.assertEqual(data["data"]["title"], self.redflag["title"])
-        self.assertEqual(data["data"]["status"], self.redflag["status"])
-        self.assertEqual(data["data"]["comment"], self.redflag["comment"])
+        self.assertEqual(data["data"][0]["type"], self.redflag["type"])
+        self.assertEqual(data["data"][0]["title"], self.redflag["title"])
+        self.assertEqual(data["data"][0]["status"], self.redflag["status"])
+        self.assertEqual(data["data"][0]["comment"], self.redflag["comment"])
         self.assertIn(self.msg['created'],str(data["msg"]))
 
     def test_get_single_redflag(self):

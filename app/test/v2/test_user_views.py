@@ -4,6 +4,7 @@ Test cases for user classes
 import unittest
 import datetime
 import json
+from pprint import pprint
 
 from app import create_app
 from app.db_config import connect, create_tables, drop_tables
@@ -24,6 +25,7 @@ class TestUser(unittest.TestCase):
         self.app = create_app('testing')
         self.client = self.app.test_client
         self.user_db = UserModel(db_name="ireporter_test")
+        pprint("User test cases v2")
         create_tables(self.user_db.conn)
         self.user = {
 
@@ -54,7 +56,7 @@ class TestUser(unittest.TestCase):
         """
         Method tests the POST endpoint user to create a new user
         """
-        
+
         res = self.client().post('/api/v2/users', data=json.dumps(self.user),content_type='application/json')
         data= json.loads(res.get_data())
         user_details = data["data"][0]
