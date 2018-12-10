@@ -1,12 +1,11 @@
 UI/images
-instance/
+venv/
 bin/
 lib/
 local/
 include/
 __pycache__/
 *.py[cod]
-*.pyc
 *$py.class
 .coverage
 .env
