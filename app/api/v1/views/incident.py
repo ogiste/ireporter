@@ -1,12 +1,12 @@
 import datetime
 import types
 
-from flask import Flask, make_response,jsonify,request
+from flask import make_response, jsonify
 from flask_restful import Resource
 
 
 #Local imports
-from .errors import parser, get_error, Validation
+from .errors import parser, get_error, Validation, error_messages
 
 
 
@@ -84,18 +84,24 @@ class IncidentView(Resource, IncidentModel):
         self.validator = Validation()
         self.db = IncidentModel()
         self.messages = {
-            "deleted":"Incident successfully deleted",
-            "created":"Incident successfully created",
-            "updated":"Incident successfully updated",
-            "read":"Incident(s) successfully retrieved"
+            "deleted": "Incident successfully deleted",
+            "created": "Incident successfully created",
+            "updated": "Incident successfully updated",
+            "read": "Incident(s) successfully retrieved"
         }
 
-    def post(self):
+    def post(self,prop=None):
         """
         POST endpoint for incident resource that creates a new instance
         and returns the incident once created
         """
         # new_incident = request.get_json()
+        if prop is not None:
+            return make_response(jsonify(get_error("Cannot load the"+\
+                                                   " requested page."+\
+                                                   "Check your URL"+\
+                                                   " and parameters provided",
+                404)),404)
         new_incident = incident_parser.parse_args()
         new_incident["title"] = \
             self.validator.remove_whitespace(new_incident["title"])
@@ -114,22 +120,9 @@ class IncidentView(Resource, IncidentModel):
                 get_error("Incident title,type,"+\
                           " comment and location cannot be empty strings",
                           400)), 400)
-        if not self.validator.is_in_limit(new_incident["title"]):
-            return make_response(jsonify(
-            get_error("Incident title cannot be greater than 30 characters and less than 4",
-                      400)), 400)
-        if not self.validator.is_in_limit(new_incident["comment"],
-                                          COMMENT_MAX, COMMENT_MIN):
-            return make_response(jsonify(
-                get_error("Incident comment cannot be greater than " +\
-                          str(COMMENT_MAX)+ " characters and less than "+\
-                          str(COMMENT_MIN),
-                          400)), 400)
-        if not self.validator.is_valid_location(new_incident["location"]):
-            return make_response(jsonify(
-                get_error("Incident location must be a valid"+\
-                          " string of lat and long coordinates",
-                          400)), 400)
+        validation_results = validate_post_input(self.validator, new_incident)
+        if validation_results is not None:
+            return validation_results
         new_incident["createdOn"] = datetime.datetime.today().strftime('%Y/%m/%d')
         new_incident["createdBy"] = (len(self.db.get_incidents())+1)
         new_incident["status"] = "draft"
@@ -139,8 +132,8 @@ class IncidentView(Resource, IncidentModel):
 
         if isinstance(incident_data, types.DictType) or isinstance(incident_data, types.ListType):
             return make_response(jsonify({
-                "data":incident_data,
-                "msg":self.messages["created"],
+                "data": [incident_data],
+                "msg": self.messages["created"],
                 "status_code":201
             }),201)
         if isinstance(incident_data, types.StringType):
@@ -148,41 +141,56 @@ class IncidentView(Resource, IncidentModel):
                 "msg":incident_data,
                 "status_code":400
             }),400)
-        print(incident_data)
         return make_response(jsonify(get_error("Failed to create new incident",
                                                400)), 400)
 
-    def get(self,id=None):
+
+    def get(self, id=None, prop=None):
         """
         GET method returns all incidents if :param :id is None or a single
         incident if :param :id is an integer
         """
+        if prop is not None:
+            return make_response(jsonify(get_error("Cannot load the"+\
+                                                   " requested page."+\
+                                                   "Check your URL"+\
+                                                   " and parameters provided",
+                404)),404)
+
         if id is None:
             incidents_data = self.db.get_incidents()
             return make_response(jsonify({
-                "data":incidents_data,
-                "msg":self.messages["read"],
+                "data": incidents_data,
+                "msg": self.messages["read"],
                 "status_code":200
             }),200)
+
         incident_results = self.db.get_single_incident(id)
-        if isinstance(incident_results,types.DictType):
+        if isinstance(incident_results, types.DictType):
             return make_response(jsonify({
                 "data":[incident_results],
                 "msg":self.messages["read"],
                 "status_code":200
             }),200)
 
-        if isinstance(incident_results,types.StringType):
+        if isinstance(incident_results, types.StringType):
             return make_response(jsonify(get_error(incident_results,400))
             ,400)
 
+        return make_response(jsonify(get_error("Requested URL is incorrect"+\
+                                               ". Please check parameters and URL entry",
+                                                404))
+        ,404)
 
-    def patch(self,id,prop):
+    def patch(self,id,prop=None):
         """
         PATCH endpoint that updates an incident comment or location
         properties using the :param :id to find the record and :param :prop to
         identify which incident property to update.
         """
+        if prop is None:
+            return make_response(jsonify(get_error(error_messages["404"],
+                404)),404)
         if prop == "comment" or prop == "location":
             patch_parser = parser.copy()
             patch_parser.add_argument('prop_value',type = str,required = True,
@@ -234,8 +242,7 @@ class IncidentView(Resource, IncidentModel):
                                                " location and comment ",
             404)),404)
 
-
-    def delete(self, id):
+    def delete(self, id, prop=None):
         """
         DELETE endpoint that deletes a single incident using the :param :id
         to identify which incident to delete
@@ -243,6 +250,12 @@ class IncidentView(Resource, IncidentModel):
         delete_parser = parser.copy()
         delete_incident_parsed = delete_parser.parse_args()
 
+        if prop is not None:
+            return make_response(jsonify(get_error("Cannot load the"+\
+                                                   " requested page."+\
+                                                   "Check your URL"+\
+                                                   " and parameters provided",
+                404)),404)
         if id == None:
             return make_response(jsonify(get_error("Cannot delete"+
             "incident without a valid id",400))
@@ -250,11 +263,37 @@ class IncidentView(Resource, IncidentModel):
 
         deleted_incident =  self.db.delete_incident(id)
 
-        if deleted_incident==True:
+        if deleted_incident == True:
             return make_response(jsonify({
                 "msg":self.messages["deleted"],
                 "status_code":202
             }),202)
 
-        return make_response(jsonify(get_error(deleted_incident, 400))
+        if isinstance(deleted_incident, types.StringType):
+            return make_response(jsonify(get_error(deleted_incident, 400))
+            ,400)
+
+        return make_response(jsonify(get_error("Requested URL is incorrect"+\
+                                               ". Please check parameters and URL entry",
+                                                400))
         ,400)
+
+
+def validate_post_input(validator,new_incident):
+    if not validator.is_in_limit(new_incident["title"]):
+        return make_response(jsonify(
+        get_error(validator.validation_messages["lim_incident_title"],
+                  400)), 400)
+    if not validator.is_in_limit(new_incident["comment"],
+                                      COMMENT_MAX, COMMENT_MIN):
+        return make_response(jsonify(
+            get_error(validator.\
+                      create_limit_message("Incident comment", COMMENT_MAX,
+                                           COMMENT_MIN),
+                      400)), 400)
+    if not validator.is_valid_location(new_incident["location"]):
+        return make_response(jsonify(
+            get_error(validator.\
+                      validation_messages["valid_incident_location"],
+                      400)), 400)
+    return None

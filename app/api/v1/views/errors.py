@@ -38,6 +38,18 @@ PW_REGEX = re.compile(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$")
 NAME_MAX = 30
 NAME_MIN = 4
 
+error_messages = {
+    "404": "Requested URL is invalid and no resource could be found :O ",
+    "400": "Bad request. Ensure all inputs and parameters are valid. ",
+    "401": "Unauthorized request was made."+\
+    " Please sign in before making this request",
+    "403": "The request made is forbidden."+\
+    " You do not have the necessary permissions",
+    "500": "An error occured while"+\
+    " executing your request :/ Admin has been notified"
+}
+
+
 
 class Validation():
     """
@@ -66,7 +78,11 @@ class Validation():
         Constructor function for Validation class used in validation of user
         input
         """
-        pass
+        self.validation_messages = {}
+        self.validation_messages["lim_incident_title"] = "Incident title\
+         cannot be greater than 30 characters and less than 4"
+        self.validation_messages["valid_incident_location"] = "Incident location"+\
+            " must be a valid string of lat and long coordinates"
 
     def is_string(self, var):
         """
@@ -192,3 +208,15 @@ class Validation():
             print (strvar, " is not a valid password string.")
             return False
         return False
+
+    def create_limit_message(self, property,max,min):
+        """
+        Method used to generate a limit message string when a strvar is not
+        within the string requirements
+
+        Returns
+        --------
+         String message describing the limits of property
+        """
+        return "{} cannot be greater than {} characters and less than {}".\
+            format(property, str(max), str(min))
