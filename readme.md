@@ -20,7 +20,7 @@ we'll create a virtual enviroment and install the packages there
 * to create a virtual enviroment run
 
 
-    ``` virtualenv -p python2.7 venv```
+    ``` virtualenv -p python3 venv```
 * activating the enviroment
 
     ``` source venv/bin/activate```
@@ -55,7 +55,7 @@ Sample Indicent Record JSON:
 Current API endpoints :
 
         | METHOD        | ENDPOINT                    | DESCRIPTION                                                           |
-        | --------------|:---------------------------:| ----------------------------------------------------------------------|
+        | --------------|:---------------------------:| --------------------------------------------------------------------|
         | POST          | /api/v1/incidents           | Used to create an incident record                                     |
         | GET           | /api/v1/incidents/          | Used to read all incident records                                     |
         | GET           | /api/v1/incidents/<int:id>  | Used to view a particular incident record                             |
