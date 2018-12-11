@@ -1,10 +1,26 @@
 
 incident_list = []
+global count_id
+count_id = 1
 
-def is_in_db(id,db):
-    if(id <= len(db) and len(db) > 0):
+
+def is_in_db(id, db):
+    """
+    Check if an id exists in the list of incidents
+
+    Returns
+    --------
+    True if it exists false otherwise
+    """
+    if len(db) < 1:
         return False
-    return True
+
+    for idx, incident in enumerate(db):
+        if id == incident["id"]:
+            return True
+        elif idx == (len(db)-1):
+            return False
+
 
 class IncidentModel():
     """
@@ -34,6 +50,7 @@ class IncidentModel():
         }
 
     """
+
     def __init__(self):
         """
         Constructor that initializes the Incident records database property
@@ -41,7 +58,7 @@ class IncidentModel():
         self.db = incident_list
         self.NOT_FOUND = "The incident was not found with id: "
 
-    def save(self,new_incident):
+    def save(self, new_incident):
         """
         Creates a new incident record
         by taking in a :new_incident arg of type dictionary
@@ -52,20 +69,21 @@ class IncidentModel():
         dictionary
             dictionary containing all newly created incident details
         """
-
+        global count_id
         data = {
-            "id":(len(self.db)+1),
+            "id": count_id,
             "createdOn": new_incident["createdOn"],
-            "createdBy":new_incident["createdBy"],
-            "title":new_incident["title"],
-            "type":new_incident["type"],
-            "location":new_incident["location"],
-            "status":new_incident["status"],
-            "images":new_incident["images"],
-            "videos":new_incident["videos"],
-            "comment":new_incident["comment"]
+            "createdBy": new_incident["createdBy"],
+            "title": new_incident["title"],
+            "type": new_incident["type"],
+            "location": new_incident["location"],
+            "status": new_incident["status"],
+            "images": new_incident["images"],
+            "videos": new_incident["videos"],
+            "comment": new_incident["comment"]
         }
 
+        count_id = count_id + 1
         self.db.append(data)
         return data
 
@@ -78,7 +96,8 @@ class IncidentModel():
         list
             list of all created incident records
         """
-
+        if len(self.db) == 0:
+            return "No incidents exist, create an incident first"
         return self.db
 
     def get_single_incident(self, id):
@@ -94,16 +113,16 @@ class IncidentModel():
         string
             string describing error if incident was not found
         """
-        if is_in_db(id,self.db):
+        if not is_in_db(id, self.db):
             return None
-        for indx,incident in enumerate(self.db):
-            if incident["id"]==id:
+        for indx, incident in enumerate(self.db):
+            if incident["id"] == id:
                 return incident
-            elif indx==(len(self.db)-1):
+            elif len(self.db) != 0 and indx == (len(self.db)-1):
                 return self.NOT_FOUND + str(id) \
                  + " Could not get a non-existent record"
 
-    def delete_incident(self,id):
+    def delete_incident(self, id):
         """
         Find a single incident record and delete it.
 
@@ -114,22 +133,22 @@ class IncidentModel():
         string
             string defining an error message
         """
-        if is_in_db(id,self.db):
+        if not is_in_db(id, self.db):
             return None
-        (id,self.db)
+        (id, self.db)
         if len(self.db) == 0:
-             return self.NOT_FOUND + str(id) \
-             + " Could not delete a non-existent record"
-
-        for indx,incident in enumerate(self.db):
-            if incident["id"]==id:
-                 self.db.remove(incident)
-                 return True
-            elif indx==(len(self.db)-1):
-                return self.NOT_FOUND + str(id) \
+            return self.NOT_FOUND + str(id) \
                 + " Could not delete a non-existent record"
 
-    def update_incident(self,id,prop, prop_value):
+        for indx, incident in enumerate(self.db):
+            if incident["id"] == id:
+                self.db.remove(incident)
+                return True
+            elif indx == (len(self.db)-1):
+                return self.NOT_FOUND + str(id) \
+                    + " Could not delete a non-existent record"
+
+    def update_incident(self, id, prop, prop_value):
         """
         Update a property of an incident
         by taking the :id arg to find the incident record,
@@ -146,15 +165,18 @@ class IncidentModel():
         dictionary
             dictionary contaiing an error message and the success status of the update.
         """
-        if is_in_db(id,self.db):
+        print("update incident")
+        print(id)
+        print(self.db)
+        print(is_in_db(id, self.db))
+        if not is_in_db(id, self.db):
             return None
         update_incident_list = [incident for incident in self.db if incident["id"]==id ]
-        update_incident = update_incident_list[0]
-        if (len(update_incident_list)>=1):
+        if (len(update_incident_list) >= 1):
             update_incident = update_incident_list[0]
-            update_incident[prop]=prop_value
+            update_incident[prop] = prop_value
             return update_incident
 
-        error_msg=self.NOT_FOUND + str(id) \
-             + "Could not update a non-existent record"
+        error_msg = self.NOT_FOUND + str(id) \
+            + "Could not update a non-existent record"
         return error_msg

@@ -3,13 +3,12 @@ language: python
 
 # Mention the python version in which travis will run the app
 python:
-  - "2.7"
+  - "3.5.2"
 
 services:
   - postgresql
 
 before_script:
-  - export DB_NAME=ireporter_test DB_USER=test_user DB_PASS=test_ireporter
   - psql -c 'CREATE DATABASE ireporter_test;' -U postgres
   - psql -c "CREATE USER test_user WITH PASSWORD 'test_ireporter';" -U postgres
   - psql -c "GRANT ALL PRIVILEGES on database ireporter_test to test_user;" -U postgres
@@ -27,5 +26,5 @@ script:
 
 # Using codecov to get coverage
 after_success:
-  - codecov --token=fd579b72-a230-4a0f-8f6d-f2ce849543f5
+  - codecov
   - coveralls

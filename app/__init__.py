@@ -24,5 +24,4 @@ def create_app(config_name="development"):
     app.config['BUNDLE_ERRORS'] = True
     app.register_blueprint(version_one)
     app.register_blueprint(version_two)
-    bcrypt = Bcrypt(app)
     return app

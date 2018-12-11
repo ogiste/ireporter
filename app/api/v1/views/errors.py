@@ -4,7 +4,6 @@ Create the default reqparse object to be used by all resources
 Define the Validation class used in validation of user input
 
 """
-import types
 import re
 from flask_restful import reqparse
 
@@ -41,14 +40,13 @@ NAME_MIN = 4
 error_messages = {
     "404": "Requested URL is invalid and no resource could be found :O ",
     "400": "Bad request. Ensure all inputs and parameters are valid. ",
-    "401": "Unauthorized request was made."+\
+    "401": "Unauthorized request was made."
     " Please sign in before making this request",
-    "403": "The request made is forbidden."+\
+    "403": "The request made is forbidden."
     " You do not have the necessary permissions",
-    "500": "An error occured while"+\
+    "500": "An error occured while"
     " executing your request :/ Admin has been notified"
 }
-
 
 
 class Validation():
@@ -88,8 +86,7 @@ class Validation():
         self.validation_messages["valid_incident_location"] = valid_loc
         self.validation_messages["empty_loc_or_comment"] = empty_loc_or_comment
 
-    @staticmethod
-    def is_string(var):
+    def is_string(self, var):
         """
         Method used to check if var is of a string instance
 
@@ -97,7 +94,7 @@ class Validation():
         --------
          Boolean value - true if var is a string false otherwise
         """
-        if isinstance(var, bytes):
+        if isinstance(var, str):
             return True
         return False
 
@@ -111,11 +108,9 @@ class Validation():
          false otherwise
         """
 
-        if Validation.is_string(strvar):
+        if self.is_string(strvar):
             if len(strvar) <= strmax and len(strvar) >= strmin:
                 return True
-            print((strvar, " is not within string limits of max: ", strmax,
-                   " min: ", strmin))
             return False
         return False
 
@@ -127,7 +122,7 @@ class Validation():
         --------
          String without whitespaces if successfully removed or None otherwise
         """
-        if Validation.is_string(strvar):
+        if self.is_string(strvar):
             strvar = strvar.replace(" ", "")
             return strvar
         return None
@@ -141,7 +136,7 @@ class Validation():
          String without leading and trailing whitespaces if successfully
          removed or None otherwise
         """
-        if Validation.is_string(strvar):
+        if self.is_string(strvar):
             strvar = strvar.lstrip()
             strvar = strvar.rstrip()
             return strvar
@@ -157,7 +152,7 @@ class Validation():
          false otherwise
         """
 
-        if Validation.is_string(strvar):
+        if self.is_string(strvar):
             if EMAIL_REGEX.match(strvar):
                 return True
             print((strvar, " is not a valid email address "))
@@ -173,7 +168,7 @@ class Validation():
          Boolean value - true if strvar is a valid lat long string
          false otherwise
         """
-        if Validation.is_string(strvar):
+        if self.is_string(strvar):
             if LOCATION_REGEX.match(strvar):
                 return True
             return False
@@ -188,7 +183,7 @@ class Validation():
          Boolean value - true if strvar is a valid phone number string
          false otherwise
         """
-        if Validation.is_string(strvar):
+        if self.is_string(strvar):
             if PHONE_REGEX.match(strvar):
                 return True
             return False
@@ -203,7 +198,7 @@ class Validation():
          Boolean value - true if  is a valid password string
          false otherwise
         """
-        if Validation.is_string(strvar):
+        if self.is_string(strvar):
             if PW_REGEX.match(strvar):
                 return True
             return False
