@@ -3,7 +3,6 @@ from app.db_config import connect
 from pprint import pprint
 from psycopg2 import IntegrityError
 from flask_bcrypt import Bcrypt
-from flask_bcrypt import Bcrypt
 
 
 class UserModel():
@@ -37,7 +36,6 @@ class UserModel():
         """
         Constructor that initializes the user records database object
         """
-        print "User Model using db_name:  ", db_name
         self.conn = connect(db_name)
         self.cursor = self.conn.cursor()
         self.bcrypt = Bcrypt()
@@ -66,19 +64,16 @@ class UserModel():
                 pw_hash = result[1]
                 authenticated = self.bcrypt.check_password_hash(pw_hash,
                                                            candidate_pass)
-                print "verify password authentication: ", authenticated
                 return authenticated
-            print "result of verify pass cursor: "
-            pprint(result)
             return None
         except Exception as e:
             pprint("verify_pass raised exception: ")
             if hasattr(e, 'message'):
-                print(e.message)
+                print((e.message))
             else:
                 print(e)
             return self.NOT_FOUND + str(username) \
-            + " Record could not be found , doesnot exist"
+                + " Record could not be found , doesnot exist"
 
     def get_formated_user_dict(self, user_tuple, allInfo=False):
         """
@@ -89,7 +84,6 @@ class UserModel():
         -------
             Dictionary with key,value pairs of user data
         """
-        print(len(user_tuple))
         user_details = dict(enumerate(user_tuple))
         user_details[6] = user_details[6].strftime('%Y/%m/%d')
         user_details = {
@@ -131,7 +125,7 @@ class UserModel():
         except IntegrityError as e:
             pprint("User model raised exception: ")
             if hasattr(e, 'message'):
-                print(e.message)
+                print((e.message))
             else:
                 print(e)
             return self.NOT_FOUND + str(username) \
@@ -175,12 +169,11 @@ class UserModel():
                                 isAdmin=new_user["isAdmin"])
         try:
             self.cursor.execute(insert_user_statement)
-            print "User created"
             return self.get_single_user_by_username(new_user["username"])
         except IntegrityError as e:
             pprint("User model raised an integrity exception: ")
             if hasattr(e, 'message'):
-                print(e.message)
+                print((e.message))
             else:
                 print(e)
             return "username,email or phone number is already taken."+\
@@ -188,7 +181,7 @@ class UserModel():
         except IntegrityError as e:
             pprint("Raised exception: ")
             if hasattr(e, 'message'):
-                print(e.message)
+                print((e.message))
             else:
                 print(e)
             return self.NOT_CREATED

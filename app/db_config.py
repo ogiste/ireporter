@@ -64,7 +64,7 @@ def connection(db_name=None):
     except Exception as e:
         pprint("DB Config Cannot connect to database")
         if hasattr(e, 'message'):
-            print(e.message)
+            print((e.message))
         else:
             print(e)
 

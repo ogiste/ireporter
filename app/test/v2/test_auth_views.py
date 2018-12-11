@@ -112,7 +112,7 @@ class TestUser(unittest.TestCase):
                                  data=json.dumps(self.user_credentials2),
                                  content_type='application/json')
         data = json.loads(res.get_data())
-        print """data["data"]: """, data["data"]
+        print("""data["data"]: """, data["data"])
         user_details = data["data"][0]["user"]
         self.assertEqual(user_details["fname"], self.user2["fname"])
         self.assertEqual(user_details["lname"], self.user2["lname"])

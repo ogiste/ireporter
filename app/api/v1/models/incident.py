@@ -3,7 +3,6 @@ incident_list = []
 
 def is_in_db(id,db):
     if(id <= len(db) and len(db) > 0):
-        print "Item does not exist in incident db"
         return False
     return True
 
@@ -150,7 +149,6 @@ class IncidentModel():
         if is_in_db(id,self.db):
             return None
         update_incident_list = [incident for incident in self.db if incident["id"]==id ]
-        print update_incident_list
         update_incident = update_incident_list[0]
         if (len(update_incident_list)>=1):
             update_incident = update_incident_list[0]
