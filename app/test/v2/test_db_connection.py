@@ -2,7 +2,7 @@
 Testcase for the database connection success
 """
 import unittest
-import StringIO
+import io
 import sys
 import types
 
@@ -29,35 +29,35 @@ class TestIncidents(unittest.TestCase):
         """
         Method that is called to test the created tables
         """
-        capturedOutput = StringIO.StringIO()          # Create StringIO object
+        capturedOutput = io.StringIO()          # Create StringIO object
         sys.stdout = capturedOutput                   # and redirect stdout.
         create_tables(self.conn)                               # Call unchanged function
         sys.stdout = sys.__stdout__                   # Reset redirect.
-        print 'Captured', capturedOutput.getvalue()   # Now works as before.
+        print('Captured', capturedOutput.getvalue())   # Now works as before.
         self.assertIn(self.create_tables_message, capturedOutput.getvalue())
 
     def test_drop_tables(self):
         """
         Method that is called to test the dropped tables
         """
-        capturedOutput = StringIO.StringIO()          # Create StringIO object
+        capturedOutput = io.StringIO()          # Create StringIO object
         sys.stdout = capturedOutput                   # and redirect stdout.
         drop_tables(self.conn)                               # Call unchanged function
         sys.stdout = sys.__stdout__                   # Reset redirect.
-        print 'Captured ', capturedOutput.getvalue()   # Now works as before.
+        print('Captured ', capturedOutput.getvalue())   # Now works as before.
         self.assertIn(self.drop_tables_message, capturedOutput.getvalue())
 
     def test_get_create_queries(self):
         """
         Method to test the get_create_queries method of the db config
         """
-        self.assertIsInstance(get_create_queries(), types.ListType)
+        self.assertIsInstance(get_create_queries(), list)
 
     def test_get_drop_queries(self):
         """
         Method to test the get_drop_queries method of the db config
         """
-        self.assertIsInstance(get_drop_queries(), types.ListType)
+        self.assertIsInstance(get_drop_queries(), list)
 
     def tearDown(self):
         self.conn.close()

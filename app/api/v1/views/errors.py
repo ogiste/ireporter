@@ -4,7 +4,6 @@ Create the default reqparse object to be used by all resources
 Define the Validation class used in validation of user input
 
 """
-import types
 import re
 from flask_restful import reqparse
 
@@ -41,14 +40,13 @@ NAME_MIN = 4
 error_messages = {
     "404": "Requested URL is invalid and no resource could be found :O ",
     "400": "Bad request. Ensure all inputs and parameters are valid. ",
-    "401": "Unauthorized request was made."+\
+    "401": "Unauthorized request was made."
     " Please sign in before making this request",
-    "403": "The request made is forbidden."+\
+    "403": "The request made is forbidden."
     " You do not have the necessary permissions",
-    "500": "An error occured while"+\
+    "500": "An error occured while"
     " executing your request :/ Admin has been notified"
 }
-
 
 
 class Validation():
@@ -81,8 +79,12 @@ class Validation():
         self.validation_messages = {}
         self.validation_messages["lim_incident_title"] = "Incident title\
          cannot be greater than 30 characters and less than 4"
-        self.validation_messages["valid_incident_location"] = "Incident location"+\
-            " must be a valid string of lat and long coordinates"
+        valid_loc = ("Incident location"
+                     " must be a valid string of lat and long coordinates")
+        empty_loc_or_comment = ("Cannot update empty location"
+                                " or comment provide a valid string")
+        self.validation_messages["valid_incident_location"] = valid_loc
+        self.validation_messages["empty_loc_or_comment"] = empty_loc_or_comment
 
     def is_string(self, var):
         """
@@ -92,27 +94,23 @@ class Validation():
         --------
          Boolean value - true if var is a string false otherwise
         """
-        if isinstance(var, types.StringType):
+        if isinstance(var, str):
             return True
-        print "var is not a string"
-        print "var is of instance: ", type(var)
         return False
 
-    def is_in_limit(self, strvar, max=NAME_MAX, min=NAME_MIN):
+    def is_in_limit(self, strvar, strmax=NAME_MAX, strmin=NAME_MIN):
         """
-        Method used to check if strvar is within the max and min value
+        Method used to check if strvar is within the strmax and strmin value
 
         Returns
         --------
-         Boolean value - true if strvar is a within the max and min values
+         Boolean value - true if strvar is a within the strmax and strmin values
          false otherwise
         """
 
         if self.is_string(strvar):
-            if len(strvar) <= max and len(strvar) >= min:
+            if len(strvar) <= strmax and len(strvar) >= strmin:
                 return True
-            print (strvar, " is not within string limits of max: ", max,
-                   " min: ", min)
             return False
         return False
 
@@ -157,7 +155,7 @@ class Validation():
         if self.is_string(strvar):
             if EMAIL_REGEX.match(strvar):
                 return True
-            print (strvar, " is not a valid email address ")
+            print((strvar, " is not a valid email address "))
             return False
         return False
 
@@ -173,7 +171,6 @@ class Validation():
         if self.is_string(strvar):
             if LOCATION_REGEX.match(strvar):
                 return True
-            print (strvar, " is not a valid lat long location ")
             return False
         return False
 
@@ -189,7 +186,6 @@ class Validation():
         if self.is_string(strvar):
             if PHONE_REGEX.match(strvar):
                 return True
-            print (strvar, " is not a valid phone number with +254 extension.")
             return False
         return False
 
@@ -205,18 +201,17 @@ class Validation():
         if self.is_string(strvar):
             if PW_REGEX.match(strvar):
                 return True
-            print (strvar, " is not a valid password string.")
             return False
         return False
 
-    def create_limit_message(self, property,max,min):
+    def create_limit_message(resource_property, strmax, strmin):
         """
         Method used to generate a limit message string when a strvar is not
         within the string requirements
 
         Returns
         --------
-         String message describing the limits of property
+         String message describing the limits of resource_property
         """
         return "{} cannot be greater than {} characters and less than {}".\
-            format(property, str(max), str(min))
+            format(resource_property, str(strmax), str(strmin))

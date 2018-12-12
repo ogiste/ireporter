@@ -74,7 +74,7 @@ class TestIncidents(unittest.TestCase):
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         data=json.loads(res.get_data())
-        print data
+        print(data)
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data["data"][0]["type"], self.redflag["type"])
         self.assertEqual(data["data"][0]["title"], self.redflag["title"])

@@ -6,7 +6,7 @@ from flask import Flask, make_response, jsonify,request
 from flask_restful import Resource
 
 # Local imports
-from errors import parser, get_error
+from .errors import parser, get_error
 from app.api.v2.models.user import UserModel
 
 
@@ -113,13 +113,13 @@ class UserView(Resource, UserModel):
         new_user["createdOn"] = datetime.datetime.today().strftime('%Y/%m/%d')
         new_user["isAdmin"] = False
         create_results = self.db.save(new_user)
-        if isinstance(create_results, types.DictType):
+        if isinstance(create_results, dict):
             return make_response(jsonify({
                 "data": [create_results],
                 "msg": self.messages["created"],
                 "status_code": 201
             }), 201)
 
-        if isinstance(create_results, types.StringType):
+        if isinstance(create_results, bytes):
             return make_response(jsonify(get_error(create_results, 400))
                                  , 400)

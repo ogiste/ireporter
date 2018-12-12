@@ -6,7 +6,7 @@ from flask import make_response, jsonify
 from flask_restful import Resource
 
 # Local imports
-from errors import parser, get_error
+from .errors import parser, get_error
 from app.api.v2.models.user import UserModel
 
 
@@ -67,7 +67,7 @@ class AuthView(Resource, UserModel):
                     get_error(" username and password cannot be empty strings",
                           400)), 400)
         authenticated = self.db.verify_pass(user_credentials)
-        if isinstance(authenticated, types.BooleanType) and authenticated is True:
+        if isinstance(authenticated, bool) and authenticated is True:
             user_details = self.db.get_single_user_by_username(user_credentials["username"])
             return make_response(jsonify({
                 "data": [{
@@ -88,6 +88,6 @@ class AuthView(Resource, UserModel):
                                                     400))
                                  , 400)
 
-        if isinstance(authenticated, types.StringType):
+        if isinstance(authenticated, bytes):
             return make_response(jsonify(get_error(authenticated, 400))
                                  , 400)
