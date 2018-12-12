@@ -4,10 +4,11 @@ Test cases for user classes
 import unittest
 import datetime
 import json
+import os
 
 from pprint import pprint
 from app import create_app
-from app.db_config import connect, create_tables, drop_tables
+from app.db_config import connect, create_tables, drop_tables,delete_all_rows
 from app.api.v2.models.user import UserModel
 
 
@@ -24,7 +25,8 @@ class TestUser(unittest.TestCase):
         """
         self.app = create_app('testing')
         self.client = self.app.test_client
-        self.user_db = UserModel(db_name="ireporter_test")
+        db_name = os.getenv("DB_NAME", default="tester")
+        self.user_db = UserModel(db_name)
         create_tables(self.user_db.conn)
         self.user = {
 
@@ -69,7 +71,7 @@ class TestUser(unittest.TestCase):
         res = self.client().post('/api/v2/users',
                                  data=json.dumps(self.user),
                                  content_type='application/json')
-        data = json.loads(res.get_data())
+        data = json.loads(res.get_data().decode('utf8'))
         user_details = data["data"][0]
         self.assertEqual(user_details["fname"], self.user["fname"])
         self.assertEqual(user_details["lname"], self.user["lname"])
@@ -83,7 +85,7 @@ class TestUser(unittest.TestCase):
         res = self.client().post('/api/v2/users',
                                  data=json.dumps(self.user2),
                                  content_type='application/json')
-        data = json.loads(res.get_data())
+        data = json.loads(res.get_data().decode('utf8'))
         user_details = data["data"][0]
         self.assertEqual(user_details["fname"], self.user2["fname"])
         self.assertEqual(user_details["lname"], self.user2["lname"])
@@ -97,7 +99,7 @@ class TestUser(unittest.TestCase):
         res = self.client().post('/api/v2/auth',
                                  data=json.dumps(self.user_credentials1),
                                  content_type='application/json')
-        data = json.loads(res.get_data())
+        data = json.loads(res.get_data().decode('utf8'))
         user_details = data["data"][0]["user"]
         self.assertEqual(user_details["fname"], self.user["fname"])
         self.assertEqual(user_details["lname"], self.user["lname"])
@@ -111,7 +113,7 @@ class TestUser(unittest.TestCase):
         res = self.client().post('/api/v2/auth',
                                  data=json.dumps(self.user_credentials2),
                                  content_type='application/json')
-        data = json.loads(res.get_data())
+        data = json.loads(res.get_data().decode('utf8'))
         print("""data["data"]: """, data["data"])
         user_details = data["data"][0]["user"]
         self.assertEqual(user_details["fname"], self.user2["fname"])

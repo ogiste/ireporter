@@ -120,6 +120,6 @@ class UserView(Resource, UserModel):
                 "status_code": 201
             }), 201)
 
-        if isinstance(create_results, bytes):
+        if isinstance(create_results, str):
             return make_response(jsonify(get_error(create_results, 400))
                                  , 400)

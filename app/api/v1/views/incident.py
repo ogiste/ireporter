@@ -114,8 +114,6 @@ class IncidentView(Resource, IncidentModel):
                 )
 
         new_incident = incident_parser.parse_args()
-        print("new_incident before")
-        print(new_incident)
         new_incident["title"] = self.validator.remove_whitespace(
             new_incident["title"]
         )
@@ -128,7 +126,6 @@ class IncidentView(Resource, IncidentModel):
             self.validator.remove_whitespace(new_incident["location"])
         non_empty_items = [new_incident["title"], new_incident["type"],
                            new_incident["comment"], new_incident["location"]]
-        print(new_incident)
         for incident_item in non_empty_items:
             if incident_item == "" or incident_item is None:
                 return make_response(jsonify(
@@ -231,8 +228,6 @@ class IncidentView(Resource, IncidentModel):
         incident_data = self.db.update_incident(
             id, prop, new_data["prop_value"]
         )
-        print("put incident")
-        print(incident_data)
         if isinstance(incident_data, dict):
             return make_response(jsonify({
                 "data": [incident_data],

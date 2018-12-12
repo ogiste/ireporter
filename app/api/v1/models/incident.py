@@ -70,8 +70,9 @@ class IncidentModel():
             dictionary containing all newly created incident details
         """
         global count_id
+        self.count_id = count_id
         data = {
-            "id": count_id,
+            "id": self.count_id,
             "createdOn": new_incident["createdOn"],
             "createdBy": new_incident["createdBy"],
             "title": new_incident["title"],
@@ -83,7 +84,7 @@ class IncidentModel():
             "comment": new_incident["comment"]
         }
 
-        count_id = count_id + 1
+        self.count_id = count_id + 1
         self.db.append(data)
         return data
 
@@ -165,10 +166,6 @@ class IncidentModel():
         dictionary
             dictionary contaiing an error message and the success status of the update.
         """
-        print("update incident")
-        print(id)
-        print(self.db)
-        print(is_in_db(id, self.db))
         if not is_in_db(id, self.db):
             return None
         update_incident_list = [incident for incident in self.db if incident["id"]==id ]
