@@ -58,7 +58,7 @@ class TestUser(unittest.TestCase):
         """
 
         res = self.client().post('/api/v2/users', data=json.dumps(self.user),content_type='application/json')
-        data= json.loads(res.get_data())
+        data= json.loads(res.get_data().decode('utf8'))
         user_details = data["data"][0]
         self.assertEqual(user_details["fname"], self.user["fname"])
         self.assertEqual(user_details["lname"], self.user["lname"])

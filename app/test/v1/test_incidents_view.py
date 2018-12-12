@@ -63,9 +63,9 @@ class TestIncidents(unittest.TestCase):
         IncidentModel.count_id = count_id
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         print("test_create_flags")
-        print(res.get_data())
+        print(res.get_data().decode('utf8'))
         print(data)
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data["data"][0]["type"], self.redflag["type"])
@@ -86,7 +86,7 @@ class TestIncidents(unittest.TestCase):
         #import pdb; pdb.set_trace()
         res = self.client().get('/api/v1/incidents/1')
         self.assertEqual(res.status_code, 200)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         print(data)
         incident_list = data["data"]
         self.assertEqual(incident_list[0]["type"], self.redflag["type"])
@@ -104,16 +104,16 @@ class TestIncidents(unittest.TestCase):
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.msg['created'],str(data["msg"]))
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag2),content_type='application/json')
         self.assertEqual(res.status_code, 201)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.msg['created'],str(data["msg"]))
         res = self.client().get('/api/v1/incidents')
         self.assertEqual(res.status_code, 200)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.msg['read'],str(data["msg"]))
         self.assertIn(self.redflag["type"], str(data["data"]))
         self.assertIn(self.redflag["title"], str(data["data"]))
@@ -133,7 +133,7 @@ class TestIncidents(unittest.TestCase):
         res = self.client().patch('/api/v1/incidents/1/comment',
         data=json.dumps(self.comment), content_type='application/json')
         self.assertEqual(res.status_code, 200)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.msg['updated'],str(data["msg"]))
         updated_incident = self.client().get('/api/v1/incidents/')
         self.assertEqual(updated_incident.status_code, 200)
@@ -154,7 +154,7 @@ class TestIncidents(unittest.TestCase):
         res = self.client().patch('/api/v1/incidents/1/location',
         data=json.dumps(self.location), content_type='application/json')
         self.assertEqual(res.status_code, 200)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.msg['updated'],str(data["msg"]))
         updated_incident = self.client().get('/api/v1/incidents/1')
         self.assertEqual(updated_incident.status_code, 200)
@@ -176,7 +176,7 @@ class TestIncidents(unittest.TestCase):
         res = self.client().delete('/api/v1/incidents/1', data=None,
         content_type='application/json')
         self.assertEqual(res.status_code, 202)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.msg['deleted'],str(data["msg"]))
 
     def tearDown(self):
