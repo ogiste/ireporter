@@ -2,7 +2,7 @@
 from app.db_config import connect
 from pprint import pprint
 from psycopg2 import IntegrityError
-from flask_bcrypt import Bcrypt
+from passlib.hash import sha256_crypt
 
 
 class UserModel():
@@ -39,9 +39,13 @@ class UserModel():
 
         self.conn = connect(db_name)
         self.cursor = self.conn.cursor()
-        self.bcrypt = Bcrypt()
-        self.NOT_FOUND = "The user was not found with username - "
-        self.NOT_CREATED = "The user was not created. Please try again "
+        self.message = {}
+        self.message["NOT_FOUND"] = "The user was not found with username - "
+        self.message["NOT_CREATED"] = ("The user was not created."
+                                       " Please try again ")
+        self.message["DUPLICATE"] = (
+            "username,email or phone number is already taken."
+            " Please provide alternative details")
 
     def verify_pass(self, user_credentials):
         """
@@ -63,17 +67,17 @@ class UserModel():
             if result is not None:
                 username = result[0]
                 pw_hash = result[1]
-                authenticated = self.bcrypt.check_password_hash(pw_hash,
-                                                           candidate_pass)
+                authenticated = sha256_crypt.verify(candidate_pass, pw_hash)
                 return authenticated
             return None
         except Exception as e:
             pprint("verify_pass raised exception: ")
             if hasattr(e, 'message'):
                 print((e.message))
+                return None
             else:
                 print(e)
-            return self.NOT_FOUND + str(username) \
+            return self.message["NOT_FOUND"] + str(username) \
                 + " Record could not be found , doesnot exist"
 
     def get_formated_user_dict(self, user_tuple, allInfo=False):
@@ -129,7 +133,7 @@ class UserModel():
                 print((e.message))
             else:
                 print(e)
-            return self.NOT_FOUND + str(username) \
+            return self.message["NOT_FOUND"] + str(username) \
              + "Record could not be found or doesnot exist"
 
     def save(self, new_user):
@@ -154,7 +158,8 @@ class UserModel():
             "createdOn": new_user["createdOn"],
             "isAdmin": new_user["isAdmin"]
         }
-        pw_hash = self.bcrypt.generate_password_hash(new_user["password"])
+        pw_hash = sha256_crypt.hash(new_user["password"])
+        print(pw_hash)
         insert_user_statement = """INSERT INTO users(
         fname,lname,othername,username,email,phone,password,createdOn,isAdmin)
         VALUES ('{fname}','{lname}','{othername}','{username}','{email}',
@@ -165,7 +170,7 @@ class UserModel():
                                 username=new_user["username"],
                                 email=new_user["email"],
                                 phone=new_user["phone"],
-                                password=str(pw_hash),
+                                password=pw_hash,
                                 createdOn=new_user["createdOn"],
                                 isAdmin=new_user["isAdmin"])
         try:
@@ -177,12 +182,11 @@ class UserModel():
                 print((e.message))
             else:
                 print(e)
-            return "username,email or phone number is already taken."+\
-                " Please provide alternative details"
+            return self.message["DUPLICATE"]
         except IntegrityError as e:
             pprint("Raised exception: ")
             if hasattr(e, 'message'):
                 print((e.message))
             else:
                 print(e)
-            return self.NOT_CREATED
+            return self.message["NOT_CREATED"]
