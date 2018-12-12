@@ -9,12 +9,14 @@ class Config(object):
 class DevelopmentConfig(Config):
     """Configurations for Development."""
     DEBUG = True
-
+    DB_NAME = "ireporter"
+    DB_URL = None
 
 class TestingConfig(Config):
     """Configurations for Testing, with a separate test database."""
     TESTING = True
     DEBUG = True
+    DB_NAME = "tester"
 
 
 class StagingConfig(Config):

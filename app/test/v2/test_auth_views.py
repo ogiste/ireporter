@@ -4,10 +4,11 @@ Test cases for user classes
 import unittest
 import datetime
 import json
+import os
 
 from pprint import pprint
 from app import create_app
-from app.db_config import connect, create_tables, drop_tables
+from app.db_config import connect, create_tables, drop_tables,delete_all_rows
 from app.api.v2.models.user import UserModel
 
 
@@ -24,7 +25,8 @@ class TestUser(unittest.TestCase):
         """
         self.app = create_app('testing')
         self.client = self.app.test_client
-        self.user_db = UserModel(db_name="ireporter_test")
+        db_name = os.getenv("DB_NAME", default="tester")
+        self.user_db = UserModel(db_name)
         create_tables(self.user_db.conn)
         self.user = {
 

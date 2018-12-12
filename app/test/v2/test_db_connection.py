@@ -2,7 +2,7 @@
 Testcase for the database connection success
 """
 import unittest
-import io
+import os
 import sys
 import types
 
@@ -20,8 +20,8 @@ class TestIncidents(unittest.TestCase):
         Method that is called to set the default connection and messages for
         for testing.
         """
-
-        self.conn = connect("ireporter_test")
+        db_name = os.getenv("DB_NAME", default="tester")
+        self.conn = connect(db_name)
         self.create_tables_message = "Tables created"
         self.drop_tables_message = "Tables dropped"
 
@@ -29,23 +29,15 @@ class TestIncidents(unittest.TestCase):
         """
         Method that is called to test the created tables
         """
-        capturedOutput = io.StringIO()          # Create StringIO object
-        sys.stdout = capturedOutput                   # and redirect stdout.
-        create_tables(self.conn)                               # Call unchanged function
-        sys.stdout = sys.__stdout__                   # Reset redirect.
-        print('Captured', capturedOutput.getvalue())   # Now works as before.
-        self.assertIn(self.create_tables_message, capturedOutput.getvalue())
+        create_success = create_tables(self.conn)
+        self.assertTrue(create_success)
 
     def test_drop_tables(self):
         """
         Method that is called to test the dropped tables
         """
-        capturedOutput = io.StringIO()          # Create StringIO object
-        sys.stdout = capturedOutput                   # and redirect stdout.
-        drop_tables(self.conn)                               # Call unchanged function
-        sys.stdout = sys.__stdout__                   # Reset redirect.
-        print('Captured ', capturedOutput.getvalue())   # Now works as before.
-        self.assertIn(self.drop_tables_message, capturedOutput.getvalue())
+        drop_success = drop_tables(self.conn)
+        self.assertTrue(drop_success)
 
     def test_get_create_queries(self):
         """

@@ -31,10 +31,9 @@ import os
 import psycopg2
 from pprint import pprint
 conn = None
-db_name_init = None
 
 
-def connection(db_name=None):
+def connection(db_name=None, init_db_uri=None):
     """
     Function that creates a database connection using psycopg2 library to
     connect using a database uri
@@ -49,28 +48,31 @@ def connection(db_name=None):
     db_port = os.getenv("DB_PORT", default=5432)
     if db_name is None:
         db_name = os.getenv("DB_NAME", default="ireporter")
-        db_name_init = db_name
     db_uri = "dbname={} host={} user={} password={} port={} ".\
         format(db_name, db_host, db_user, db_pass, db_port)
     if db_name is "ireporter_test":
-        db_name_init = db_name
         db_uri = "dbname={} host={} user={} password={}".\
             format(db_name, "localhost", 'test_user', 'test_ireporter')
+    if db_name is "tester":
+        db_name = os.getenv("DB_NAME", default="tester")
+        db_uri = "dbname={} host={} user={} password={} port={} ".\
+            format(db_name, db_host, db_user, db_pass, db_port)
+    if init_db_uri is not None:
+        db_uri = init_db_uri
     try:
         conn = psycopg2.connect(db_uri)
         conn.autocommit = True
-        pprint("Database Connection established")
+        # "connection() - Database Connection established"
         return conn
     except Exception as e:
-        pprint("DB Config Cannot connect to database")
+        print("DB Config Cannot connect to database")
         if hasattr(e, 'message'):
             print((e.message))
         else:
             print(e)
 
 
-
-def connect(db_name=None):
+def connect(db_name=None, init_db_uri=None):
     """
     Function to return the established database connection
 
@@ -79,9 +81,8 @@ def connect(db_name=None):
         psycopg2 connection object
     """
     if db_name != None:
-        db_name_init = db_name
-        conn = connection(db_name)
-    conn = connection(db_name)
+        conn = connection(db_name, init_db_uri)
+    conn = connection(db_name,init_db_uri)
     return conn
 
 
@@ -94,8 +95,8 @@ def create_tables(conn=None):
         queries = get_create_queries()
         for query in queries:
             cur.execute(query)
-        return pprint("Tables created")
-    return pprint("Connection object is a None type cannot create tables")
+        return True
+    return None
 
 def get_create_queries():
     """
@@ -146,8 +147,8 @@ def drop_tables(conn=None):
         queries = get_drop_queries()
         for query in queries:
             cur.execute(query)
-        return pprint("Tables dropped")
-    return pprint("Connection object is a None type cannot drop tables")
+        return True
+    return None
 
 
 def get_drop_queries(conn=None):
@@ -162,6 +163,30 @@ def get_drop_queries(conn=None):
     drop_incident_table = "DROP table if exists incidents CASCADE;"
     return [drop_user_table, drop_incident_table]
 
+def delete_all_rows(conn=None):
+    """
+    Function that deletes all data in created tables
+    """
+    if conn is not None:
+        cur = conn.cursor()
+        queries = get_delete_all_queries()
+        for query in queries:
+            cur.execute(query)
+        return True
+    return None
+
+
+def get_delete_all_queries(conn=None):
+    """
+    Function that gets all queries defining the delete statements for db tables
+
+    Returns
+    -------
+        list of all queries used in database table removal
+    """
+    delete_all_users = "DELETE FROM users;"
+    delete_all_incidents = "DELETE FROM incidents;"
+    return [delete_all_users, delete_all_incidents]
 
 if __name__ == '__main__':
     connection()

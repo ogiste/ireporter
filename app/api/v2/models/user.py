@@ -32,10 +32,11 @@ class UserModel():
 
     """
 
-    def __init__(self, db_name="ireporter"):
+    def __init__(self, db_name=None):
         """
         Constructor that initializes the user records database object
         """
+
         self.conn = connect(db_name)
         self.cursor = self.conn.cursor()
         self.bcrypt = Bcrypt()

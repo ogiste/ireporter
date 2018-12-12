@@ -1,12 +1,13 @@
 """
-Test cases for redflag classes
+Test cases for incident classes
 """
 import unittest
 import datetime
 import json
 
+from app.api.v1.models.incident import IncidentModel, count_id
 from app import create_app
-from app.api.v1.models.incident import IncidentModel
+
 
 
 class TestIncidents(unittest.TestCase):
@@ -28,40 +29,28 @@ class TestIncidents(unittest.TestCase):
             'prop_value': 'Corruption in hiring process'
         }
         self.msg = {
-        "deleted":"Incident successfully deleted",
-        "created":"Incident successfully created",
-        "updated":"Incident successfully updated",
-        "read":"Incident(s) successfully retrieved",
-        'error' : None,
-
+            "deleted": "Incident successfully deleted",
+            "created": "Incident successfully created",
+            "updated": "Incident successfully updated",
+            "read": "Incident(s) successfully retrieved",
+            'error': None,
         }
         self.location = {
             'prop_value': '-4.333333,25.333333',
         }
 
         self.redflag = {
-            'id' : 1,
             'type': 'red-flag',
             'title':"Corruption",
-            'createdBy': 1,
-            'createdOn':datetime.datetime.today().strftime('%Y-%m-%d'),
-            'location': '-2.333333,35.333333',
-            'status': 'draft',
-            'images': ['/new.jpg'],
-            'videos': ['/new.mp4'],
+            'location': '-2.333333,-13.333333',
             'comment': 'Corruption in tender procurement'
         }
 
         self.redflag2 = {
-            'id' : 2,
             'type': 'red-flag',
             'title':"Corruption",
-            'createdBy': 1,
-            'createdOn':datetime.datetime.today().strftime('%Y-%m-%d'),
             'location': '-2.333333,35.333333',
             'status': 'rejected',
-            'images': ['/new2.jpg'],
-            'videos': ['/new2.mp4'],
             'comment': 'Corruption in employment procurement'
         }
 
@@ -70,15 +59,18 @@ class TestIncidents(unittest.TestCase):
         """
         Method tests the view endpoint used in creating a new incident.
         """
-
+        count_id = 1
+        IncidentModel.count_id = count_id
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         data=json.loads(res.get_data())
+        print("test_create_flags")
+        print(res.get_data())
         print(data)
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data["data"][0]["type"], self.redflag["type"])
         self.assertEqual(data["data"][0]["title"], self.redflag["title"])
-        self.assertEqual(data["data"][0]["status"], self.redflag["status"])
+        self.assertEqual(data["data"][0]["location"], self.redflag["location"])
         self.assertEqual(data["data"][0]["comment"], self.redflag["comment"])
         self.assertIn(self.msg['created'],str(data["msg"]))
 
@@ -86,17 +78,20 @@ class TestIncidents(unittest.TestCase):
         """
         Method tests the view endpoint used in get a single incident record.
         """
-
+        count_id = 1
+        IncidentModel.count_id = count_id
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
+        #import pdb; pdb.set_trace()
         res = self.client().get('/api/v1/incidents/1')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data())
+        print(data)
         incident_list = data["data"]
         self.assertEqual(incident_list[0]["type"], self.redflag["type"])
         self.assertEqual(incident_list[0]["title"], self.redflag["title"])
-        self.assertEqual(incident_list[0]["status"], self.redflag["status"])
+        self.assertEqual(data["data"][0]["location"], self.redflag["location"])
         self.assertEqual(incident_list[0]["comment"], self.redflag["comment"])
         self.assertIn(self.msg['read'],str(data["msg"]))
 
@@ -104,7 +99,8 @@ class TestIncidents(unittest.TestCase):
         """
         Method tests the view endpoint used in getting all incident records.
         """
-
+        count_id = 1
+        IncidentModel.count_id = count_id
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
@@ -121,19 +117,16 @@ class TestIncidents(unittest.TestCase):
         self.assertIn(self.msg['read'],str(data["msg"]))
         self.assertIn(self.redflag["type"], str(data["data"]))
         self.assertIn(self.redflag["title"], str(data["data"]))
-        self.assertIn(self.redflag["status"], str(data["data"]))
         self.assertIn(self.redflag["comment"], str(data["data"]))
-        self.assertIn(self.redflag["type"], str(data["data"]))
-        self.assertIn(self.redflag["title"], str(data["data"]))
-        self.assertIn(self.redflag["status"], str(data["data"]))
-        self.assertIn(self.redflag["comment"], str(data["data"]))
+        self.assertIn(self.redflag["location"], str(data["data"]))
 
     def test_update_comment(self):
         """
         Method tests the view endpoint used in updating a single incident
         record comment property.
         """
-
+        count_id = 1
+        IncidentModel.count_id = count_id
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
@@ -142,7 +135,7 @@ class TestIncidents(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data())
         self.assertIn(self.msg['updated'],str(data["msg"]))
-        updated_incident = self.client().get('/api/v1/incidents/1')
+        updated_incident = self.client().get('/api/v1/incidents/')
         self.assertEqual(updated_incident.status_code, 200)
         data=json.loads(updated_incident.get_data())
         incident_list = data["data"]
@@ -153,7 +146,8 @@ class TestIncidents(unittest.TestCase):
         Method tests the view endpoint used in creating a new incident
         record location property.
         """
-
+        count_id = 1
+        IncidentModel.count_id = count_id
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
@@ -174,6 +168,8 @@ class TestIncidents(unittest.TestCase):
         """
         Method tests the view endpoint used in deleting a single incident.
         """
+        count_id = 1
+        IncidentModel.count_id = count_id
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
@@ -188,5 +184,11 @@ class TestIncidents(unittest.TestCase):
         Method is called after all tests and resets the list database
         used in storing the incident records the
         """
-
+        count_id = 1
+        IncidentModel.count_id = count_id
         IncidentModel.incident_list = []
+
+if __name__ == '__main__':
+    test_incidents = TestIncidents()
+    test_incidents.test_get_single_redflag()
+    test_incidents.test_get_single_redflag()

@@ -2,7 +2,7 @@
 Test cases for user classes
 """
 import unittest
-import datetime
+import os
 import json
 from pprint import pprint
 
@@ -24,8 +24,8 @@ class TestUser(unittest.TestCase):
         """
         self.app = create_app('testing')
         self.client = self.app.test_client
-        self.user_db = UserModel(db_name="ireporter_test")
-        pprint("User test cases v2")
+        db_name = os.getenv("DB_NAME", default="tester")
+        self.user_db = UserModel(db_name)
         create_tables(self.user_db.conn)
         self.user = {
 

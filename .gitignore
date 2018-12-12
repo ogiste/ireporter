@@ -9,3 +9,4 @@ __pycache__/
 *$py.class
 .coverage
 .env
+.test.env
