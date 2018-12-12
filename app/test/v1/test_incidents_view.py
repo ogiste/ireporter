@@ -137,7 +137,7 @@ class TestIncidents(unittest.TestCase):
         self.assertIn(self.msg['updated'],str(data["msg"]))
         updated_incident = self.client().get('/api/v1/incidents/')
         self.assertEqual(updated_incident.status_code, 200)
-        data=json.loads(updated_incident.get_data())
+        data=json.loads(updated_incident.get_data().decode('utf8'))
         incident_list = data["data"]
         self.assertEqual(self.comment['prop_value'], incident_list[0]["comment"])
 
@@ -158,7 +158,7 @@ class TestIncidents(unittest.TestCase):
         self.assertIn(self.msg['updated'],str(data["msg"]))
         updated_incident = self.client().get('/api/v1/incidents/1')
         self.assertEqual(updated_incident.status_code, 200)
-        data=json.loads(updated_incident.get_data())
+        data=json.loads(updated_incident.get_data().decode('utf8'))
         self.assertIn(self.msg['read'],str(data["msg"]))
         # self.assertIn(self.location['prop_value'], str(data))
         incident_list = data["data"]

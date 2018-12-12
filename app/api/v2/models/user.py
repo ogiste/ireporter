@@ -165,7 +165,7 @@ class UserModel():
                                 username=new_user["username"],
                                 email=new_user["email"],
                                 phone=new_user["phone"],
-                                password=pw_hash,
+                                password=str(pw_hash),
                                 createdOn=new_user["createdOn"],
                                 isAdmin=new_user["isAdmin"])
         try:
