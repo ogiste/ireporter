@@ -1,0 +1,82 @@
+"""
+Describes helper functions used in providing validation logic for:
+
+Incident GET methods
+Incident PUT method
+Incident POST method
+Incident DELETE method
+
+"""
+from flask import make_response, jsonify
+from app.api.v1.views.errors import get_error
+
+COMMENT_MAX = 100
+COMMENT_MIN = 3
+
+
+def validate_incident_post_input(validator, new_incident):
+    """
+    Function that validates the title,comment,and location properties of a new
+    incident
+
+    Returns
+    -------
+    make_response object if validation Failed
+    None object if validation Succeeded
+    """
+    if not validator.is_in_limit(new_incident["title"]):
+        return make_response(jsonify(
+            get_error(validator.validation_messages["lim_incident_title"],
+                      400)), 400)
+    if not validator.is_in_limit(new_incident["comment"],
+                                 COMMENT_MAX, COMMENT_MIN):
+        return make_response(jsonify(
+            get_error(validator.
+                      create_limit_message("Incident comment", COMMENT_MAX,
+                                           COMMENT_MIN),
+                      400)), 400)
+    if not validator.is_valid_location(new_incident["location"]):
+        return make_response(jsonify(
+            get_error(validator.
+                      validation_messages["valid_incident_location"],
+                      400)), 400)
+    return True
+
+
+def validate_incident_put_input(validator, new_data, prop):
+    """
+    Function that validates the location or comment value for update
+    takes in a validator object, new_data from the request body
+    and a prop which should only be location or comment
+    Returns
+    -------
+    make_response object if validation Failed
+    None object if validation Succeeded
+    """
+    if prop == "location":
+        new_data["prop_value"] = validator.\
+            remove_whitespace(new_data["prop_value"])
+    if prop == "comment":
+        new_data["prop_value"] = validator.\
+            remove_lr_whitespace(new_data["prop_value"])
+    if id is not None and prop is not None and new_data["prop_value"] != "":
+        is_valid_location = validator.is_valid_location(new_data["prop_value"])
+        if prop == "location" and not is_valid_location:
+            return make_response(jsonify(
+                get_error(validator.
+                          validation_messages["valid_incident_location"],
+                          400)), 400)
+        is_valid_comment = validator.is_in_limit(new_data["prop_value"],
+                                                 COMMENT_MAX, COMMENT_MIN)
+        if prop == "comment" and not is_valid_comment:
+            return make_response(jsonify(
+                get_error(validator.
+                          create_limit_message("Incident comment", COMMENT_MAX,
+                                               COMMENT_MIN),
+                          400)), 400)
+    else:
+        empty_loc_or_comment = validator.\
+            validation_messages["empty_loc_or_comment"]
+        return make_response(jsonify(get_error(empty_loc_or_comment, 400)),
+                             400)
+    return True

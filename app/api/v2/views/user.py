@@ -6,7 +6,9 @@ from flask import Flask, make_response, jsonify,request
 from flask_restful import Resource
 
 # Local imports
-from .errors import parser, get_error
+from .errors import parser, get_error, Validation
+from .helpers.user_validation import (validate_user_post_input,
+                                      validate_user_put_input)
 from app.api.v2.models.user import UserModel
 
 
@@ -39,6 +41,8 @@ user_parser.add_argument('phone', type=str, required=True,
 user_parser.add_argument('password', type=str, required=True,
                              location='json',
                              help='A password is a required field')
+
+validator = Validation()
 
 
 class UserView(Resource, UserModel):
@@ -92,24 +96,27 @@ class UserView(Resource, UserModel):
         """
 
         new_user = user_parser.parse_args()
-        new_user["fname"] = new_user["fname"].replace(" ", "")
-        new_user["lname"] = new_user["lname"].replace(" ", "")
-        new_user["othername"] = new_user["othername"].replace(" ", "")
-        new_user["email"] = new_user["email"].replace(" ", "")
-        new_user["username"] = new_user["username"].replace(" ", "")
-        new_user["phone"] = new_user["phone"].replace(" ", "")
-        new_user["password"] = new_user["password"].lstrip()
-        new_user["password"] = new_user["password"].rstrip()
+        new_user["fname"] = validator.remove_whitespace(new_user["fname"])
+        new_user["lname"] = validator.remove_whitespace(new_user["lname"])
+        new_user["othername"] = validator.remove_whitespace(new_user["othername"])
+        new_user["email"] = validator.remove_whitespace(new_user["email"])
+        new_user["username"] = validator.remove_whitespace(new_user["username"])
+        new_user["phone"] = validator.remove_whitespace(new_user["phone"])
         non_empty_items = [new_user["fname"], new_user["lname"],
                            new_user["email"],
                            new_user["username"], new_user["phone"],
                            new_user["password"]]
         for user_item in non_empty_items:
-            if user_item=="":
+            if user_item == "":
                 return make_response(jsonify(
-                get_error("user first,last and other name,email,"+\
-                          " username,phone and password cannot be empty strings",
-                          400)), 400)
+                    get_error("user first and last name  email,"
+                              " username,phone and password cannot"
+                              " be empty strings",
+                              400)), 400)
+        validation_results = validate_user_post_input(validator,
+                                                     new_user)
+        if validation_results is not True:
+            return validation_results
         new_user["createdOn"] = datetime.datetime.today().strftime('%Y/%m/%d')
         new_user["isAdmin"] = False
         create_results = self.db.save(new_user)
@@ -121,5 +128,5 @@ class UserView(Resource, UserModel):
             }), 201)
 
         if isinstance(create_results, str):
-            return make_response(jsonify(get_error(create_results, 400))
-                                 , 400)
+            return make_response(jsonify(get_error(create_results, 400)),
+                                 400)

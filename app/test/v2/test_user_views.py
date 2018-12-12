@@ -30,12 +30,12 @@ class TestUser(unittest.TestCase):
         self.user = {
 
             "fname": "Jacob",
-            "lname":"Tutu",
-            "othername":"Damon",
-            "email":"jtutu@gmail.com",
-            "phone":"254705093322",
-            "username":"jtutu",
-            "password":"password"
+            "lname": "Tutu",
+            "othername": "Damon",
+            "email": "jtutu@gmail.com",
+            "phone": "+254705093322",
+            "username": "jtutu",
+            "password": "password1"
         }
 
         self.user2 = {
@@ -43,9 +43,9 @@ class TestUser(unittest.TestCase):
             "lname":"Abdi",
             "othername":"",
             "email":"Kaka@gmail.com",
-            "phone":"254705094322",
+            "phone":"+254705094322",
             "username":"masu",
-            "password":"ssdfa"
+            "password":"1ssdfa"
         }
 
         self.messages = {
