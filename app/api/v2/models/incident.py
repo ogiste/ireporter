@@ -61,7 +61,7 @@ class IncidentModel():
         self.message["NOT_FOUND"] = "The incident was not found with id: "
         self.message["NOT_CREATED"] = ("The incident was not created."
                                        " Please try again ")
-        self.message["INTEGRITY"] = ("There were integrit errors when creating"
+        self.message["INTEGRITY"] = ("There were integrity errors when creating"
                                      " the incident")
 
     def get_formated_incident_dict(self, incident_tuple):
