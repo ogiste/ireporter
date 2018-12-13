@@ -6,8 +6,9 @@ from flask import make_response, jsonify
 from flask_restful import Resource
 
 # Local imports
-from .errors import parser, get_error
+from .errors import parser, get_error, Validation
 from app.api.v2.models.user import UserModel
+from app.api.v2.views.helpers.auth_validation import validate_auth_post_input
 
 
 auth_parser = parser.copy()
@@ -19,6 +20,8 @@ auth_parser.add_argument('username', type=str, required=True,
 auth_parser.add_argument('password', type=str, required=True,
                          location='json',
                          help='Your password is a required field')
+
+validator = Validation()
 
 
 class AuthView(Resource, UserModel):
@@ -55,17 +58,20 @@ class AuthView(Resource, UserModel):
         """
 
         user_credentials = auth_parser.parse_args()
-        user_credentials["username"] = user_credentials["username"].replace(" ",
-                                                                            "")
-        user_credentials["password"] = user_credentials["password"].lstrip()
-        user_credentials["password"] = user_credentials["password"].rstrip()
+        user_credentials["username"] = validator.remove_whitespace(
+            user_credentials["username"]
+        )
         non_empty_items = [user_credentials["username"],
                            user_credentials["password"]]
         for user_item in non_empty_items:
             if user_item == "":
                 return make_response(jsonify(
                     get_error(" username and password cannot be empty strings",
-                          400)), 400)
+                              400)), 400)
+        validation_results = validate_auth_post_input(validator,
+                                                      user_credentials)
+        if validation_results is not True:
+            return validation_results
         authenticated = self.db.verify_pass(user_credentials)
         if isinstance(authenticated, bool) and authenticated is True:
             user_details = self.db.get_single_user_by_username(user_credentials["username"])
@@ -80,12 +86,12 @@ class AuthView(Resource, UserModel):
 
         if authenticated is False:
             return make_response(jsonify(get_error(self.messages["failed"],
-                                                    400))
+                                                   400))
                                  , 400)
 
         if authenticated is None:
             return make_response(jsonify(get_error(self.messages["not_found"],
-                                                    400))
+                                                   400))
                                  , 400)
 
         if isinstance(authenticated, bytes):

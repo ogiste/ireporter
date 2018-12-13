@@ -114,7 +114,7 @@ def get_create_queries():
     othername VARCHAR(30),
     username VARCHAR(30) NOT NULL UNIQUE,
     email VARCHAR(60) NOT NULL UNIQUE,
-    phone VARCHAR(12) NOT NULL UNIQUE,
+    phone VARCHAR(13) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     isAdmin BOOLEAN NOT NULL DEFAULT false,
     createdOn DATE NOT NULL
