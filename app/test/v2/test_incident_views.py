@@ -92,15 +92,15 @@ class TestIncident(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         res = self.client().post('/api/v2/incidents', data=json.dumps(self.intervention),content_type='application/json')
         self.assertEqual(res.status_code, 201)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
         res = self.client().post('/api/v2/incidents', data=json.dumps(self.redflag2),content_type='application/json')
         self.assertEqual(res.status_code, 201)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
         res = self.client().get('/api/v2/incidents')
         self.assertEqual(res.status_code, 200)
-        data=json.loads(res.get_data())
+        data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('Corruption in tender procurement', str(data))
 
     def tearDown(self):
