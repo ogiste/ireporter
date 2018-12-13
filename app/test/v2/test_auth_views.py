@@ -12,7 +12,7 @@ from app.db_config import connect, create_tables, drop_tables,delete_all_rows
 from app.api.v2.models.user import UserModel
 
 
-class TestUser(unittest.TestCase):
+class TestAuth(unittest.TestCase):
 
     """
     This class represents the authentication test cases that test login of a user
