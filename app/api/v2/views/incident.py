@@ -198,7 +198,7 @@ class IncidentView(Resource, IncidentModel):
 
         if isinstance(incident_results, str):
             return make_response(
-                jsonify(get_error(incident_results, 400)), 400
+                jsonify(get_error(incident_results, 404)), 404
                 )
         return make_response(
             jsonify(

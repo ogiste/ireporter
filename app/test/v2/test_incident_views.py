@@ -101,7 +101,35 @@ class TestIncident(unittest.TestCase):
         res = self.client().get('/api/v2/incidents')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
-        self.assertIn('Corruption in tender procurement', str(data))
+        self.assertIn(self.intervention["comment"], str(data))
+
+    def test_get_single_incidents(self):
+        """
+        Method tests the GET endpoint to retrieve a single to incident record
+        """
+        res = self.client().post('/api/v2/users', data=json.dumps(self.user),
+                                 content_type='application/json')
+        data= json.loads(res.get_data().decode('utf8'))
+        user_details = data["data"][0]
+        self.assertEqual(res.status_code, 201)
+        res = self.client().post('/api/v2/incidents/',
+                                 data=json.dumps(self.intervention),
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success',str(data["msg"]))
+        res = self.client().post('/api/v2/incidents/',
+                                 data=json.dumps(self.redflag2),
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success',str(data["msg"]))
+        res = self.client().get('/api/v2/incidents/1')
+        self.assertEqual(res.status_code, 200)
+        res = self.client().get('/api/v2/incidents/2')
+        self.assertEqual(res.status_code, 200)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn(self.redflag2["comment"], str(data))
 
     def tearDown(self):
         drop_tables(self.incident_db.conn)
