@@ -120,6 +120,8 @@ def get_create_queries():
     createdOn DATE NOT NULL
     );
     SET datestyle = "ISO, YMD";
+
+    SELECT setval('users_id_seq', (SELECT MAX(id) FROM users)+1)
     """
     create_incident_table = """
     CREATE TABLE IF NOT EXISTS incidents(

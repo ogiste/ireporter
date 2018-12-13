@@ -136,7 +136,6 @@ class IncidentModel():
         """
         if not is_in_db(id, self.db):
             return None
-        (id, self.db)
         if len(self.db) == 0:
             return self.NOT_FOUND + str(id) \
                 + " Could not delete a non-existent record"

@@ -210,3 +210,45 @@ class IncidentModel():
                 print(e)
             return self.message["NOT_CREATED"]
         return data
+
+    def delete_incident(self, id):
+        """
+        Find a single incident record and delete it.
+
+        Returns
+        --------
+        bool
+            bool value of True if incident was deleted
+        string
+            string defining an error message
+        """
+
+        delete_incidents_statement = """
+        DELETE FROM incidents WHERE id={};
+        """.format(id)
+        incident = self.get_single_incident_by_id(id)
+        if not isinstance(incident, dict):
+            return self.message["NOT_FOUND"] + str(id) \
+             + " Record could not be found or doesnot exist"
+        try:
+            result = self.cursor.execute(delete_incidents_statement)
+            print("delete_incident")
+            print(result)
+            if result is None:
+                return True
+        except IntegrityError as e:
+            pprint("delete incident - "
+                   "Incident model raised exception: ")
+            if hasattr(e, 'message'):
+                print((e.message))
+            else:
+                print(e)
+            return self.message["NOT_FOUND"] + str(id) \
+             + "Record could not be found or doesnot exist"
+        except Exception as e:
+            pprint("delete incident - "
+                   "Incident model raised exception: ")
+            if hasattr(e, 'message'):
+                print((e.message))
+            else:
+                print(e)
