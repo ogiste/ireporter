@@ -114,7 +114,7 @@ class IncidentView(Resource, IncidentModel):
                 )
 
         new_incident = incident_parser.parse_args()
-        new_incident["title"] = self.validator.remove_whitespace(
+        new_incident["title"] = self.validator.remove_lr_whitespace(
             new_incident["title"]
         )
         new_incident["type"] = self.validator.remove_whitespace(
@@ -161,3 +161,46 @@ class IncidentView(Resource, IncidentModel):
             }), 400)
         return make_response(jsonify(get_error("Failed to create new incident",
                                                400)), 400)
+
+    def get(self, id=None, prop=None):
+        """
+        GET method returns all incidents if :param :id is None or a single
+        incident if :param :id is an integer
+        """
+        if prop is not None:
+            return make_response(
+                jsonify(get_error(
+                    error_messages["404"],
+                    404)),
+                404
+                )
+
+        if id is None:
+            incidents_data = IncidentDB.get_incidents()
+            if isinstance(incidents_data, str):
+                return make_response(jsonify({
+                    "msg": incidents_data,
+                    "status_code": 404
+                }), 404)
+            return make_response(jsonify({
+                "data": incidents_data,
+                "msg": self.messages["read"],
+                "status_code": 200
+            }), 200)
+
+        incident_results = IncidentDB.get_single_incident_by_id(id)
+        if isinstance(incident_results, dict):
+            return make_response(jsonify({
+                "data": [incident_results],
+                "msg": self.messages["read"],
+                "status_code": 200
+            }), 200)
+
+        if isinstance(incident_results, str):
+            return make_response(
+                jsonify(get_error(incident_results, 400)), 400
+                )
+        return make_response(
+            jsonify(
+                get_error(error_messages["404"], 404)), 404
+            )

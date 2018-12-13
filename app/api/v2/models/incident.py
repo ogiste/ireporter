@@ -59,6 +59,7 @@ class IncidentModel():
         self.cursor = self.conn.cursor()
         self.message = {}
         self.message["NOT_FOUND"] = "The incident was not found with id: "
+        self.message["NONE_EXIST"] = "No incidents could be found "
         self.message["NOT_CREATED"] = ("The incident was not created."
                                        " Please try again ")
         self.message["INTEGRITY"] = ("There were integrity errors when creating"
@@ -108,6 +109,40 @@ class IncidentModel():
             return incident_details
         except IntegrityError as e:
             pprint("get_single_incident_by_id - "
+                   "Incident model raised exception: ")
+            if hasattr(e, 'message'):
+                print((e.message))
+            else:
+                print(e)
+            return self.message["NOT_FOUND"] + str(id) \
+             + "Record could not be found or doesnot exist"
+
+    def get_incidents(self):
+        """
+        Method that retrieves a single incident from the incident records database
+
+        Returns
+        --------
+        dictionary
+            dictionary containing all incident details
+        """
+
+        select_incidents_statement = """
+        SELECT id,createdBy,title,type,comment,status,location,createdOn
+        FROM incidents;
+        """
+        try:
+            self.cursor.execute(select_incidents_statement)
+            result = self.cursor.fetchall()
+            if(len(result) > 0):
+                incidents_all = []
+                for incident in result:
+                    incident_details = self.get_formated_incident_dict(incident)
+                    incidents_all.append(incident_details)
+                return incidents_all
+            return self.message["NONE_EXIST"]
+        except IntegrityError as e:
+            pprint("get_incidents - "
                    "Incident model raised exception: ")
             if hasattr(e, 'message'):
                 print((e.message))
