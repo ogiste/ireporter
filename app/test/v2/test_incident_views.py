@@ -53,6 +53,20 @@ class TestIncident(unittest.TestCase):
             'comment': 'Corruption in employment procurement'
         }
 
+        self.bad_intervention = {
+            'type': 'intervention',
+            'title': "   ",
+            'location': '-2.333333,35.333333',
+            'comment': 'Corruption in employment procurement'
+        }
+
+        self.bad_intervention2 = {
+            'type': 'intervention',
+            'title': "ds",
+            'location': '-2.333333,35.333333',
+            'comment': 'Corruption in employment procurement'
+        }
+
         self.msg = {
             "deleted": "Incident successfully deleted",
             "created": "Incident successfully created",
@@ -73,14 +87,23 @@ class TestIncident(unittest.TestCase):
         res = self.client().post('/api/v2/incidents',
         data=json.dumps(self.intervention),content_type='application/json')
         data=json.loads(res.get_data().decode('utf8'))
-        print(res.get_data().decode('utf8'))
-        print(data)
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data["data"][0]["type"], self.intervention["type"])
         self.assertEqual(data["data"][0]["title"], self.intervention["title"])
         self.assertEqual(data["data"][0]["location"], self.intervention["location"])
         self.assertEqual(data["data"][0]["comment"], self.intervention["comment"])
         self.assertIn(self.msg['created'],str(data["msg"]))
+        self.assertEqual(res.status_code, 201)
+        res = self.client().post('/api/v2/incidents',
+        data=json.dumps(self.bad_intervention),content_type='application/json')
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertEqual(res.status_code, 400)
+        res = self.client().post(
+            '/api/v2/incidents',
+            data=json.dumps(self.bad_intervention2),
+            content_type='application/json')
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertEqual(res.status_code, 400)
 
     def test_get_all_incidents(self):
         """

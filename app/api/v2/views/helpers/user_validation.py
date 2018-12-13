@@ -8,8 +8,8 @@ user POST method
 from flask import make_response, jsonify
 from app.api.v2.views.errors import get_error, Validation
 
-FLNAME_MAX = 30
-FLNAME_MIN = 2
+FL_NAME_MAX = 30 # First name, Last name max value
+FL_NAME_MIN = 2  # First name, Last name min value
 EMAIL_MAX = 60
 EMAIL_MIN = 10
 PHONE_MAX = 13
@@ -50,9 +50,9 @@ def validate_single_name(name):
     True if validated or response object otherwise
     """
     if not validator.is_in_limit(name,
-                                 FLNAME_MAX, FLNAME_MIN):
-        msg = validator.create_limit_message("Your name", FLNAME_MAX,
-                                             FLNAME_MIN)
+                                 FL_NAME_MAX, FL_NAME_MIN):
+        msg = validator.create_limit_message("Your name", FL_NAME_MAX,
+                                             FL_NAME_MIN)
         return make_response(jsonify(
             get_error(
                 msg,
@@ -70,8 +70,8 @@ def validate_single_othername(othername):
     True if validated or response object otherwise
     """
     if not validator.is_in_limit(othername,
-                                 FLNAME_MAX, 0):
-        msg = validator.create_limit_message("Your other name", FLNAME_MAX, 0)
+                                 FL_NAME_MAX, 0):
+        msg = validator.create_limit_message("Your other name", FL_NAME_MAX, 0)
         return make_response(jsonify(
             get_error(msg,
                       400)), 400)
@@ -142,24 +142,24 @@ def validate_user_post_input(validator, new_user):
             get_error(validator.validation_messages["lim_user_username"],
                       400)), 400)
     if not validator.is_in_limit(new_user["fname"],
-                                 FLNAME_MAX, FLNAME_MIN):
+                                 FL_NAME_MAX, FL_NAME_MIN):
         return make_response(jsonify(
             get_error(validator.
-                      create_limit_message("Your first name", FLNAME_MAX,
-                                           FLNAME_MIN),
+                      create_limit_message("Your first name", FL_NAME_MAX,
+                                           FL_NAME_MIN),
                       400)), 400)
     if not validator.is_in_limit(new_user["lname"],
-                                 FLNAME_MAX, FLNAME_MIN):
+                                 FL_NAME_MAX, FL_NAME_MIN):
         return make_response(jsonify(
             get_error(validator.
-                      create_limit_message("Your last name", FLNAME_MAX,
-                                           FLNAME_MIN),
+                      create_limit_message("Your last name", FL_NAME_MAX,
+                                           FL_NAME_MIN),
                       400)), 400)
     if not validator.is_in_limit(new_user["othername"],
-                                 FLNAME_MAX, 0):
+                                 FL_NAME_MAX, 0):
         return make_response(jsonify(
             get_error(validator.
-                      create_limit_message("Your other name", FLNAME_MAX,
+                      create_limit_message("Your other name", FL_NAME_MAX,
                                            0),
                       400)), 400)
     if not validator.is_in_limit(new_user["email"],

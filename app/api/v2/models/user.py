@@ -71,12 +71,8 @@ class UserModel():
                 return authenticated
             return None
         except Exception as e:
-            pprint("verify_pass raised exception: ")
             if hasattr(e, 'message'):
-                print((e.message))
                 return None
-            else:
-                print(e)
             return self.message["NOT_FOUND"] + str(username) \
                 + " Record could not be found , doesnot exist"
 
@@ -131,11 +127,6 @@ class UserModel():
             return (self.message["NOT_FOUND"] + str(username) +\
                     "Record could not be found or doesnot exist")
         except IntegrityError as e:
-            pprint("User model raised exception: ")
-            if hasattr(e, 'message'):
-                print((e.message))
-            else:
-                print(e)
             return self.message["NOT_FOUND"] + str(username) \
              + " Record could not be found or doesnot exist"
 
@@ -162,7 +153,6 @@ class UserModel():
             "isAdmin": new_user["isAdmin"]
         }
         pw_hash = sha256_crypt.hash(new_user["password"])
-        print(pw_hash)
         insert_user_statement = """INSERT INTO users(
         fname,lname,othername,username,email,phone,password,createdOn,isAdmin)
         VALUES ('{fname}','{lname}','{othername}','{username}','{email}',
@@ -180,16 +170,6 @@ class UserModel():
             self.cursor.execute(insert_user_statement)
             return self.get_single_user_by_username(new_user["username"])
         except IntegrityError as e:
-            pprint("User model raised an integrity exception: ")
-            if hasattr(e, 'message'):
-                print((e.message))
-            else:
-                print(e)
             return self.message["DUPLICATE"]
-        except IntegrityError as e:
-            pprint("Raised exception: ")
-            if hasattr(e, 'message'):
-                print((e.message))
-            else:
-                print(e)
+        except Exception as e:
             return self.message["NOT_CREATED"]
