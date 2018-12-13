@@ -1,0 +1,173 @@
+
+from app.db_config import connect
+from pprint import pprint
+from psycopg2 import IntegrityError
+
+
+def is_in_db(id, db):
+    """
+    Check if an id exists in the list of incidents
+
+    Returns
+    --------
+    True if it exists false otherwise
+    """
+    if len(db) < 1:
+        return False
+
+    for idx, incident in enumerate(db):
+        if id == incident["id"]:
+            return True
+        elif idx == (len(db)-1):
+            return False
+
+
+class IncidentModel():
+    """
+    IncidentModel used to view, edit and delete incident records
+
+    Defines methods that define logic for for :
+
+        -Create an incident record
+        -Get all incident records
+        -Get a single incident record
+        -Update an incident record
+        -Delete an incident record
+
+        Incident Record : {
+            "id": Integer,
+            "createdOn": String, # Datetime string
+            "createdBy": Integer,
+            # Integer ID of the user who created the incident
+            "title": String ,
+            "type": String,
+            "location": String, # Lat Long Coordinates
+            "status": String,
+            # Either draft,resolved,rejected or under investigation
+            "images": List, # List of image urls
+            "videos": List,# List of video urls
+            "comment": String
+        }
+
+    """
+
+    def __init__(self, db_name=None):
+        """
+        Constructor that initializes the Incident records database property
+        """
+        self.conn = connect(db_name)
+        self.cursor = self.conn.cursor()
+        self.message = {}
+        self.message["NOT_FOUND"] = "The incident was not found with id: "
+        self.message["NOT_CREATED"] = ("The incident was not created."
+                                       " Please try again ")
+        self.message["INTEGRITY"] = ("There were integrit errors when creating"
+                                     " the incident")
+
+    def get_formated_incident_dict(self, incident_tuple):
+        """
+        Method takes a single tuple from a database query and returns the
+        incident details in an easily readable dictionary
+
+        Returns
+        -------
+            Dictionary with key,value pairs of user data
+        """
+        incident_details = dict(enumerate(incident_tuple))
+        incident_details[7] = incident_details[7].strftime('%Y/%m/%d')
+        incident_details = {
+            "id": incident_details[0],
+            "createdBy": incident_details[1],
+            "title": incident_details[2],
+            "type": incident_details[3],
+            "comment": incident_details[4],
+            "status": incident_details[5],
+            "location": incident_details[6],
+            "createdOn": incident_details[7]
+        }
+        return incident_details
+
+    def get_single_incident_by_id(self, id):
+        """
+        Method that retrieves a single incident from the incident records database
+
+        Returns
+        --------
+        dictionary
+            dictionary containing all incident details
+        """
+
+        select_incident_statement = """
+        SELECT id,createdBy,title,type,comment,status,location,createdOn
+        FROM incidents WHERE id='{id}';
+        """.format(id=id)
+        try:
+            self.cursor.execute(select_incident_statement)
+            result = self.cursor.fetchone()
+            incident_details = self.get_formated_incident_dict(result)
+            return incident_details
+        except IntegrityError as e:
+            pprint("get_single_incident_by_id - "
+                   "Incident model raised exception: ")
+            if hasattr(e, 'message'):
+                print((e.message))
+            else:
+                print(e)
+            return self.message["NOT_FOUND"] + str(id) \
+             + "Record could not be found or doesnot exist"
+
+    def save(self, new_incident):
+        """
+        Creates a new incident record
+        by taking in a :new_incident arg of type dictionary
+        with all need incident details.
+
+        Returns
+        --------
+        dictionary
+            dictionary containing all newly created incident details
+        """
+
+        data = {
+            "createdOn": new_incident["createdOn"],
+            "createdBy": new_incident["createdBy"],
+            "title": new_incident["title"],
+            "type": new_incident["type"],
+            "location": new_incident["location"],
+            "status": new_incident["status"],
+            "images": new_incident["images"],
+            "videos": new_incident["videos"],
+            "comment": new_incident["comment"]
+        }
+        insert_incident_statement = """INSERT INTO incidents(
+        createdBy,title,type,comment,status,location,createdOn)
+        VALUES ({createdBy},'{title}','{type}','{comment}','{status}',
+        '{location}','{createdOn}') RETURNING id ;""".format(
+            str,
+            createdBy=1,  # A a value from the auth'd user
+            title=new_incident["title"],
+            type=new_incident["type"],
+            comment=new_incident["comment"],
+            status='draft',
+            location=new_incident["location"],
+            createdOn=new_incident["createdOn"]
+        )
+        try:
+            self.cursor.execute(insert_incident_statement)
+            incident_results = self.cursor.fetchone()
+            return self.get_single_incident_by_id(incident_results[0])
+        except IntegrityError as e:
+            pprint("Incident model raised an integrity exception: ")
+            if hasattr(e, 'message'):
+                print((e.message))
+            else:
+                print(e)
+            return self.message["INTEGRITY"]
+        except IntegrityError as e:
+            pprint("Raised exception: ")
+            if hasattr(e, 'message'):
+                print((e.message))
+            else:
+                print(e)
+            return self.message["NOT_CREATED"]
+        return data

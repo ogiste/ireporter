@@ -13,7 +13,7 @@ from app.api.v2.views.helpers.user_validation import (validate_user_post_input,
                                                       validate_user_put_input)
 
 
-class TestUser(unittest.TestCase):
+class TestUserAuthentication(unittest.TestCase):
 
     """
     This class represents the user test cases that test validation of a user

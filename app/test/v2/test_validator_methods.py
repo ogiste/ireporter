@@ -6,7 +6,7 @@ import unittest
 from app.api.v2.views.errors import Validation
 
 
-class TestUser(unittest.TestCase):
+class TestValidatorMethods(unittest.TestCase):
 
     """
     This class represents the user test cases that test validation of a user
