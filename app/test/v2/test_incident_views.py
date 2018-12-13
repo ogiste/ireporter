@@ -9,7 +9,7 @@ from pprint import pprint
 from app import create_app
 from app.db_config import connect, create_tables, drop_tables
 from app.api.v2.models.user import UserModel
-
+from app.api.v2.models.incident import IncidentModel
 
 class TestIncident(unittest.TestCase):
 
@@ -26,8 +26,8 @@ class TestIncident(unittest.TestCase):
         self.app = create_app('testing')
         self.client = self.app.test_client
         db_name = os.getenv("DB_NAME", default="tester")
-        self.user_db = UserModel(db_name)
-        create_tables(self.user_db.conn)
+        self.incident_db = IncidentModel(db_name)
+        create_tables(self.incident_db.conn)
         self.user = {
 
             "fname": "Jacob",
@@ -39,9 +39,9 @@ class TestIncident(unittest.TestCase):
             "password": "password1"
         }
 
-        self.redflag = {
-            'type': 'red-flag',
-            'title':"Corruption",
+        self.intervention = {
+            'type': 'intervention',
+            'title':"Corruption In office",
             'location': '-2.333333,-13.333333',
             'comment': 'Corruption in tender procurement'
         }
@@ -71,16 +71,37 @@ class TestIncident(unittest.TestCase):
         user_details = data["data"][0]
         self.assertEqual(res.status_code, 201)
         res = self.client().post('/api/v2/incidents',
-        data=json.dumps(self.redflag),content_type='application/json')
+        data=json.dumps(self.intervention),content_type='application/json')
         data=json.loads(res.get_data().decode('utf8'))
         print(res.get_data().decode('utf8'))
         print(data)
         self.assertEqual(res.status_code, 201)
-        self.assertEqual(data["data"][0]["type"], self.redflag["type"])
-        self.assertEqual(data["data"][0]["title"], self.redflag["title"])
-        self.assertEqual(data["data"][0]["location"], self.redflag["location"])
-        self.assertEqual(data["data"][0]["comment"], self.redflag["comment"])
+        self.assertEqual(data["data"][0]["type"], self.intervention["type"])
+        self.assertEqual(data["data"][0]["title"], self.intervention["title"])
+        self.assertEqual(data["data"][0]["location"], self.intervention["location"])
+        self.assertEqual(data["data"][0]["comment"], self.intervention["comment"])
         self.assertIn(self.msg['created'],str(data["msg"]))
 
+    def test_get_all_incidents(self):
+        """
+        Method tests the GET endpoint to retrieve all to incident records
+        """
+        res = self.client().post('/api/v2/users', data=json.dumps(self.user),content_type='application/json')
+        data= json.loads(res.get_data().decode('utf8'))
+        user_details = data["data"][0]
+        self.assertEqual(res.status_code, 201)
+        res = self.client().post('/api/v2/incidents', data=json.dumps(self.intervention),content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success',str(data["msg"]))
+        res = self.client().post('/api/v2/incidents', data=json.dumps(self.redflag2),content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success',str(data["msg"]))
+        res = self.client().get('/api/v2/incidents')
+        self.assertEqual(res.status_code, 200)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn('Corruption in tender procurement', str(data))
+
     def tearDown(self):
-        drop_tables(self.user_db.conn)
+        drop_tables(self.incident_db.conn)
