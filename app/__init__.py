@@ -38,8 +38,8 @@ def create_app(config_name="development"):
     def forbidden(error):
         return make_response(jsonify({
             "status_code": 403,
-            "msg": ("You do not have adequate priviledges"
-                    " to access this resource")
+            "msg": ("You do not have sufficient permission to access"
+                    " this resource")
         }), 403)
 
     @app.errorhandler(500)

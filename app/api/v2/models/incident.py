@@ -4,22 +4,21 @@ from pprint import pprint
 from psycopg2 import IntegrityError
 
 
-def is_in_db(id, db):
+def get_all_incidents(incident_tuples, get_formated_incident_dict):
     """
-    Check if an id exists in the list of incidents
+    Function used to get all incidents in database as a list of dictionary
+    items
 
     Returns
-    --------
-    True if it exists false otherwise
+    -------
+    List of dictionary items that represent incidents
     """
-    if len(db) < 1:
-        return False
 
-    for idx, incident in enumerate(db):
-        if id == incident["id"]:
-            return True
-        elif idx == (len(db)-1):
-            return False
+    incidents_all = []
+    for incident in incident_tuples:
+        incident_details = get_formated_incident_dict(incident)
+        incidents_all.append(incident_details)
+    return incidents_all
 
 
 class IncidentModel():
@@ -105,19 +104,12 @@ class IncidentModel():
         try:
             self.cursor.execute(select_incident_statement)
             result = self.cursor.fetchone()
-            print(result)
             if result is not None:
                 incident_details = self.get_formated_incident_dict(result)
                 return incident_details
             return (self.message["NOT_FOUND"] + str(id) +\
                     " Record could not be found or doesnot exist")
         except IntegrityError as e:
-            pprint("get_single_incident_by_id - "
-                   "Incident model raised exception: ")
-            if hasattr(e, 'message'):
-                print((e.message))
-            else:
-                print(e)
             return self.message["NOT_FOUND"] + str(id) \
              + "Record could not be found or doesnot exist"
 
@@ -139,19 +131,12 @@ class IncidentModel():
             self.cursor.execute(select_incidents_statement)
             result = self.cursor.fetchall()
             if(len(result) > 0):
-                incidents_all = []
-                for incident in result:
-                    incident_details = self.get_formated_incident_dict(incident)
-                    incidents_all.append(incident_details)
+                incidents_all = get_all_incidents(
+                    result, self.get_formated_incident_dict
+                )
                 return incidents_all
             return self.message["NONE_EXIST"]
         except IntegrityError as e:
-            pprint("get_incidents - "
-                   "Incident model raised exception: ")
-            if hasattr(e, 'message'):
-                print((e.message))
-            else:
-                print(e)
             return self.message["NOT_FOUND"] + str(id) \
              + "Record could not be found or doesnot exist"
 
@@ -196,17 +181,36 @@ class IncidentModel():
             incident_results = self.cursor.fetchone()
             return self.get_single_incident_by_id(incident_results[0])
         except IntegrityError as e:
-            pprint("Incident model raised an integrity exception: ")
-            if hasattr(e, 'message'):
-                print((e.message))
-            else:
-                print(e)
             return self.message["INTEGRITY"]
         except IntegrityError as e:
-            pprint("Raised exception: ")
-            if hasattr(e, 'message'):
-                print((e.message))
-            else:
-                print(e)
             return self.message["NOT_CREATED"]
         return data
+
+    def delete_incident(self, id):
+        """
+        Find a single incident record and delete it.
+
+        Returns
+        --------
+        bool
+            bool value of True if incident was deleted
+        string
+            string defining an error message
+        """
+
+        delete_incidents_statement = """
+        DELETE FROM incidents WHERE id={};
+        """.format(id)
+        incident = self.get_single_incident_by_id(id)
+        if not isinstance(incident, dict):
+            return self.message["NOT_FOUND"] + str(id) \
+             + " Record could not be found or doesnot exist"
+        try:
+            result = self.cursor.execute(delete_incidents_statement)
+            if result is None:
+                return True
+        except IntegrityError as e:
+            return self.message["NOT_FOUND"] + str(id) \
+             + "Record could not be found or doesnot exist"
+        except Exception as e:
+            return None

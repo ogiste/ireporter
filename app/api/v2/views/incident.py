@@ -204,3 +204,41 @@ class IncidentView(Resource, IncidentModel):
             jsonify(
                 get_error(error_messages["404"], 404)), 404
             )
+    def delete(self, id, prop=None):
+        """
+        DELETE endpoint that deletes a single incident using the :param :id
+        to identify which incident to delete
+        """
+        delete_parser = parser.copy()
+        delete_incident_parsed = delete_parser.parse_args()
+
+        if prop is not None:
+            return make_response(
+                jsonify(get_error("Cannot load the"
+                                  " requested page."
+                                  "Check your URL"
+                                  " and parameters provided",
+                                  404)), 404)
+        if id is None:
+            return make_response(
+                jsonify(get_error("Cannot delete incident"
+                                  " without a valid id"
+                                  , 400))
+                , 400)
+
+        deleted_incident = IncidentDB.delete_incident(id)
+
+        if deleted_incident is True:
+            return make_response(jsonify({
+                "msg": self.messages["deleted"],
+                "status_code": 202
+            }), 202)
+
+        if isinstance(deleted_incident, str):
+            return make_response(
+                jsonify(get_error(deleted_incident, 404)),
+                404
+                )
+
+        return make_response(jsonify(get_error(error_messages["404"],
+                                               404)), 404)
