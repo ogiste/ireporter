@@ -204,6 +204,50 @@ class IncidentView(Resource, IncidentModel):
             jsonify(
                 get_error(error_messages["404"], 404)), 404
             )
+    def patch(self, id, prop=None):
+        """
+        PATCH endpoint that updates an incident comment or location
+        properties using the :param :id to find the record and :param :prop to
+        identify which incident property to update.
+        """
+        if prop is None:
+            return make_response(jsonify(get_error(error_messages["404"],
+                                                   404)), 404)
+        if prop == "comment" or prop == "location":
+            patch_parser = parser.copy()
+            patch_parser.add_argument('prop_value', type=str, required=True,
+                                      location='json',
+                                      help="The new value of the comment"
+                                      " or location must be provided")
+            new_data = patch_parser.parse_args()
+        validation_results = validate_incident_put_input(self.validator,
+                                                         new_data,
+                                                         prop)
+        if validation_results is not True:
+            return validation_results
+
+        incident_data = IncidentDB.update_incident(
+            id, prop, new_data["prop_value"]
+        )
+        if isinstance(incident_data, dict):
+            return make_response(jsonify({
+                "data": [incident_data],
+                "msg": self.messages["updated"],
+                "status_code": 200
+            }), 200)
+        if isinstance(incident_data, str):
+            return make_response(jsonify({
+                "msg": incident_data,
+                "status_code": 400
+            }), 400)
+        return make_response(
+            jsonify(get_error(error_messages["400"], 400)), 400)
+
+        return make_response(
+            jsonify(get_error("Cannot update "
+                              " attributes other than incident"
+                              " location and comment "
+                              , 404)), 404)
     def delete(self, id, prop=None):
         """
         DELETE endpoint that deletes a single incident using the :param :id

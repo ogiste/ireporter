@@ -140,6 +140,43 @@ class IncidentModel():
             return self.message["NOT_FOUND"] + str(id) \
              + "Record could not be found or doesnot exist"
 
+    def update_incident(self, id, prop, prop_value):
+        """
+        Update a property of an incident
+        by taking the :id arg to find the incident record,
+        :prop arg to identify the key of the property of the record to update,
+        :prop_value arg to store the new property value
+
+        Returns
+        --------
+        dictionary
+            dictionary containing all details of found incident and a success message
+
+            OR
+
+        dictionary
+            dictionary contaiing an error message and the success status of the update.
+        """
+        incident = self.get_single_incident_by_id(id)
+        if not isinstance(incident, dict):
+            return self.message["NOT_FOUND"] + str(id) \
+             + " Record could not be found or doesnot exist"
+
+        update_incident_statement = """
+        UPDATE incidents SET {prop} = '{prop_value}' WHERE id ={id};
+        """.format(prop=prop,prop_value=prop_value,id=id)
+        try:
+
+            result = self.cursor.execute(update_incident_statement)
+            if result is None:
+                incident_details = self.get_single_incident_by_id(id)
+                return incident_details
+            return (self.message["NOT_FOUND"] + str(id) +\
+                    " Record could not be found or doesnot exist")
+        except IntegrityError as e:
+            return self.message["NOT_FOUND"] + str(id) \
+             + "Record could not be found or doesnot exist"
+
     def save(self, new_incident):
         """
         Creates a new incident record
@@ -167,7 +204,6 @@ class IncidentModel():
         createdBy,title,type,comment,status,location,createdOn)
         VALUES ({createdBy},'{title}','{type}','{comment}','{status}',
         '{location}','{createdOn}') RETURNING id ;""".format(
-            str,
             createdBy=1,  # A a value from the auth'd user
             title=new_incident["title"],
             type=new_incident["type"],
