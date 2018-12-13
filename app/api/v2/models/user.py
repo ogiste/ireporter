@@ -125,8 +125,11 @@ class UserModel():
         try:
             self.cursor.execute(select_user_statement)
             result = self.cursor.fetchone()
-            user_details = self.get_formated_user_dict(result)
-            return user_details
+            if result is not None:
+                user_details = self.get_formated_user_dict(result)
+                return user_details
+            return (self.message["NOT_FOUND"] + str(username) +\
+                    "Record could not be found or doesnot exist")
         except IntegrityError as e:
             pprint("User model raised exception: ")
             if hasattr(e, 'message'):
@@ -134,7 +137,7 @@ class UserModel():
             else:
                 print(e)
             return self.message["NOT_FOUND"] + str(username) \
-             + "Record could not be found or doesnot exist"
+             + " Record could not be found or doesnot exist"
 
     def save(self, new_user):
         """

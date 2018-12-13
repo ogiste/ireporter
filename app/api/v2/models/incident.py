@@ -100,13 +100,17 @@ class IncidentModel():
 
         select_incident_statement = """
         SELECT id,createdBy,title,type,comment,status,location,createdOn
-        FROM incidents WHERE id='{id}';
+        FROM incidents WHERE id={id};
         """.format(id=id)
         try:
             self.cursor.execute(select_incident_statement)
             result = self.cursor.fetchone()
-            incident_details = self.get_formated_incident_dict(result)
-            return incident_details
+            print(result)
+            if result is not None:
+                incident_details = self.get_formated_incident_dict(result)
+                return incident_details
+            return (self.message["NOT_FOUND"] + str(id) +\
+                    " Record could not be found or doesnot exist")
         except IntegrityError as e:
             pprint("get_single_incident_by_id - "
                    "Incident model raised exception: ")
