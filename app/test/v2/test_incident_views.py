@@ -236,8 +236,8 @@ class TestIncident(unittest.TestCase):
                                   data=json.dumps(self.bad_status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 400)
-        res = self.client().patch('/api/v2/incidents/20/status',
-                                  data=json.dumps(self.bad_status_patch),
+        res = self.client().patch('/api/v2/incidents/200/status',
+                                  data=json.dumps(self.status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 404)
 

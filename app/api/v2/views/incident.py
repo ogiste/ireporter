@@ -368,6 +368,13 @@ class AdminView(Resource, IncidentModel):
                 "msg": self.messages["updated"],
                 "status_code": 200
             }), 200)
+
+        if (isinstance(incident_data, str)
+            and IncidentDB.message["NOT_FOUND"] in incident_data):
+            return make_response(jsonify({
+                "msg": incident_data,
+                "status_code": 404
+            }), 404)
         if isinstance(incident_data, str):
             return make_response(jsonify({
                 "msg": incident_data,
