@@ -165,8 +165,8 @@ class IncidentModel():
             return self.message["NOT_FOUND"] + str(id) \
              + " Record could not be found or doesnot exist"
 
-        if incident['status'] != "draft":
-            return self.message["STATUS_CHANGE"]
+        # if incident['status'] != "draft":  # or auth'd user is not admin
+        #     return self.message["STATUS_CHANGE"]
         update_incident_statement = """
         UPDATE incidents SET {prop} = '{prop_value}' WHERE id ={id};
         """.format(prop=prop, prop_value=prop_value, id=id)
@@ -182,6 +182,8 @@ class IncidentModel():
         except IntegrityError as e:
             return self.message["NOT_FOUND"] + str(id) \
              + "Record could not be found or doesnot exist"
+        except Exception as e:
+            return str(e)
 
     def save(self, new_incident):
         """

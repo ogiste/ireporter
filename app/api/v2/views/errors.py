@@ -82,6 +82,8 @@ class Validation():
         input
         """
         self.validation_messages = {}
+        self.valid_incident_status = ('draft', 'resolved', 'rejected',
+                                      'under investigation')
         self.validation_messages["lim_incident_title"] = "Incident title\
          cannot be greater than 30 characters and less than 4"
         self.validation_messages["lim_user_username"] = (
@@ -103,7 +105,12 @@ class Validation():
             " at least one letter and one number"
         )
         self.validation_messages["empty_loc_or_comment"] = empty_loc_or_comment
-
+        self.validation_messages["empty_status"] = ("Status of an incident"
+                                                    " cannot be empty")
+        self.validation_messages["valid_status"] = ("Status of an incident"
+                                                    " can only be - draft,"
+                                                    " resolved, rejected or"
+                                                    " under investigation")
     def is_string(self, var):
         """
         Method used to check if var is of a string instance
@@ -115,6 +122,24 @@ class Validation():
         if isinstance(var, str):
             return True
         return False
+
+    def is_in_valid_status(self, strvar):
+        """
+        Method used to check if strvar is in list of incident statuses
+
+        Returns
+        --------
+         Boolean value - true if var is in the tuple of valid statuses false
+         otherwise
+        """
+        is_valid = None
+        for status in self.valid_incident_status:
+            if status == strvar:
+                is_valid = True
+                break
+            else:
+                is_valid = False
+        return is_valid
 
     def is_in_limit(self, strvar, strmax=NAME_MAX, strmin=NAME_MIN):
         """
@@ -218,6 +243,21 @@ class Validation():
         """
         if self.is_string(strvar):
             if PW_REGEX.match(strvar):
+                return True
+            return False
+        return False
+
+    def is_valid_incident_status(self, strvar):
+        """
+        Method used check if strvar is a valid incident status
+
+        Returns
+        --------
+         Boolean value - true if  is a valid incident status string
+         false otherwise
+        """
+        if self.is_string(strvar):
+            if self.is_in_valid_status(strvar):
                 return True
             return False
         return False

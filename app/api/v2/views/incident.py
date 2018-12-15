@@ -7,12 +7,14 @@ from flask_restful import Resource
 # Local imports
 from .errors import parser, get_error, Validation, error_messages
 from .helpers.incident_validation import (validate_incident_post_input,
-                                          validate_incident_put_input)
+                                          validate_incident_put_input,
+                                          validate_admin_put_input)
 
 
 from app.api.v2.models.incident import IncidentModel
 
 IncidentDB = IncidentModel()
+validator = Validation()
 incident_parser = parser.copy()
 
 incident_parser.add_argument(
@@ -93,7 +95,6 @@ class IncidentView(Resource, IncidentModel):
         Constructor sets the IncidentView instance.db to the database
         from the Incident Module class
         """
-        self.validator = Validation()
         self.messages = {
             "deleted": "Incident successfully deleted",
             "created": "Incident successfully created",
@@ -121,16 +122,16 @@ class IncidentView(Resource, IncidentModel):
                 )
 
         new_incident = incident_parser.parse_args()
-        new_incident["title"] = self.validator.remove_lr_whitespace(
+        new_incident["title"] = validator.remove_lr_whitespace(
             new_incident["title"]
         )
-        new_incident["type"] = self.validator.remove_whitespace(
+        new_incident["type"] = validator.remove_whitespace(
             new_incident["type"]
         )
-        new_incident["comment"] = self.validator.remove_lr_whitespace(
+        new_incident["comment"] = validator.remove_lr_whitespace(
             new_incident["comment"]
         )
-        new_incident["location"] = self.validator.remove_whitespace(
+        new_incident["location"] = validator.remove_whitespace(
             new_incident["location"]
         )
         non_empty_items = [new_incident["title"], new_incident["type"],
@@ -142,7 +143,7 @@ class IncidentView(Resource, IncidentModel):
                               " comment and location cannot be empty strings",
                               400)), 400)
 
-        validation_results = validate_incident_post_input(self.validator,
+        validation_results = validate_incident_post_input(validator,
                                                           new_incident)
         if validation_results is not True:
             return validation_results
@@ -228,7 +229,7 @@ class IncidentView(Resource, IncidentModel):
                                   help="The new value of the comment"
                                   " or location must be provided")
         new_data = patch_parser.parse_args()
-        validation_results = validate_incident_put_input(self.validator,
+        validation_results = validate_incident_put_input(validator,
                                                          new_data,
                                                          prop)
         if validation_results is not True:
@@ -293,3 +294,84 @@ class IncidentView(Resource, IncidentModel):
 
         return make_response(jsonify(get_error(error_messages["404"],
                                                404)), 404)
+
+
+class AdminView(Resource, IncidentModel):
+    """
+    AdminView used to update incident status and retrieve all incident records
+
+    Defines methods that define logic for for :
+
+        -Get all incidents
+        -Update an incident's status
+
+        Incident Record : {
+            "id": Integer,
+            "createdOn": String, # Datetime string
+            "createdBy": Integer,
+            # Integer ID of the user who created the incident
+            "title": String ,
+            "type": String,
+            "location": String, # Lat Long Coordinates
+            "status": String,
+            # Either draft,resolved,rejected or under investigation
+            "images": List, # List of image urls
+            "videos": List,# List of video urls
+            "comment": String
+        }
+
+    """
+
+    def __init__(self):
+        """
+        Constructor sets the AdminView initializes the validator and sets The
+        messages used in responses
+        """
+        self.messages = {
+            "updated": "Incident status successfully updated",
+            "read": "Incident(s) successfully retrieved"
+        }
+
+        self.status_types = {
+            "DRAFT": "draft",
+            "RESOLVED": "resolved",
+            "REJECTED": "rejected",
+            "UNDER_INVESTIGATION": "under investigation",
+        }
+
+    def patch(self, id):
+        """
+        PATCH endpoint that updates an incident status
+        properties using the :param :id to find the record
+        """
+        patch_parser = parser.copy()
+        patch_parser.add_argument(
+            'status', required=True, type=str,
+            choices=('draft', 'resolved', 'rejected',
+                     'under investigation'),
+            location='json',
+            help='The status of the incident - '
+            'can either be draft, resolved,'
+            'rejected or under investigation'
+        )
+        new_data = patch_parser.parse_args()
+        validation_results = validate_admin_put_input(validator, new_data)
+        if validation_results is not True:
+            return validation_results
+
+        incident_data = IncidentDB.update_incident(
+            id, "status", new_data["status"]
+        )
+        if isinstance(incident_data, dict):
+            return make_response(jsonify({
+                "data": [incident_data],
+                "msg": self.messages["updated"],
+                "status_code": 200
+            }), 200)
+        if isinstance(incident_data, str):
+            return make_response(jsonify({
+                "msg": incident_data,
+                "status_code": 400
+            }), 400)
+        return make_response(
+            jsonify(get_error(error_messages["400"], 400)), 400)

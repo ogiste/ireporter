@@ -47,7 +47,7 @@ validator = Validation()
 
 class UserView(Resource, UserModel):
     """
-    UserModel used to view, edit and delete user records
+    UserView used to view, edit and delete user records
 
     Defines methods that define logic for for :
 
