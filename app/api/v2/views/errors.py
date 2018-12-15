@@ -31,8 +31,11 @@ def get_error(error_message, status_code):
 
 
 EMAIL_REGEX = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+
+
 LOCATION_REGEX = re.compile(
-    r"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$"
+    r"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),[-+]?(180(\.0+)?|((1[0-7]\d)|"
+    r"([1-9]?\d))(\.\d+)?)$"
 )
 PHONE_REGEX = re.compile(r"((\+254)){1}(\d{9,9})")
 PW_REGEX = re.compile(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$")

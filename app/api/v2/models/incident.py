@@ -61,8 +61,10 @@ class IncidentModel():
         self.message["NONE_EXIST"] = "No incidents could be found "
         self.message["NOT_CREATED"] = ("The incident was not created."
                                        " Please try again ")
-        self.message["INTEGRITY"] = ("There were integrity errors when creating"
-                                     " the incident")
+        self.message["INTEGRITY"] = ("There were integrity errors when "
+                                     " creating the incident")
+        self.message["STATUS_CHANGE"] = ("Cannot edit an incident that is not"
+                                         " in draft status")
 
     def get_formated_incident_dict(self, incident_tuple):
         """
@@ -89,7 +91,8 @@ class IncidentModel():
 
     def get_single_incident_by_id(self, id):
         """
-        Method that retrieves a single incident from the incident records database
+        Method that retrieves a single incident from the incident
+        records database
 
         Returns
         --------
@@ -162,9 +165,12 @@ class IncidentModel():
             return self.message["NOT_FOUND"] + str(id) \
              + " Record could not be found or doesnot exist"
 
+        if incident['status'] != "draft":
+            return self.message["STATUS_CHANGE"]
         update_incident_statement = """
         UPDATE incidents SET {prop} = '{prop_value}' WHERE id ={id};
-        """.format(prop=prop,prop_value=prop_value,id=id)
+        """.format(prop=prop, prop_value=prop_value, id=id)
+
         try:
 
             result = self.cursor.execute(update_incident_statement)
