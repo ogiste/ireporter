@@ -183,7 +183,9 @@ class TestIncident(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
-        res = self.client().get('/api/v2/incidents/all')
+        res = self.client().get('/api/v2/incidents/all',
+                                headers={"Access-token": self.access_token_header}
+                                )
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.intervention["comment"], str(data["data"]))
@@ -244,18 +246,21 @@ class TestIncident(unittest.TestCase):
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
         res = self.client().patch('/api/v2/incidents/2/location',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.location_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.location_patch["prop_value"], str(data))
         res = self.client().patch('/api/v2/incidents/2/comment',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.comment_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.comment_patch["prop_value"], str(data))
         res = self.client().patch('/api/v2/incidents/2/dsadsa',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.comment_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 404)
@@ -280,16 +285,19 @@ class TestIncident(unittest.TestCase):
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
         res = self.client().patch('/api/v2/incidents/2/status',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.status_patch["status"], str(data))
         res = self.client().patch('/api/v2/incidents/2/status',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.bad_status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 400)
         res = self.client().patch('/api/v2/incidents/200/status',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 404)
@@ -312,9 +320,11 @@ class TestIncident(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
-        res = self.client().delete('/api/v2/incidents/1')
+        res = self.client().delete('/api/v2/incidents/1',
+                                   headers={"Access-token": self.access_token_header})
         self.assertEqual(res.status_code, 202)
-        res = self.client().delete('/api/v2/incidents/2')
+        res = self.client().delete('/api/v2/incidents/2',
+                                   headers={"Access-token": self.access_token_header})
         self.assertEqual(res.status_code, 202)
         data=json.loads(res.get_data().decode('utf8'))
 

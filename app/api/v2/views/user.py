@@ -6,6 +6,7 @@ from flask import Flask, make_response, jsonify,request
 from flask_restful import Resource
 
 # Local imports
+from app.api.helpers.auth_validation import auth_required
 from .errors import parser, get_error, Validation
 from .helpers.user_validation import (validate_user_post_input,
                                       validate_user_put_input)

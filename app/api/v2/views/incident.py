@@ -219,7 +219,8 @@ class IncidentView(Resource, IncidentModel):
                 get_error(error_messages["404"], 404)), 404
             )
 
-    def patch(self, id, prop=None):
+    @auth_required
+    def patch(self, auth, id, prop=None):
         """
         PATCH endpoint that updates an incident comment or location
         properties using the :param :id to find the record and :param :prop to
@@ -258,7 +259,8 @@ class IncidentView(Resource, IncidentModel):
         return make_response(
             jsonify(get_error(error_messages["400"], 400)), 400)
 
-    def delete(self, id, prop=None):
+    @auth_required
+    def delete(self, auth, id, prop=None):
         """
         DELETE endpoint that deletes a single incident using the :param :id
         to identify which incident to delete
@@ -344,7 +346,8 @@ class AdminView(Resource, IncidentModel):
             "UNDER_INVESTIGATION": "under investigation",
         }
 
-    def get(self):
+    @auth_required
+    def get(self, auth):
         """
         GET method returns all incidents records
         """
@@ -360,7 +363,8 @@ class AdminView(Resource, IncidentModel):
             "status_code": 200
         }), 200)
 
-    def patch(self, id):
+    @auth_required
+    def patch(self, auth, id):
         """
         PATCH endpoint that updates an incident status
         properties using the :param :id to find the record
