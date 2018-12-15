@@ -5,6 +5,7 @@ from flask_restful import Resource
 
 
 # Local imports
+from app.api.helpers.auth_validation import auth_required
 from .errors import parser, get_error, Validation, error_messages
 from .helpers.incident_validation import (validate_incident_post_input,
                                           validate_incident_put_input,
@@ -109,7 +110,8 @@ class IncidentView(Resource, IncidentModel):
             "UNDER_INVESTIGATION": "under investigation",
         }
 
-    def post(self, prop=None):
+    @auth_required
+    def post(self, auth, prop=None):
         """
         POST endpoint for incident resource that creates a new instance
         and returns the incident once created
@@ -150,10 +152,8 @@ class IncidentView(Resource, IncidentModel):
 
         new_incident["createdOn"] = datetime.datetime.today().\
             strftime('%Y/%m/%d')
-        new_incident["createdBy"] = 1
+        new_incident["createdBy"] = auth["id"]
         new_incident["status"] = "draft"
-        new_incident["images"] = ["/url/image1", "url/image2"]
-        new_incident["videos"] = ["/url/video1", "url/video2"]
         incident_data = IncidentDB.save(new_incident)
 
         if isinstance(incident_data, dict) or isinstance(incident_data, list):
@@ -170,7 +170,8 @@ class IncidentView(Resource, IncidentModel):
         return make_response(jsonify(get_error("Failed to create new incident",
                                                400)), 400)
 
-    def get(self, id=None, prop=None):
+    @auth_required
+    def get(self, auth, id=None, prop=None):
         """
         GET method returns all incidents if :param :id is None or a single
         incident if :param :id is an integer
@@ -179,12 +180,17 @@ class IncidentView(Resource, IncidentModel):
             return make_response(
                 jsonify(get_error(
                     error_messages["404"],
-                    404)),
-                404
+                    404)), 404
                 )
 
         if id is None:
-            incidents_data = IncidentDB.get_incidents()
+            incidents_data = IncidentDB.get_my_incidents(auth["id"])
+            if (isinstance(incidents_data, str) and IncidentDB.message["NOT_FOUND"]
+                in incidents_data):
+                return make_response(jsonify({
+                    "msg": incidents_data,
+                    "status_code": 404
+                }), 404)
             if isinstance(incidents_data, str):
                 return make_response(jsonify({
                     "msg": incidents_data,
@@ -251,7 +257,6 @@ class IncidentView(Resource, IncidentModel):
             }), 400)
         return make_response(
             jsonify(get_error(error_messages["400"], 400)), 400)
-
 
     def delete(self, id, prop=None):
         """

@@ -154,11 +154,8 @@ class IncidentModel():
         --------
         dictionary
             dictionary containing all details of found incident and a success message
-
             OR
-
-        dictionary
-            dictionary contaiing an error message and the success status of the update.
+        String containing an error message and the success status of the update.
         """
         incident = self.get_single_incident_by_id(id)
         if not isinstance(incident, dict):
@@ -185,6 +182,35 @@ class IncidentModel():
         except Exception as e:
             return str(e)
 
+    def get_my_incidents(self, user_id):
+        """
+        Method used to retrieve all incidents created by the current user
+
+        Returns
+        --------
+        dictionary
+            dictionary containing all incident details
+
+            OR
+        String with an error message
+        """
+        select_incidents_statement = """
+        SELECT id,createdBy,title,type,comment,status,location,createdOn
+        FROM incidents WHERE createdBy={};
+        """.format(int(user_id))
+        try:
+            self.cursor.execute(select_incidents_statement)
+            result = self.cursor.fetchall()
+            if(len(result) > 0):
+                incidents_all = get_all_incidents(
+                    result, self.get_formated_incident_dict
+                )
+                return incidents_all
+            return self.message["NONE_EXIST"]
+        except IntegrityError as e:
+            return self.message["NOT_FOUND"] + str(id) \
+             + "Record could not be found or doesnot exist"
+
     def save(self, new_incident):
         """
         Creates a new incident record
@@ -204,15 +230,13 @@ class IncidentModel():
             "type": new_incident["type"],
             "location": new_incident["location"],
             "status": new_incident["status"],
-            "images": new_incident["images"],
-            "videos": new_incident["videos"],
             "comment": new_incident["comment"]
         }
         insert_incident_statement = """INSERT INTO incidents(
         createdBy,title,type,comment,status,location,createdOn)
         VALUES ({createdBy},'{title}','{type}','{comment}','{status}',
         '{location}','{createdOn}') RETURNING id ;""".format(
-            createdBy=1,  # A a value from the auth'd user
+            createdBy=new_incident["createdBy"],  # A a value from auth'd user
             title=new_incident["title"],
             type=new_incident["type"],
             comment=new_incident["comment"],
@@ -225,6 +249,7 @@ class IncidentModel():
             incident_results = self.cursor.fetchone()
             return self.get_single_incident_by_id(incident_results[0])
         except IntegrityError as e:
+            print(str(e))
             return self.message["INTEGRITY"]
         except IntegrityError as e:
             return self.message["NOT_CREATED"]
@@ -257,4 +282,4 @@ class IncidentModel():
             return self.message["NOT_FOUND"] + str(id) \
              + "Record could not be found or doesnot exist"
         except Exception as e:
-            return None
+            return str(e)

@@ -8,6 +8,7 @@ from flask_restful import Resource
 # Local imports
 from .errors import parser, get_error, Validation
 from app.api.v2.models.user import UserModel
+from app.api.helpers.auth_validation import generate_token
 from app.api.v2.views.helpers.auth_validation import validate_auth_post_input
 
 
@@ -74,26 +75,35 @@ class AuthView(Resource, UserModel):
             return validation_results
         authenticated = self.db.verify_pass(user_credentials)
         if isinstance(authenticated, bool) and authenticated is True:
-            user_details = self.db.get_single_user_by_username(user_credentials["username"])
-            return make_response(jsonify({
-                "data": [{
-                        "token": "jwt-token",
-                        "user": user_details
-                        }],
-                "msg": self.messages["authenticated"],
-                "status_code": 200
-            }), 200)
-
+            user_details = self.db.get_single_user_by_username(
+                user_credentials["username"]
+            )
+            gen_token_results = generate_token(
+                user_details["username"],
+                user_details["id"],
+                user_details["isAdmin"]
+            )
+            if gen_token_results["success"]:
+                return make_response(jsonify({
+                    "data": [{
+                            "token": gen_token_results["access_token"].
+                            decode("utf8"),
+                            "user": user_details
+                            }],
+                    "msg": self.messages["authenticated"],
+                    "status_code": 200
+                }), 200)
+            return make_response(jsonify(
+                get_error(gen_token_results["access_token"],
+                          400)
+                ), 400)
         if authenticated is False:
             return make_response(jsonify(get_error(self.messages["failed"],
-                                                   400))
-                                 , 400)
+                                                   400)), 400)
 
         if authenticated is None:
             return make_response(jsonify(get_error(self.messages["not_found"],
-                                                   400))
-                                 , 400)
+                                                   400)), 400)
 
         if isinstance(authenticated, bytes):
-            return make_response(jsonify(get_error(authenticated, 400))
-                                 , 400)
+            return make_response(jsonify(get_error(authenticated, 400)), 400)
