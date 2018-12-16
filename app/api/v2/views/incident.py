@@ -339,6 +339,22 @@ class AdminView(Resource, IncidentModel):
             "UNDER_INVESTIGATION": "under investigation",
         }
 
+    def get(self):
+        """
+        GET method returns all incidents records
+        """
+        incidents_data = IncidentDB.get_incidents()
+        if isinstance(incidents_data, str):
+            return make_response(jsonify({
+                "msg": incidents_data,
+                "status_code": 404
+            }), 404)
+        return make_response(jsonify({
+            "data": incidents_data,
+            "msg": self.messages["read"],
+            "status_code": 200
+        }), 200)
+
     def patch(self, id):
         """
         PATCH endpoint that updates an incident status
