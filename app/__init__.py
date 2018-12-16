@@ -9,7 +9,6 @@
 
 from flask import Flask, make_response, jsonify
 from instance.config import app_config
-from .api.v1 import v1 as version_one
 from .api.v2 import v2 as version_two
 from app.db_config import connect, create_tables
 from app.api.helpers.error_handler_validation import status_error_messages
@@ -31,7 +30,6 @@ def create_app(config_name="development"):
     app.config['BUNDLE_ERRORS'] = True
     conn = connect(app.config['DB_NAME'])
     create_tables(conn)
-    app.register_blueprint(version_one)
     app.register_blueprint(version_two)
 
     @app.errorhandler(400)
