@@ -5,6 +5,22 @@ from psycopg2 import IntegrityError
 from passlib.hash import sha256_crypt
 
 
+def get_all_users(user_tuples, get_formated_user_dict):
+    """
+    Function used to get all users in database as a list of dictionary
+    items
+
+    Returns
+    -------
+    List of dictionary items that represent users
+    """
+
+    users_all = []
+    for user in user_tuples:
+        user_details = get_formated_user_dict(user)
+        users_all.append(user_details)
+    return users_all
+
 class UserModel():
     """
     UserModel used to view, edit and delete user records
@@ -43,6 +59,7 @@ class UserModel():
         self.message["NOT_FOUND"] = "The user was not found with username - "
         self.message["NOT_CREATED"] = ("The user was not created."
                                        " Please try again ")
+        self.message["NONE_EXIST"] = "No users could be found "
         self.message["DUPLICATE"] = (
             "username,email or phone number is already taken."
             " Please provide alternative details")
@@ -75,6 +92,31 @@ class UserModel():
                 return None
             return self.message["NOT_FOUND"] + str(username) \
                 + " Record could not be found , doesnot exist"
+
+    def get_users(self):
+        """
+        Method that retrieves a single user from the user records database
+
+        Returns
+        --------
+        dictionary
+            dictionary containing all user details
+        """
+
+        select_user_statement = """
+        SELECT id,username,fname,lname,othername,email,createdOn,isAdmin,phone
+        FROM users;
+        """
+        try:
+            self.cursor.execute(select_user_statement)
+            result = self.cursor.fetchall()
+            if (len(result) > 0):
+                all_users = get_all_users(result, self.get_formated_user_dict)
+                return all_users
+            return (self.message["NONE_EXIST"] )
+        except IntegrityError as e:
+            return self.message["NOT_FOUND"] + str(username) \
+             + " Record could not be found or doesnot exist"
 
     def get_formated_user_dict(self, user_tuple, allInfo=True):
         """

@@ -162,7 +162,6 @@ class IncidentView(Resource, IncidentModel):
 
         incident_owner = access_control.is_incident_owner(id, auth["id"])
         admin = access_control.is_admin(auth["id"])
-        print(incident_owner)
         if (incident_owner["success"] is not True
                 and admin["success"] is not True):
             return make_response(jsonify({

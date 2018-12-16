@@ -6,8 +6,14 @@ from flask import Flask, make_response, jsonify,request
 from flask_restful import Resource
 
 # Local imports
-from app.api.helpers.auth_validation import auth_required
-from app.api.helpers.errors import parser, get_error, Validation
+from app.api.helpers.auth_validation import (
+    auth_required, access_control,
+    auth_error_messages
+)
+from app.api.helpers.errors import(
+    parser, get_error,
+    Validation, error_messages
+)
 from app.api.helpers.user_validation import (
     validate_user_post_input,
     validate_user_put_input)
@@ -45,7 +51,7 @@ user_parser.add_argument('password', type=str, required=True,
                              help='A password is a required field')
 
 validator = Validation()
-
+user_db = UserModel()
 
 class UserView(Resource, UserModel):
     """
@@ -80,13 +86,68 @@ class UserView(Resource, UserModel):
         from the User Module class
         """
         db_name = os.getenv("DB_NAME", default="ireporter")
-        self.db = UserModel(db_name)
         self.messages = {
             "deleted": "User successfully deleted",
             "created": "User successfully created",
             "updated": "User successfully updated",
             "read": "User(s) successfully retrieved"
         }
+
+    @auth_required
+    def get(self, auth, id=None):
+        """
+        Method used to return a single user's details or all user details if
+        the current user is an administrator.
+
+        Returns
+        --------
+        A JSON response object with user details
+        """
+        if id is None:
+            admin = access_control.is_admin(auth["id"])
+            if admin["success"] is not True:
+                return make_response(jsonify({
+                    "msg": auth_error_messages["403"],
+                    "status_code": 403
+                }), 403)
+            user_data = user_db.get_users()
+            if (isinstance(user_data, str) and user_db.message["NOT_FOUND"]
+                in user_data):
+                return make_response(jsonify({
+                    "msg": user_data,
+                    "status_code": 404
+                }), 404)
+            if isinstance(user_data, str):
+                return make_response(jsonify({
+                    "msg": user_data,
+                    "status_code": 404
+                }), 404)
+            return make_response(jsonify({
+                "data": user_data,
+                "msg": self.messages["read"],
+                "status_code": 200
+            }), 200)
+        if(auth["id"] == id):
+            user_results = user_db.get_single_user_by_id(id)
+            if isinstance(user_results, dict):
+                return make_response(jsonify({
+                    "data": [user_results],
+                    "msg": self.messages["read"],
+                    "status_code": 200
+                }), 200)
+
+            if isinstance(user_results, str):
+                return make_response(
+                    jsonify(get_error(user_results, 404)), 404
+                    )
+            return make_response(
+                jsonify(
+                    get_error(error_messages["404"], 404)), 404
+                )
+        return make_response(jsonify({
+            "msg": auth_error_messages["403"],
+            "status_code": 403
+        }), 403)
 
     def post(self):
         """
@@ -121,14 +182,18 @@ class UserView(Resource, UserModel):
             return validation_results
         new_user["createdOn"] = datetime.datetime.today().strftime('%Y/%m/%d')
         new_user["isAdmin"] = False
-        create_results = self.db.save(new_user)
+        create_results = user_db.save(new_user)
         if isinstance(create_results, dict):
             return make_response(jsonify({
                 "data": [create_results],
                 "msg": self.messages["created"],
                 "status_code": 201
             }), 201)
+        duplicate = user_db.message["DUPLICATE"]
 
+        if isinstance(create_results, str) and duplicate in create_results:
+            return make_response(jsonify(get_error(create_results, 409)),
+                                 409)
         if isinstance(create_results, str):
             return make_response(jsonify(get_error(create_results, 400)),
                                  400)
