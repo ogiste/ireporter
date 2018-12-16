@@ -115,8 +115,8 @@ class UserModel():
                 return all_users
             return (self.message["NONE_EXIST"] )
         except IntegrityError as e:
-            return self.message["NOT_FOUND"] + str(username) \
-             + " Record could not be found or doesnot exist"
+            return self.message["NOT_FOUND"] +\
+             " Record could not be found or doesnot exist"
 
     def get_formated_user_dict(self, user_tuple, allInfo=True):
         """

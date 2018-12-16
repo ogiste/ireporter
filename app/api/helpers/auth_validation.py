@@ -185,7 +185,7 @@ class AccessControl(object):
                 return {"is_owner": True, "success": True}
             error = (self.messages["NOT_FOUND"] + str(id) +\
                      "Record could not be found or doesnot exist")
-            return {"error": error, "success": False}
+            return {"error": error,"status":404, "success": False}
         except IntegrityError as e:
             error = (self.messages["NOT_FOUND"] + str(id) +\
                      "Record could not be found or doesnot exist")
@@ -244,7 +244,6 @@ class AccessControl(object):
         try:
             self.cursor.execute(select_user_statement)
             result = self.cursor.fetchone()
-            print(result)
             if result is not None:
                 return {"is_owner": True, "success": True}
             error = (self.messages["NOT_FOUND"] + str(id) +\
