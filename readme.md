@@ -55,7 +55,7 @@ Sample Indicent Record JSON:
 Current API endpoints :
 
 
-        | METHOD        | ENDPOINT                    | DESCRIPTION|
+        | METHOD        | ENDPOINT                    | DESCRIPTION |
         | ---|---| ---|
         | POST          | /api/v2/incidents           | Used to create an incident record |
         | GET           | /api/v2/incidents/          | Used to read all incident records |
