@@ -38,7 +38,10 @@ class TestIncident(unittest.TestCase):
             "username": "jtutu",
             "password": "password1"
         }
-
+        self.user_credentials = {
+            "username": "jtutu",
+            "password": "password1"
+        }
         self.intervention = {
             'type': 'intervention',
             'title':"Corruption In office",
@@ -88,17 +91,30 @@ class TestIncident(unittest.TestCase):
             'error': None,
         }
 
+        # Create user
+        res = self.client().post(
+            '/api/v2/users',
+            data=json.dumps(self.user),
+            content_type='application/json')
+        data = json.loads(res.get_data().decode('utf8'))
+        # Sign in user
+        res = self.client().post('/api/v2/auth',
+                                 data=json.dumps(self.user_credentials),
+                                 content_type='application/json')
+        data = json.loads(res.get_data().decode('utf8'))
+        token = data["data"][0]["token"]
+        self.access_token_header = "Bearer {token}".format(token=token)
+
     def test_incident_create(self):
         """
         Method tests the POST endpoint user to create a new user
         """
-
-        res = self.client().post('/api/v2/users', data=json.dumps(self.user),content_type='application/json')
-        data= json.loads(res.get_data().decode('utf8'))
-        user_details = data["data"][0]
-        self.assertEqual(res.status_code, 201)
+        # Create an incident
         res = self.client().post('/api/v2/incidents',
-        data=json.dumps(self.intervention),content_type='application/json')
+                                 data=json.dumps(self.intervention),
+                                 headers={"Access-token": self.access_token_header},
+                                 content_type='application/json'
+                                 )
         data=json.loads(res.get_data().decode('utf8'))
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data["data"][0]["type"], self.intervention["type"])
@@ -107,12 +123,17 @@ class TestIncident(unittest.TestCase):
         self.assertEqual(data["data"][0]["comment"], self.intervention["comment"])
         self.assertIn(self.msg['created'],str(data["msg"]))
         self.assertEqual(res.status_code, 201)
+        # Create an edge case intervention
         res = self.client().post('/api/v2/incidents',
-        data=json.dumps(self.bad_intervention),content_type='application/json')
+                                 data=json.dumps(self.bad_intervention),
+                                 headers={"Access-token": self.access_token_header},
+                                 content_type='application/json')
         data=json.loads(res.get_data().decode('utf8'))
         self.assertEqual(res.status_code, 400)
+        # Create an edge case intervention 2
         res = self.client().post(
             '/api/v2/incidents',
+            headers={"Access-token": self.access_token_header},
             data=json.dumps(self.bad_intervention2),
             content_type='application/json')
         data=json.loads(res.get_data().decode('utf8'))
@@ -122,19 +143,23 @@ class TestIncident(unittest.TestCase):
         """
         Method tests the GET endpoint to retrieve all to incident records
         """
-        res = self.client().post('/api/v2/users', data=json.dumps(self.user),content_type='application/json')
-        data= json.loads(res.get_data().decode('utf8'))
-        user_details = data["data"][0]
-        self.assertEqual(res.status_code, 201)
-        res = self.client().post('/api/v2/incidents', data=json.dumps(self.intervention),content_type='application/json')
-        self.assertEqual(res.status_code, 201)
-        data=json.loads(res.get_data().decode('utf8'))
-        self.assertIn('success',str(data["msg"]))
-        res = self.client().post('/api/v2/incidents', data=json.dumps(self.redflag2),content_type='application/json')
+        #Create an intervention
+        res = self.client().post('/api/v2/incidents',
+                                 headers={"Access-token": self.access_token_header},
+                                 data=json.dumps(self.intervention),
+                                 content_type='application/json')
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
-        res = self.client().get('/api/v2/incidents')
+        res = self.client().post('/api/v2/incidents',
+                                 headers={"Access-token": self.access_token_header},
+                                 data=json.dumps(self.redflag2),
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success',str(data["msg"]))
+        res = self.client().get('/api/v2/incidents',
+                                headers={"Access-token": self.access_token_header})
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.intervention["comment"], str(data))
@@ -144,19 +169,23 @@ class TestIncident(unittest.TestCase):
         Method tests the GET endpoint to retrieve all to incident records as
         admin
         """
-        res = self.client().post('/api/v2/users', data=json.dumps(self.user),content_type='application/json')
-        data= json.loads(res.get_data().decode('utf8'))
-        user_details = data["data"][0]
-        self.assertEqual(res.status_code, 201)
-        res = self.client().post('/api/v2/incidents', data=json.dumps(self.intervention),content_type='application/json')
-        self.assertEqual(res.status_code, 201)
-        data=json.loads(res.get_data().decode('utf8'))
-        self.assertIn('success',str(data["msg"]))
-        res = self.client().post('/api/v2/incidents', data=json.dumps(self.redflag2),content_type='application/json')
+        res = self.client().post('/api/v2/incidents',
+                                 headers={"Access-token": self.access_token_header},
+                                 data=json.dumps(self.intervention),
+                                 content_type='application/json')
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
-        res = self.client().get('/api/v2/incidents/all')
+        res = self.client().post('/api/v2/incidents',
+                                 headers={"Access-token": self.access_token_header},
+                                 data=json.dumps(self.redflag2),
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success',str(data["msg"]))
+        res = self.client().get('/api/v2/incidents/all',
+                                headers={"Access-token": self.access_token_header}
+                                )
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.intervention["comment"], str(data["data"]))
@@ -166,26 +195,29 @@ class TestIncident(unittest.TestCase):
         """
         Method tests the GET endpoint to retrieve a single to incident record
         """
-        res = self.client().post('/api/v2/users', data=json.dumps(self.user),
-                                 content_type='application/json')
-        data= json.loads(res.get_data().decode('utf8'))
-        user_details = data["data"][0]
-        self.assertEqual(res.status_code, 201)
         res = self.client().post('/api/v2/incidents/',
+                                 headers={"Access-token": self.access_token_header},
                                  data=json.dumps(self.intervention),
                                  content_type='application/json')
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
-        res = self.client().post('/api/v2/incidents/',
-                                 data=json.dumps(self.redflag2),
-                                 content_type='application/json')
+        res = self.client().post(
+            '/api/v2/incidents/',
+            headers={"Access-token": self.access_token_header},
+            data=json.dumps(self.redflag2),
+            content_type='application/json'
+            )
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
-        res = self.client().get('/api/v2/incidents/1')
+        res = self.client().get(
+            '/api/v2/incidents/1',
+            headers={"Access-token": self.access_token_header})
         self.assertEqual(res.status_code, 200)
-        res = self.client().get('/api/v2/incidents/2')
+        res = self.client().get(
+            '/api/v2/incidents/2',
+            headers={"Access-token": self.access_token_header})
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.redflag2["comment"], str(data))
@@ -195,35 +227,40 @@ class TestIncident(unittest.TestCase):
         Method tests the PATCH endpoint to patch a single incident record's
         location or comment
         """
-        res = self.client().post('/api/v2/users', data=json.dumps(self.user),
-                                 content_type='application/json')
-        data= json.loads(res.get_data().decode('utf8'))
-        self.assertEqual(res.status_code, 201)
-        res = self.client().post('/api/v2/incidents/',
-                                 data=json.dumps(self.intervention),
-                                 content_type='application/json')
+        res = self.client().post(
+            '/api/v2/incidents/',
+            headers={"Access-token": self.access_token_header},
+            data=json.dumps(self.intervention),
+            content_type='application/json'
+            )
         self.assertEqual(res.status_code, 201)
         data = json.loads(res.get_data().decode('utf8'))
         self.assertIn('success', str(data["msg"]))
-        res = self.client().post('/api/v2/incidents/',
-                                 data=json.dumps(self.redflag2),
-                                 content_type='application/json')
+        res = self.client().post(
+            '/api/v2/incidents/',
+            headers={"Access-token": self.access_token_header},
+            data=json.dumps(self.redflag2),
+            content_type='application/json'
+            )
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
         res = self.client().patch('/api/v2/incidents/2/location',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.location_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.location_patch["prop_value"], str(data))
         res = self.client().patch('/api/v2/incidents/2/comment',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.comment_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.comment_patch["prop_value"], str(data))
         res = self.client().patch('/api/v2/incidents/2/dsadsa',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.comment_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 404)
@@ -233,33 +270,34 @@ class TestIncident(unittest.TestCase):
         Method tests the PATCH endpoint to patch status of a single incident
         record
         """
-        res = self.client().post('/api/v2/users', data=json.dumps(self.user),
-                                 content_type='application/json')
-        data= json.loads(res.get_data().decode('utf8'))
-        self.assertEqual(res.status_code, 201)
         res = self.client().post('/api/v2/incidents/',
+                                 headers={"Access-token": self.access_token_header},
                                  data=json.dumps(self.intervention),
                                  content_type='application/json')
         self.assertEqual(res.status_code, 201)
         data = json.loads(res.get_data().decode('utf8'))
         self.assertIn('success', str(data["msg"]))
         res = self.client().post('/api/v2/incidents/',
+                                 headers={"Access-token": self.access_token_header},
                                  data=json.dumps(self.redflag2),
                                  content_type='application/json')
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
         res = self.client().patch('/api/v2/incidents/2/status',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.status_patch["status"], str(data))
         res = self.client().patch('/api/v2/incidents/2/status',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.bad_status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 400)
         res = self.client().patch('/api/v2/incidents/200/status',
+                                  headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 404)
@@ -268,25 +306,25 @@ class TestIncident(unittest.TestCase):
         """
         Method tests the DELETE endpoint to retrieve a single to incident record
         """
-        res = self.client().post('/api/v2/users', data=json.dumps(self.user),
-                                 content_type='application/json')
-        data= json.loads(res.get_data().decode('utf8'))
-        self.assertEqual(res.status_code, 201)
         res = self.client().post('/api/v2/incidents/',
+                                 headers={"Access-token": self.access_token_header},
                                  data=json.dumps(self.intervention),
                                  content_type='application/json')
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
         res = self.client().post('/api/v2/incidents/',
+                                 headers={"Access-token": self.access_token_header},
                                  data=json.dumps(self.redflag2),
                                  content_type='application/json')
         self.assertEqual(res.status_code, 201)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
-        res = self.client().delete('/api/v2/incidents/1')
+        res = self.client().delete('/api/v2/incidents/1',
+                                   headers={"Access-token": self.access_token_header})
         self.assertEqual(res.status_code, 202)
-        res = self.client().delete('/api/v2/incidents/2')
+        res = self.client().delete('/api/v2/incidents/2',
+                                   headers={"Access-token": self.access_token_header})
         self.assertEqual(res.status_code, 202)
         data=json.loads(res.get_data().decode('utf8'))
 

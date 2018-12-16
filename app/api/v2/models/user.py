@@ -76,7 +76,7 @@ class UserModel():
             return self.message["NOT_FOUND"] + str(username) \
                 + " Record could not be found , doesnot exist"
 
-    def get_formated_user_dict(self, user_tuple, allInfo=False):
+    def get_formated_user_dict(self, user_tuple, allInfo=True):
         """
         Method takes a single tuple from a database query and returns the user
         details in an easily readable dictionary

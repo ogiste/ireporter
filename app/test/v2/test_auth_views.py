@@ -54,6 +54,11 @@ class TestAuth(unittest.TestCase):
             "password":"password1"
         }
 
+        self.bad_user_credentials = {
+            "username":"jtutu",
+            "password":"passwor1"
+        }
+
         self.user_credentials2 = {
             "username":"masu",
             "password":"11ssdfa"
@@ -63,38 +68,23 @@ class TestAuth(unittest.TestCase):
             "authenticated": "User successfully signed in"
         }
 
-    def test_user_login(self):
-        """
-        Method tests the POST endpoint of user authentication
-        """
         # Create user 1
         res = self.client().post('/api/v2/users',
                                  data=json.dumps(self.user),
                                  content_type='application/json')
         data = json.loads(res.get_data().decode('utf8'))
-        user_details = data["data"][0]
-        self.assertEqual(user_details["fname"], self.user["fname"])
-        self.assertEqual(user_details["lname"], self.user["lname"])
-        self.assertEqual(user_details["email"], self.user["email"])
-        self.assertEqual(user_details["othername"], self.user["othername"])
-        self.assertEqual(user_details["phone"], self.user["phone"])
-        self.assertEqual(res.status_code, 201)
-        self.assertIn(self.messages["created"],data["msg"])
-
+        self.user_details = data["data"][0]
         # Create user 2
         res = self.client().post('/api/v2/users',
                                  data=json.dumps(self.user2),
                                  content_type='application/json')
         data = json.loads(res.get_data().decode('utf8'))
-        user_details = data["data"][0]
-        self.assertEqual(user_details["fname"], self.user2["fname"])
-        self.assertEqual(user_details["lname"], self.user2["lname"])
-        self.assertEqual(user_details["email"], self.user2["email"])
-        self.assertEqual(user_details["othername"], self.user2["othername"])
-        self.assertEqual(user_details["phone"], self.user2["phone"])
-        self.assertEqual(res.status_code, 201)
-        self.assertIn(self.messages["created"], data["msg"])
+        self.user_details2 = data["data"][0]
 
+    def test_user_login(self):
+        """
+        Method tests the POST endpoint of user authentication
+        """
         # Test first user login
         res = self.client().post('/api/v2/auth',
                                  data=json.dumps(self.user_credentials1),
@@ -123,6 +113,12 @@ class TestAuth(unittest.TestCase):
         self.assertEqual(user_details["phone"], self.user2["phone"])
         self.assertEqual(res.status_code, 200)
         self.assertIn(self.messages["authenticated"], data["msg"])
+
+        # Test edge case user login
+        res = self.client().post('/api/v2/auth',
+                                 data=json.dumps(self.bad_user_credentials),
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 400)
 
     def tearDown(self):
         drop_tables(self.user_db.conn)
