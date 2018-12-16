@@ -56,11 +56,11 @@ Current API endpoints :
 
 
         | METHOD        | ENDPOINT                    | DESCRIPTION|
-        | :---|:---:| ---:|
+        | ---|---| ---|
         | POST          | /api/v2/incidents           | Used to create an incident record |
         | GET           | /api/v2/incidents/          | Used to read all incident records |
         | GET           | /api/v2/incidents/<int:id>  | Used to view a particular incident record |
-        | PATCH           | /api/v2/incidents/<int:id>  | Used to update the incident location and comment of a specific record |
+        | PATCH           | /api/v2/incidents/<int:id>  | Used to update the incident location and comment of an incident |
         | DELETE        | /api/v2/incidents/<int:id>  | Allows user to delete a specific incident record |
         | POST        | /api/v2/auth/  | Allows user to login |
         | POST        | /api/v2/user/  | Allows user to create an account |
