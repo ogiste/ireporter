@@ -56,6 +56,13 @@ class TestIncident(unittest.TestCase):
         self.location_patch = {
             'prop_value': '-33.99999,12.444444',
         }
+
+        self.status_patch= {
+            'status': 'under investigation',
+        }
+        self.bad_status_patch = {
+            'status': '-33.99999,12.444444',
+        }
         self.comment_patch = {
             'prop_value': 'Updated comment',
         }
@@ -195,6 +202,42 @@ class TestIncident(unittest.TestCase):
         self.assertIn(self.comment_patch["prop_value"], str(data))
         res = self.client().patch('/api/v2/incidents/2/dsadsa',
                                   data=json.dumps(self.comment_patch),
+                                  content_type='application/json')
+        self.assertEqual(res.status_code, 404)
+
+    def test_patch_incident_status(self):
+        """
+        Method tests the PATCH endpoint to patch status of a single incident
+        record
+        """
+        res = self.client().post('/api/v2/users', data=json.dumps(self.user),
+                                 content_type='application/json')
+        data= json.loads(res.get_data().decode('utf8'))
+        self.assertEqual(res.status_code, 201)
+        res = self.client().post('/api/v2/incidents/',
+                                 data=json.dumps(self.intervention),
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data = json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success', str(data["msg"]))
+        res = self.client().post('/api/v2/incidents/',
+                                 data=json.dumps(self.redflag2),
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success',str(data["msg"]))
+        res = self.client().patch('/api/v2/incidents/2/status',
+                                  data=json.dumps(self.status_patch),
+                                  content_type='application/json')
+        self.assertEqual(res.status_code, 200)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn(self.status_patch["status"], str(data))
+        res = self.client().patch('/api/v2/incidents/2/status',
+                                  data=json.dumps(self.bad_status_patch),
+                                  content_type='application/json')
+        self.assertEqual(res.status_code, 400)
+        res = self.client().patch('/api/v2/incidents/200/status',
+                                  data=json.dumps(self.status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 404)
 

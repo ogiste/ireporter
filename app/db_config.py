@@ -130,7 +130,7 @@ def get_create_queries():
     title VARCHAR(30) NOT NULL,
     type VARCHAR(12) NOT NULL,
     comment VARCHAR(100) NOT NULL,
-    status VARCHAR(18) NOT NULL,
+    status VARCHAR(20) NOT NULL,
     location VARCHAR(40) NOT NULL,
     createdOn DATE NOT NULL,
     FOREIGN KEY (createdBy) REFERENCES users(id)

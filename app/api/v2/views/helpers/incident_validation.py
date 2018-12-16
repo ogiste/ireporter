@@ -86,3 +86,28 @@ def validate_incident_put_input(validator, new_data, prop):
         return make_response(jsonify(get_error(empty_loc_or_comment, 400)),
                              400)
     return True
+
+
+def validate_admin_put_input(validator, new_data):
+    """
+    Function that validates the status value for update
+    takes in a validator object and new_data dictionary from the request body
+    Returns
+    -------
+    make_response object if validation Failed
+    True object if validation Succeeded
+    """
+    new_data["status"] = validator.\
+        remove_lr_whitespace(new_data["status"])
+    if id is not None and new_data["status"] != "":
+        is_valid_status = validator.\
+            is_valid_incident_status(new_data["status"])
+        if is_valid_status is not True:
+            valid_status = validator.\
+                validation_messages["valid_status"]
+            return make_response(jsonify(get_error(valid_status, 400)), 400)
+    else:
+        empty_status = validator.\
+            validation_messages["empty_status"]
+        return make_response(jsonify(get_error(empty_status, 400)), 400)
+    return True
