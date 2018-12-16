@@ -6,10 +6,10 @@ from flask import make_response, jsonify
 from flask_restful import Resource
 
 # Local imports
-from .errors import parser, get_error, Validation
+from app.api.helpers.errors import parser, get_error, Validation
 from app.api.v2.models.user import UserModel
-from app.api.helpers.auth_validation import generate_token
-from app.api.v2.views.helpers.auth_validation import validate_auth_post_input
+from app.api.helpers.auth_validation import (generate_token,
+                                             validate_auth_post_input)
 
 
 auth_parser = parser.copy()

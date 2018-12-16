@@ -8,8 +8,8 @@ from pprint import pprint
 
 from app import create_app
 from app.db_config import connect, create_tables, drop_tables
-from app.api.v2.views.errors import Validation
-from app.api.v2.views.helpers.incident_validation import (
+from app.api.helpers.errors import Validation
+from app.api.helpers.incident_validation import (
     validate_incident_put_input,
     validate_incident_post_input
 )
