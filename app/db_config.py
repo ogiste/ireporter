@@ -47,14 +47,14 @@ def connection(db_name=None, init_db_uri=None):
     db_pass = os.getenv("DB_PASS")
     db_port = os.getenv("DB_PORT", default=5432)
     if db_name is None:
-        db_name = os.getenv("DB_NAME", default="ireporter")
+        db_name = os.getenv("DB_NAME")
     db_uri = "dbname={} host={} user={} password={} port={} ".\
         format(db_name, db_host, db_user, db_pass, db_port)
     if db_name is "ireporter_test":
         db_uri = "dbname={} host={} user={} password={}".\
             format(db_name, "localhost", 'test_user', 'test_ireporter')
     if db_name is "tester":
-        db_name = os.getenv("DB_NAME", default="tester")
+        db_name = os.getenv("DB_NAME")
         db_uri = "dbname={} host={} user={} password={} port={} ".\
             format(db_name, db_host, db_user, db_pass, db_port)
     if init_db_uri is not None:
