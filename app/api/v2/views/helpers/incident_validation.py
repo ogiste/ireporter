@@ -51,8 +51,14 @@ def validate_incident_put_input(validator, new_data, prop):
     Returns
     -------
     make_response object if validation Failed
-    None object if validation Succeeded
+    True object if validation Succeeded
     """
+    if prop != "comment" and prop != "location":
+        return make_response(
+            jsonify(get_error("Cannot update "
+                              " attributes other than incident"
+                              " location and comment ",
+                              404)), 404)
     if prop == "location":
         new_data["prop_value"] = validator.\
             remove_whitespace(new_data["prop_value"])

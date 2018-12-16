@@ -101,6 +101,13 @@ class IncidentView(Resource, IncidentModel):
             "read": "Incident(s) successfully retrieved"
         }
 
+        self.status_types = {
+            "DRAFT": "draft",
+            "RESOLVED": "resolved",
+            "REJECTED": "rejected",
+            "UNDER_INVESTIGATION": "under investigation",
+        }
+
     def post(self, prop=None):
         """
         POST endpoint for incident resource that creates a new instance
@@ -204,6 +211,47 @@ class IncidentView(Resource, IncidentModel):
             jsonify(
                 get_error(error_messages["404"], 404)), 404
             )
+
+    def patch(self, id, prop=None):
+        """
+        PATCH endpoint that updates an incident comment or location
+        properties using the :param :id to find the record and :param :prop to
+        identify which incident property to update.
+        """
+        if prop is None:
+            return make_response(jsonify(get_error(error_messages["404"],
+
+                                                   404)), 404)
+        patch_parser = parser.copy()
+        patch_parser.add_argument('prop_value', type=str, required=True,
+                                  location='json',
+                                  help="The new value of the comment"
+                                  " or location must be provided")
+        new_data = patch_parser.parse_args()
+        validation_results = validate_incident_put_input(self.validator,
+                                                         new_data,
+                                                         prop)
+        if validation_results is not True:
+            return validation_results
+
+        incident_data = IncidentDB.update_incident(
+            id, prop, new_data["prop_value"]
+        )
+        if isinstance(incident_data, dict):
+            return make_response(jsonify({
+                "data": [incident_data],
+                "msg": self.messages["updated"],
+                "status_code": 200
+            }), 200)
+        if isinstance(incident_data, str):
+            return make_response(jsonify({
+                "msg": incident_data,
+                "status_code": 400
+            }), 400)
+        return make_response(
+            jsonify(get_error(error_messages["400"], 400)), 400)
+
+
     def delete(self, id, prop=None):
         """
         DELETE endpoint that deletes a single incident using the :param :id
@@ -222,14 +270,17 @@ class IncidentView(Resource, IncidentModel):
         if id is None:
             return make_response(
                 jsonify(get_error("Cannot delete incident"
-                                  " without a valid id"
-                                  , 400))
-                , 400)
+                                  " without a valid id",
+                                  400)),
+                400)
 
         deleted_incident = IncidentDB.delete_incident(id)
 
         if deleted_incident is True:
             return make_response(jsonify({
+                "data": [{
+                    "id": id
+                    }],
                 "msg": self.messages["deleted"],
                 "status_code": 202
             }), 202)

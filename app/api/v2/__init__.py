@@ -21,4 +21,5 @@ v2 = Blueprint("v2", __name__, url_prefix="/api/v2")
 api_v2 = Api(v2)
 api_v2.add_resource(UserView, '/users')
 api_v2.add_resource(AuthView, '/auth')
-api_v2.add_resource(IncidentView, '/incidents', '/incidents/<int:id>')
+api_v2.add_resource(IncidentView, '/incidents', '/incidents/<int:id>',
+                    '/incidents/<int:id>/<prop>')

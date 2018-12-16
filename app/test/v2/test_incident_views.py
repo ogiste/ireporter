@@ -53,6 +53,12 @@ class TestIncident(unittest.TestCase):
             'comment': 'Corruption in employment procurement'
         }
 
+        self.location_patch = {
+            'prop_value': '-33.99999,12.444444',
+        }
+        self.comment_patch = {
+            'prop_value': 'Updated comment',
+        }
         self.bad_intervention = {
             'type': 'intervention',
             'title': "   ",
@@ -154,6 +160,44 @@ class TestIncident(unittest.TestCase):
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.redflag2["comment"], str(data))
 
+    def test_patch_incident(self):
+        """
+        Method tests the PATCH endpoint to patch a single incident record's
+        location or comment
+        """
+        res = self.client().post('/api/v2/users', data=json.dumps(self.user),
+                                 content_type='application/json')
+        data= json.loads(res.get_data().decode('utf8'))
+        self.assertEqual(res.status_code, 201)
+        res = self.client().post('/api/v2/incidents/',
+                                 data=json.dumps(self.intervention),
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data = json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success', str(data["msg"]))
+        res = self.client().post('/api/v2/incidents/',
+                                 data=json.dumps(self.redflag2),
+                                 content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn('success',str(data["msg"]))
+        res = self.client().patch('/api/v2/incidents/2/location',
+                                  data=json.dumps(self.location_patch),
+                                  content_type='application/json')
+        self.assertEqual(res.status_code, 200)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn(self.location_patch["prop_value"], str(data))
+        res = self.client().patch('/api/v2/incidents/2/comment',
+                                  data=json.dumps(self.comment_patch),
+                                  content_type='application/json')
+        self.assertEqual(res.status_code, 200)
+        data=json.loads(res.get_data().decode('utf8'))
+        self.assertIn(self.comment_patch["prop_value"], str(data))
+        res = self.client().patch('/api/v2/incidents/2/dsadsa',
+                                  data=json.dumps(self.comment_patch),
+                                  content_type='application/json')
+        self.assertEqual(res.status_code, 404)
+
     def test_delete_single_incident(self):
         """
         Method tests the DELETE endpoint to retrieve a single to incident record
@@ -161,7 +205,6 @@ class TestIncident(unittest.TestCase):
         res = self.client().post('/api/v2/users', data=json.dumps(self.user),
                                  content_type='application/json')
         data= json.loads(res.get_data().decode('utf8'))
-        user_details = data["data"][0]
         self.assertEqual(res.status_code, 201)
         res = self.client().post('/api/v2/incidents/',
                                  data=json.dumps(self.intervention),
