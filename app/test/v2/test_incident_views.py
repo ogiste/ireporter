@@ -4,13 +4,15 @@ Test cases for user classes
 import unittest
 import os
 import json
+import datetime
 from pprint import pprint
 
 from app import create_app
-from app.db_config import connect, create_tables, drop_tables
+from app.db_config import create_tables, drop_tables
 from app.api.v2.models.user import UserModel
 from app.api.v2.models.incident import IncidentModel
 
+user_db = UserModel()
 class TestIncident(unittest.TestCase):
 
     """
@@ -38,8 +40,26 @@ class TestIncident(unittest.TestCase):
             "username": "jtutu",
             "password": "password1"
         }
+
+        self.admin = {
+
+            "fname": "Admin",
+            "lname": "iReporter",
+            "othername": "Damon",
+            "email": "admin@gmail.com",
+            "phone": "+254703093322",
+            "username": "admin",
+            "password": "password1",
+            "createdOn": datetime.datetime.today().strftime('%Y/%m/%d'),
+            "isAdmin": True
+        }
         self.user_credentials = {
             "username": "jtutu",
+            "password": "password1"
+        }
+
+        self.admin_credentials = {
+            "username": "admin",
             "password": "password1"
         }
         self.intervention = {
@@ -104,6 +124,16 @@ class TestIncident(unittest.TestCase):
         data = json.loads(res.get_data().decode('utf8'))
         token = data["data"][0]["token"]
         self.access_token_header = "Bearer {token}".format(token=token)
+
+        # create admin user
+        user_db.save(self.admin, isAdmin=True)
+        # Sign in admin
+        res = self.client().post('/api/v2/auth',
+                                 data=json.dumps(self.admin_credentials),
+                                 content_type='application/json')
+        admin_data = json.loads(res.get_data().decode('utf8'))
+        admin_token = admin_data["data"][0]["token"]
+        self.access_token_admin = "Bearer {token}".format(token=admin_token)
 
     def test_incident_create(self):
         """
@@ -184,7 +214,7 @@ class TestIncident(unittest.TestCase):
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
         res = self.client().get('/api/v2/incidents/all',
-                                headers={"Access-token": self.access_token_header}
+                                headers={"Access-token": self.access_token_admin}
                                 )
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
@@ -259,6 +289,12 @@ class TestIncident(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.comment_patch["prop_value"], str(data))
+        res = self.client().patch('/api/v2/incidents/2/comment',
+                                  headers={"Access-token": self.access_token_admin},
+                                  data=json.dumps(self.comment_patch),
+                                  content_type='application/json')
+        self.assertEqual(res.status_code, 403)
+        data=json.loads(res.get_data().decode('utf8'))
         res = self.client().patch('/api/v2/incidents/2/dsadsa',
                                   headers={"Access-token": self.access_token_header},
                                   data=json.dumps(self.comment_patch),
@@ -285,26 +321,31 @@ class TestIncident(unittest.TestCase):
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn('success',str(data["msg"]))
         res = self.client().patch('/api/v2/incidents/2/status',
-                                  headers={"Access-token": self.access_token_header},
+                                  headers={"Access-token": self.access_token_admin},
                                   data=json.dumps(self.status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
         self.assertIn(self.status_patch["status"], str(data))
         res = self.client().patch('/api/v2/incidents/2/status',
-                                  headers={"Access-token": self.access_token_header},
+                                  headers={"Access-token": self.access_token_admin},
                                   data=json.dumps(self.bad_status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 400)
         res = self.client().patch('/api/v2/incidents/200/status',
-                                  headers={"Access-token": self.access_token_header},
+                                  headers={"Access-token": self.access_token_admin},
                                   data=json.dumps(self.status_patch),
                                   content_type='application/json')
         self.assertEqual(res.status_code, 404)
+        res = self.client().patch('/api/v2/incidents/2/status',
+                                  headers={"Access-token": self.access_token_header},
+                                  data=json.dumps(self.status_patch),
+                                  content_type='application/json')
+        self.assertEqual(res.status_code, 403)
 
     def test_delete_single_incident(self):
         """
-        Method tests the DELETE endpoint to retrieve a single to incident record
+        Method tests the DELETE endpoint to remove a single to incident record
         """
         res = self.client().post('/api/v2/incidents/',
                                  headers={"Access-token": self.access_token_header},

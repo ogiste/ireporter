@@ -7,13 +7,15 @@ import datetime
 
 from functools import wraps
 from flask import request, make_response, jsonify
+from app.db_config import connect
+from psycopg2 import IntegrityError
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 auth_error_messages = {}
 auth_error_messages["401"] = ("You are not authorize to access"
                               " this resource. Please sign in and try again")
-auth_error_messages["403"] = ("You do not have permissions to access"
-                              " this resource. Please sign in ")
+auth_error_messages["403"] = ("You do not have permissions to access this resource")
+
 
 
 def auth_required(func):
@@ -110,3 +112,124 @@ def decode_token(access_token):
     except Exception as e:
         # any other exception
         return {"error": str(e), "success": False}
+
+
+class AccessControl(object):
+    """
+    This class defines methods to verify the access levels for a user based on
+    whether they are the owners of a resource or an administator.
+
+    Methods
+    --------
+    is_user_profile_owner(user_id,auth_user_id) - Checks if current user can
+    change user profile details
+
+    is_incident_owner(created_by_id, auth_user_id) - Checks if current user has
+    access to update, or delete an incident's user_details
+
+    is_admin(auth_id) - checks to see if current user is an administrator
+    """
+
+    def __init__(self):
+        self.conn = connect()
+        self.cursor = self.conn.cursor()
+        self.messages = {}
+        self.messages["NOT_FOUND"] = "The resource was not found with id: "
+
+    def is_user_profile_owner(self, user_id, auth_user_id):
+        """
+        Method that verifies current user as the owner of a record to be updated
+        or viewed
+
+        Returns
+        --------
+        dictionary
+            dictionary containing a is_owner bool value that is True if
+            the current user is the owner  and success status bool
+            value. Both return false otherwise
+        """
+
+        select_user_statement = """
+        SELECT id FROM users WHERE id={};
+        """.format(auth_user_id)
+        try:
+            self.cursor.execute(select_user_statement)
+            result = self.cursor.fetchone()
+            if result is not None:
+                return {"is_owner": True, "success": True}
+            error = (self.messages["NOT_FOUND"] + str(id) +\
+                     "Record could not be found or doesnot exist")
+            return {"error": error, "success": False}
+        except IntegrityError as e:
+            error = (self.messages["NOT_FOUND"] + str(id) +\
+                     "Record could not be found or doesnot exist")
+            return {"error": error, "success": False}
+        except Exception as e:
+            return {"error": str(e), "success": False}
+
+    def is_incident_owner(self, incident_id, auth_user_id):
+        """
+        Method that verifies current user as the owner of an incident record
+        to be updated, viewed or deleted
+
+        Returns
+        --------
+        dictionary
+            dictionary containing a is_owner bool value that is True if
+            the current user is the owner  and success status bool
+            value. Both return false otherwise
+        """
+
+        select_user_statement = """
+        SELECT id,createdBy FROM incidents WHERE createdBy={} AND id={};
+        """.format(auth_user_id, incident_id)
+        try:
+            self.cursor.execute(select_user_statement)
+            result = self.cursor.fetchone()
+            if result is not None:
+                return {"is_owner": True, "success": True}
+            error = (self.messages["NOT_FOUND"] + str(id) +\
+                     "Record could not be found or doesnot exist")
+            return {"error": error, "success": False}
+        except IntegrityError as e:
+            error = (self.messages["NOT_FOUND"] + str(id) +\
+                     "Record could not be found or doesnot exist")
+            return {"error": error, "success": False}
+        except Exception as e:
+            return {"error": str(e), "success": False}
+
+    def is_admin(self, auth_user_id):
+        """
+        Method that verifies current user as the owner of a record to be updated
+        or viewed
+
+        Returns
+        --------
+        dictionary
+            dictionary containing a is_owner bool value that is True if
+            the current user is the owner  and success status bool
+            value. Both return false otherwise
+        """
+
+        select_user_statement = """
+        SELECT id,isAdmin FROM users WHERE id={} AND isAdmin=True;
+        """.format(auth_user_id)
+
+        try:
+            self.cursor.execute(select_user_statement)
+            result = self.cursor.fetchone()
+            print(result)
+            if result is not None:
+                return {"is_owner": True, "success": True}
+            error = (self.messages["NOT_FOUND"] + str(id) +\
+                     "Record could not be found or doesnot exist")
+            return {"error": error, "success": False}
+        except IntegrityError as e:
+            error = (self.messages["NOT_FOUND"] + str(id) +\
+                     "Record could not be found or doesnot exist")
+            return {"error": error, "success": False}
+        except Exception as e:
+            return {"error": str(e), "success": False}
+
+
+access_control = AccessControl()
