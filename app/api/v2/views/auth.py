@@ -2,15 +2,17 @@ import datetime
 import types
 import os
 
-from flask import make_response, jsonify
-from flask_restful import Resource
+from flask import make_response, jsonify, request
+from flask_restful import Resource, abort
 
 # Local imports
 from app.api.helpers.errors import parser, get_error, Validation
 from app.api.v2.models.user import UserModel
 from app.api.helpers.auth_validation import (generate_token,
                                              validate_auth_post_input)
-
+from app.api.helpers.error_handler_validation import (
+    is_valid_json,
+    status_error_messages)
 
 auth_parser = parser.copy()
 
@@ -57,8 +59,9 @@ class AuthView(Resource, UserModel):
         -------
         A JSON response to the user once created
         """
-
-        user_credentials = auth_parser.parse_args()
+        if not is_valid_json(request.get_data()):
+            abort(400, message=status_error_messages["400"], status_code=400)
+        user_credentials = auth_parser.parse_args(strict=True)
         user_credentials["username"] = validator.remove_whitespace(
             user_credentials["username"]
         )

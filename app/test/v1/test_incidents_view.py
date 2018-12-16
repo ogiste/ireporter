@@ -64,9 +64,6 @@ class TestIncidents(unittest.TestCase):
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         data=json.loads(res.get_data().decode('utf8'))
-        print("test_create_flags")
-        print(res.get_data().decode('utf8'))
-        print(data)
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data["data"][0]["type"], self.redflag["type"])
         self.assertEqual(data["data"][0]["title"], self.redflag["title"])
@@ -87,7 +84,6 @@ class TestIncidents(unittest.TestCase):
         res = self.client().get('/api/v1/incidents/1')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
-        print(data)
         incident_list = data["data"]
         self.assertEqual(incident_list[0]["type"], self.redflag["type"])
         self.assertEqual(incident_list[0]["title"], self.redflag["title"])

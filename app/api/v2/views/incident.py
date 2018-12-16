@@ -1,7 +1,7 @@
 import datetime
 
-from flask import make_response, jsonify
-from flask_restful import Resource
+from flask import request, make_response, jsonify
+from flask_restful import Resource, abort
 
 
 # Local imports
@@ -14,6 +14,9 @@ from app.api.helpers.incident_validation import (
     validate_incident_put_input,
     incident_parser
 )
+from app.api.helpers.error_handler_validation import (
+    is_valid_json,
+    status_error_messages)
 
 
 from app.api.v2.models.incident import IncidentModel
@@ -80,8 +83,9 @@ class IncidentView(Resource, IncidentModel):
                     get_error(error_messages["404"], 404)),
                 404
                 )
-
-        new_incident = incident_parser.parse_args()
+        if not is_valid_json(request.get_data()):
+            abort(400, message=status_error_messages["400"], status_code=400)
+        new_incident = incident_parser.parse_args(strict=True)
         new_incident["title"] = validator.remove_lr_whitespace(
             new_incident["title"]
         )
@@ -196,12 +200,14 @@ class IncidentView(Resource, IncidentModel):
             return make_response(jsonify(get_error(error_messages["404"],
 
                                                    404)), 404)
+        if not is_valid_json(request.get_data()):
+            abort(400, message=status_error_messages["400"], status_code=400)
         patch_parser = parser.copy()
         patch_parser.add_argument('prop_value', type=str, required=True,
                                   location='json',
                                   help="The new value of the comment"
                                   " or location must be provided")
-        new_data = patch_parser.parse_args()
+        new_data = patch_parser.parse_args(strict=True)
         validation_results = validate_incident_put_input(validator,
                                                          new_data,
                                                          prop)

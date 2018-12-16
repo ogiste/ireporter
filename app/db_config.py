@@ -65,11 +65,10 @@ def connection(db_name=None, init_db_uri=None):
         # "connection() - Database Connection established"
         return conn
     except Exception as e:
-        print("DB Config Cannot connect to database")
         if hasattr(e, 'message'):
-            print((e.message))
+            e.message
         else:
-            print(e)
+            str(e)
 
 
 def connect(db_name=None, init_db_uri=None):

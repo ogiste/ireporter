@@ -232,7 +232,6 @@ def validate_user_put_input(validator, update_data):
         validator_functions_names = list(validator_functions.keys())
         validation_results = None
         for user_prop_name in user_prop_names:
-            print(user_prop_name)
             if(prop_is_in_proplist(user_prop_name, validator_functions_names)):
                 validation_results = validator_functions[user_prop_name](
                     update_data[user_prop_name]

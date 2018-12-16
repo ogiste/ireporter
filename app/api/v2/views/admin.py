@@ -1,7 +1,7 @@
 import smtplib
 import os
-from flask import make_response, jsonify
-from flask_restful import Resource
+from flask import make_response, jsonify, request
+from flask_restful import Resource, abort
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 # Local imports
@@ -11,6 +11,9 @@ from app.api.helpers.errors import parser, get_error, Validation, error_messages
 from app.api.helpers.incident_validation import (validate_admin_put_input)
 from app.api.v2.models.incident import IncidentModel
 from app.api.v2.models.user import UserModel
+from app.api.helpers.error_handler_validation import (
+    is_valid_json,
+    status_error_messages)
 
 incident_db = IncidentModel()
 user_db = UserModel()
@@ -63,7 +66,6 @@ def send_email_notification(user_data, incident_data):
         server.starttls()
         server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         server.send_message(email_msg)
-        print("Email sent")
         server.quit()
     except Exception as e:
         str(e)
@@ -141,7 +143,8 @@ class AdminView(Resource):
         PATCH endpoint that updates an incident status
         properties using the :param :id to find the record
         """
-
+        if not is_valid_json(request.get_data()):
+            abort(400, message=status_error_messages["400"], status_code=400)
         admin = access_control.is_admin(auth["id"])
         if admin["success"] is not True:
             return make_response(jsonify({
@@ -158,7 +161,7 @@ class AdminView(Resource):
             'can either be draft, resolved,'
             'rejected or under investigation'
         )
-        new_data = patch_parser.parse_args()
+        new_data = patch_parser.parse_args(strict=True)
         validation_results = validate_admin_put_input(validator, new_data)
         if validation_results is not True:
             return validation_results

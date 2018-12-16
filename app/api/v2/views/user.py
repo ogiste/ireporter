@@ -1,9 +1,10 @@
 import datetime
 import types
 import os
+import json
 
-from flask import Flask, make_response, jsonify,request
-from flask_restful import Resource
+from flask import Flask, make_response, jsonify
+from flask_restful import Resource, request, abort
 
 # Local imports
 from app.api.helpers.auth_validation import (
@@ -17,6 +18,10 @@ from app.api.helpers.errors import(
 from app.api.helpers.user_validation import (
     validate_user_post_input,
     validate_user_put_input)
+
+from app.api.helpers.error_handler_validation import (
+    is_valid_json,
+    status_error_messages)
 from app.api.v2.models.user import UserModel
 
 
@@ -157,8 +162,9 @@ class UserView(Resource, UserModel):
         -------
         A JSON response to the user once created
         """
-
-        new_user = user_parser.parse_args()
+        if not is_valid_json(request.get_data()):
+            abort(400, message=status_error_messages["400"], status_code=400)
+        new_user = user_parser.parse_args(strict=True)
         new_user["fname"] = validator.remove_whitespace(new_user["fname"])
         new_user["lname"] = validator.remove_whitespace(new_user["lname"])
         new_user["othername"] = validator.remove_whitespace(new_user["othername"])
@@ -192,8 +198,7 @@ class UserView(Resource, UserModel):
         duplicate = user_db.message["DUPLICATE"]
 
         if isinstance(create_results, str) and duplicate in create_results:
-            return make_response(jsonify(get_error(create_results, 409)),
-                                 409)
+            abort(409, msg=status_error_messages["409"], status_code=409)
         if isinstance(create_results, str):
             return make_response(jsonify(get_error(create_results, 400)),
                                  400)

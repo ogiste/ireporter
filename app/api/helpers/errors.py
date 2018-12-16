@@ -221,7 +221,6 @@ class Validation():
         if self.is_string(strvar):
             if EMAIL_REGEX.match(strvar):
                 return True
-            print((strvar, " is not a valid email address "))
             return False
         return False
 
