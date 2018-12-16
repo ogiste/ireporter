@@ -2,15 +2,9 @@
 Test cases for user classes
 """
 import unittest
-import os
-import json
-from pprint import pprint
-
 from app import create_app
-from app.db_config import connect, create_tables, drop_tables
 from app.api.helpers.errors import Validation
 from app.api.helpers.incident_validation import (
-    validate_incident_put_input,
     validate_incident_post_input
 )
 
@@ -40,7 +34,7 @@ class TestIncidentValidation(unittest.TestCase):
 
         self.redflag = {
             'type': 'red-flag',
-            'title':"Corruption",
+            'title': "Corruption",
             'location': '-2.333333,-13.333333',
             'comment': 'Corruption in tender procurement'
         }
@@ -59,8 +53,8 @@ class TestIncidentValidation(unittest.TestCase):
         Method tests the POST endpoint user validation
         """
         with self.app.test_request_context('/api/v2/incidents'):
-            self.assertTrue(validate_incident_post_input(self.validator,
-                                                     self.redflag))
+            self.assertTrue(validate_incident_post_input(
+                self.validator, self.redflag))
 
     def tearDown(self):
         pass

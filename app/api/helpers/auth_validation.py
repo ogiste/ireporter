@@ -44,6 +44,7 @@ def validate_auth_post_input(validator, user_credentials):
                       400)), 400)
     return True
 
+
 def auth_required(func):
     """
     Decorator function that returns the authetication details for a protected
@@ -164,7 +165,8 @@ class AccessControl(object):
 
     def is_user_profile_owner(self, user_id, auth_user_id):
         """
-        Method that verifies current user as the owner of a record to be updated
+        Method that verifies current user as the owner of a record to be
+        updated
         or viewed
 
         Returns
@@ -185,7 +187,7 @@ class AccessControl(object):
                 return {"is_owner": True, "success": True}
             error = (self.messages["NOT_FOUND"] + str(id) +\
                      "Record could not be found or doesnot exist")
-            return {"error": error,"status":404, "success": False}
+            return {"error": error, "status": 404, "success": False}
         except IntegrityError as e:
             error = (self.messages["NOT_FOUND"] + str(id) +\
                      "Record could not be found or doesnot exist")

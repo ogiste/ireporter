@@ -2,8 +2,9 @@
 Test cases for user classes
 """
 import unittest
-
+from app import create_app
 from app.api.helpers.errors import Validation
+from app.api.helpers.auth_validation import validate_auth_post_input
 
 
 class TestValidatorMethods(unittest.TestCase):
@@ -17,6 +18,7 @@ class TestValidatorMethods(unittest.TestCase):
         This method will be called before all tests and sets up the dummy data
         """
 
+        self.app = create_app("testing")
         self.user = {
 
             "fname": "Jacob",
@@ -30,14 +32,19 @@ class TestValidatorMethods(unittest.TestCase):
 
         self.redflag = {
             'type': 'red-flag',
-            'title':"Corruption",
+            'title': "Corruption",
             'location': '-2.333333,-13.333333',
             'comment': 'Corruption in tender procurement'
         }
 
-        self.user3 = {
-            "username":"masu",
-            "password":"ssdfa"
+        self.usercredentials = {
+            "username": "masu",
+            "password": "ssdfa12"
+        }
+
+        self.bad_usercredentials = {
+            "username": "masu",
+            "password": "ssd2"
         }
 
         self.validator = Validation()
@@ -66,6 +73,26 @@ class TestValidatorMethods(unittest.TestCase):
         self.assertTrue(self.validator.is_valid_location(
             self.redflag["location"])
         )
+
+    def test_all_auth_property_validators(self):
+        """
+        Method tests the validator methods used in testing
+        authentication properties
+        """
+        with self.app.test_request_context('/api/v2/auth'):
+
+            self.assertTrue(
+                validate_auth_post_input(
+                    self.validator, self.usercredentials
+                )
+            )
+            res = validate_auth_post_input(
+                self.validator, self.bad_usercredentials
+            )
+            self.assertEqual(
+                res.status_code,
+                400
+            )
 
     def tearDown(self):
         pass

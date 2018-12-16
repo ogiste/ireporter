@@ -18,6 +18,7 @@ def is_valid_json(str):
     except ValueError:
         return False
 
+
 status_error_messages = {
     "400": ("Request could not be applied"
             " because of a client error e.g"

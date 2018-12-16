@@ -13,6 +13,7 @@ from .api.v2 import v2 as version_two
 from app.db_config import connect, create_tables
 from app.api.helpers.error_handler_validation import status_error_messages
 
+
 def create_app(config_name="development"):
     """
     Function used to create the Flask application.
