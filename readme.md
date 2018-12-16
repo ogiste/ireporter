@@ -54,13 +54,20 @@ Sample Indicent Record JSON:
 
 Current API endpoints :
 
-        | METHOD        | ENDPOINT                    | DESCRIPTION                                                           |
-        | --------------|:---------------------------:| --------------------------------------------------------------------|
-        | POST          | /api/v1/incidents           | Used to create an incident record                                     |
-        | GET           | /api/v1/incidents/          | Used to read all incident records                                     |
-        | GET           | /api/v1/incidents/<int:id>  | Used to view a particular incident record                             |
-        | PUT           | /api/v1/incidents/<int:id>  | Used to update the incident location and comment of a specific record |
-        | DELETE        | /api/v1/incidents/<int:id>  | Allows user to delete a specific incident record                      |
+
+        | METHOD        | ENDPOINT                    | DESCRIPTION|
+        | :---|:---:| ---:|
+        | POST          | /api/v2/incidents           | Used to create an incident record |
+        | GET           | /api/v2/incidents/          | Used to read all incident records |
+        | GET           | /api/v2/incidents/<int:id>  | Used to view a particular incident record |
+        | PATCH           | /api/v2/incidents/<int:id>  | Used to update the incident location and comment of a specific record |
+        | DELETE        | /api/v2/incidents/<int:id>  | Allows user to delete a specific incident record |
+        | POST        | /api/v2/auth/  | Allows user to login |
+        | POST        | /api/v2/user/  | Allows user to create an account |
+        | GET        | /api/v2/users/<int:id>  | Allows user to view their profile |
+        | GET        | /api/v2/users/  | Allows admin to view all user profiles |
+        | PATCH        | /api/v2/incident/<int:id>/status  | Allows admin to update the status of an incident |
+        
 
 View the [published collection](https://documenter.getpostman.com/view/764347/RzffJ9Y8
 ) for more details
