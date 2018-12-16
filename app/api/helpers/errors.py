@@ -118,6 +118,7 @@ class Validation():
         self.validation_messages["valid_username"] = (
             "Username can only consist of numbers letters"
             " and underscore characters")
+
     def is_string(self, var):
         """
         Method used to check if var is of a string instance
@@ -154,7 +155,8 @@ class Validation():
 
         Returns
         --------
-         Boolean value - true if strvar is a within the strmax and strmin values
+         Boolean value - true if strvar is a within the strmax and strmin
+         values
          false otherwise
         """
 

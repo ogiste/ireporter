@@ -60,6 +60,7 @@ incident_parser.add_argument(
     help="A list of video urls related to the incident and is not required"
     )
 
+
 def validate_incident_post_input(validator, new_incident):
     """
     Function that validates the title,comment,and location properties of a new

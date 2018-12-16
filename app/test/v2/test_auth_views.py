@@ -2,20 +2,19 @@
 Test cases for user classes
 """
 import unittest
-import datetime
 import json
 import os
 
-from pprint import pprint
 from app import create_app
-from app.db_config import connect, create_tables, drop_tables,delete_all_rows
+from app.db_config import create_tables, drop_tables
 from app.api.v2.models.user import UserModel
 
 
 class TestAuth(unittest.TestCase):
 
     """
-    This class represents the authentication test cases that test login of a user
+    This class represents the authentication test cases that test login of a
+    user
     """
 
     def setUp(self):
@@ -41,27 +40,27 @@ class TestAuth(unittest.TestCase):
 
         self.user2 = {
             "fname": "Kaka",
-            "lname":"Abdi",
-            "othername":"",
-            "email":"kaka@mailinator.com",
-            "phone":"+254705094322",
-            "username":"masu",
-            "password":"11ssdfa"
+            "lname": "Abdi",
+            "othername": "",
+            "email": "kaka@mailinator.com",
+            "phone": "+254705094322",
+            "username": "masu",
+            "password": "11ssdfa"
         }
 
         self.user_credentials1 = {
-            "username":"jtutu",
-            "password":"password1"
+            "username": "jtutu",
+            "password": "password1"
         }
 
         self.bad_user_credentials = {
-            "username":"jtutu",
-            "password":"passwor1"
+            "username": "jtutu",
+            "password": "passwor1"
         }
 
         self.user_credentials2 = {
-            "username":"masu",
-            "password":"11ssdfa"
+            "username": "masu",
+            "password": "11ssdfa"
         }
         self.messages = {
             "created": "User successfully created",

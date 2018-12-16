@@ -3,8 +3,6 @@ Testcase for the database connection success
 """
 import unittest
 import os
-import sys
-import types
 
 from app.db_config import connect, create_tables, drop_tables,\
     get_create_queries, get_drop_queries

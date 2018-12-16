@@ -8,7 +8,7 @@ user POST method
 from flask import make_response, jsonify
 from .errors import get_error, Validation
 
-FL_NAME_MAX = 30 # First name, Last name max value
+FL_NAME_MAX = 30  # First name, Last name max value
 FL_NAME_MIN = 2  # First name, Last name min value
 EMAIL_MAX = 60
 EMAIL_MIN = 10
@@ -99,7 +99,8 @@ def validate_single_email(email):
     """
     if not validator.is_in_limit(email,
                                  EMAIL_MAX, EMAIL_MIN):
-        msg = validator.create_limit_message("Your email", EMAIL_MAX, EMAIL_MIN)
+        msg = validator.create_limit_message("Your email",
+                                             EMAIL_MAX, EMAIL_MIN)
         return make_response(jsonify(
             get_error(msg,
                       400)), 400)

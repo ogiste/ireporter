@@ -29,7 +29,6 @@ get_drop_queries():
 
 import os
 import psycopg2
-from pprint import pprint
 conn = None
 
 
@@ -79,9 +78,9 @@ def connect(db_name=None, init_db_uri=None):
     -------
         psycopg2 connection object
     """
-    if db_name != None:
+    if db_name is not None:
         conn = connection(db_name, init_db_uri)
-    conn = connection(db_name,init_db_uri)
+    conn = connection(db_name, init_db_uri)
     return conn
 
 
@@ -96,6 +95,7 @@ def create_tables(conn=None):
             cur.execute(query)
         return True
     return None
+
 
 def get_create_queries():
     """
@@ -164,6 +164,7 @@ def get_drop_queries(conn=None):
     drop_incident_table = "DROP table if exists incidents CASCADE;"
     return [drop_user_table, drop_incident_table]
 
+
 def delete_all_rows(conn=None):
     """
     Function that deletes all data in created tables
@@ -188,6 +189,7 @@ def get_delete_all_queries(conn=None):
     delete_all_users = "DELETE FROM users;"
     delete_all_incidents = "DELETE FROM incidents;"
     return [delete_all_users, delete_all_incidents]
+
 
 if __name__ == '__main__':
     connection()

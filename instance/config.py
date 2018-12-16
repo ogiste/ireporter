@@ -1,5 +1,6 @@
 import os
 
+
 class Config(object):
     """Parent configuration class."""
     DEBUG = False
@@ -11,6 +12,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     DB_NAME = os.getenv("DB_NAME")
     DB_URL = None
+
 
 class TestingConfig(Config):
     """Configurations for Testing, with a separate test database."""
@@ -29,6 +31,7 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
     DB_NAME = os.getenv("DB_NAME")
+
 
 app_config = {
     'development': DevelopmentConfig,
