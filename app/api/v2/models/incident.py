@@ -61,8 +61,7 @@ class IncidentModel():
         self.message["NONE_EXIST"] = "No incidents could be found "
         self.message["NOT_CREATED"] = ("The incident was not created."
                                        " Please try again ")
-        self.message["INTEGRITY"] = ("There were integrity errors when "
-                                     " creating the incident")
+        self.message["INTEGRITY"] = ("Could not create the incident")
         self.message["STATUS_CHANGE"] = ("Cannot edit an incident that is not"
                                          " in draft status")
 
@@ -143,7 +142,7 @@ class IncidentModel():
             return self.message["NOT_FOUND"] + str(id) \
              + "Record could not be found or doesnot exist"
 
-    def update_incident(self, id, prop, prop_value):
+    def update_incident(self, id, prop, prop_value, isAdmin=False):
         """
         Update a property of an incident
         by taking the :id arg to find the incident record,
@@ -162,10 +161,10 @@ class IncidentModel():
             return self.message["NOT_FOUND"] + str(id) \
              + " Record could not be found or doesnot exist"
 
-        if incident['status'] != "draft":
+        if incident['status'] != "draft" and isAdmin is False:
             return self.message["STATUS_CHANGE"]
         update_incident_statement = """
-        UPDATE incidents SET {prop} = '{prop_value}' WHERE id ={id};
+        UPDATE incidents SET {prop} = $${prop_value}$$ WHERE id ={id};
         """.format(prop=prop, prop_value=prop_value, id=id)
 
         try:
@@ -232,10 +231,12 @@ class IncidentModel():
             "status": new_incident["status"],
             "comment": new_incident["comment"]
         }
-        insert_incident_statement = """INSERT INTO incidents(
+        insert_incident_statement = """
+        INSERT INTO incidents(
         createdBy,title,type,comment,status,location,createdOn)
-        VALUES ({createdBy},'{title}','{type}','{comment}','{status}',
-        '{location}','{createdOn}') RETURNING id ;""".format(
+        VALUES ({createdBy},$${title}$$,'{type}',$${comment}$$,'{status}',
+        '{location}','{createdOn}') RETURNING id ;
+        """.format(
             createdBy=new_incident["createdBy"],  # A a value from auth'd user
             title=new_incident["title"],
             type=new_incident["type"],
@@ -249,7 +250,6 @@ class IncidentModel():
             incident_results = self.cursor.fetchone()
             return self.get_single_incident_by_id(incident_results[0])
         except IntegrityError as e:
-            print(str(e))
             return self.message["INTEGRITY"]
         except IntegrityError as e:
             return self.message["NOT_CREATED"]

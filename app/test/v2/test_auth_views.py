@@ -33,7 +33,7 @@ class TestAuth(unittest.TestCase):
             "fname": "Jacob",
             "lname": "Tutu",
             "othername": "Damon",
-            "email": "jtutu@gmail.com",
+            "email": "jtutu@mailinator.com",
             "phone": "+254705093322",
             "username": "jtutu",
             "password": "password1"
@@ -43,7 +43,7 @@ class TestAuth(unittest.TestCase):
             "fname": "Kaka",
             "lname":"Abdi",
             "othername":"",
-            "email":"Kaka@gmail.com",
+            "email":"kaka@mailinator.com",
             "phone":"+254705094322",
             "username":"masu",
             "password":"11ssdfa"
