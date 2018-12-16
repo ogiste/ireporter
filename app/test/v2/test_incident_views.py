@@ -35,7 +35,7 @@ class TestIncident(unittest.TestCase):
             "fname": "Jacob",
             "lname": "Tutu",
             "othername": "Damon",
-            "email": "jtutu@gmail.com",
+            "email": "jtutu@mailinator.com",
             "phone": "+254705093322",
             "username": "jtutu",
             "password": "password1"
@@ -46,7 +46,7 @@ class TestIncident(unittest.TestCase):
             "fname": "Admin",
             "lname": "iReporter",
             "othername": "Damon",
-            "email": "admin@gmail.com",
+            "email": "admin@mailinator.com",
             "phone": "+254703093322",
             "username": "admin",
             "password": "password1",

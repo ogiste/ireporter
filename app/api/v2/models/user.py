@@ -104,6 +104,32 @@ class UserModel():
         del user_details["isAdmin"]
         return user_details
 
+    def get_single_user_by_id(self, id):
+        """
+        Method that retrieves a single user from the user records database
+
+        Returns
+        --------
+        dictionary
+            dictionary containing all user details
+        """
+
+        select_user_statement = """
+        SELECT id,username,fname,lname,othername,email,createdOn,isAdmin,phone
+        FROM users WHERE id={id};
+        """.format(id=id)
+        try:
+            self.cursor.execute(select_user_statement)
+            result = self.cursor.fetchone()
+            if result is not None:
+                user_details = self.get_formated_user_dict(result)
+                return user_details
+            return (self.message["NOT_FOUND"] + str(id) +\
+                    "Record could not be found or doesnot exist")
+        except IntegrityError as e:
+            return self.message["NOT_FOUND"] + str(id) \
+             + " Record could not be found or doesnot exist"
+
     def get_single_user_by_username(self, username):
         """
         Method that retrieves a single user from the user records database

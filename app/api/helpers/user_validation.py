@@ -57,6 +57,11 @@ def validate_single_name(name):
             get_error(
                 msg,
                 400)), 400)
+    if not name.isalpha():
+        return make_response(jsonify(
+            get_error(
+                validator.validation_messages["alphabetic"],
+                400)), 400)
     return True
 
 
@@ -75,6 +80,11 @@ def validate_single_othername(othername):
         return make_response(jsonify(
             get_error(msg,
                       400)), 400)
+    if othername != "" and not othername.isalpha():
+        return make_response(jsonify(
+            get_error(
+                validator.validation_messages["alphabetic"],
+                400)), 400)
     return True
 
 
@@ -137,9 +147,21 @@ def validate_user_post_input(validator, new_user):
     make_response object if validation Failed
     True Boolean if validation Succeeded
     """
+    names = [new_user["fname"], new_user["othername"],
+             new_user["lname"]]
+    for name in names:
+        if name != "" and not name.isalpha():
+            return make_response(jsonify(
+                get_error(
+                    validator.validation_messages["alphabetic"],
+                    400)), 400)
     if not validator.is_in_limit(new_user["username"]):
         return make_response(jsonify(
             get_error(validator.validation_messages["lim_user_username"],
+                      400)), 400)
+    if not validator.is_valid_username(new_user["username"]):
+        return make_response(jsonify(
+            get_error(validator.validation_messages["valid_username"],
                       400)), 400)
     if not validator.is_in_limit(new_user["fname"],
                                  FL_NAME_MAX, FL_NAME_MIN):
@@ -148,6 +170,7 @@ def validate_user_post_input(validator, new_user):
                       create_limit_message("Your first name", FL_NAME_MAX,
                                            FL_NAME_MIN),
                       400)), 400)
+
     if not validator.is_in_limit(new_user["lname"],
                                  FL_NAME_MAX, FL_NAME_MIN):
         return make_response(jsonify(

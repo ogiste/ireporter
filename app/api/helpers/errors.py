@@ -31,7 +31,8 @@ def get_error(error_message, status_code):
 
 
 EMAIL_REGEX = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
-
+USERNAME_REGEX = re.compile(r"^(?=.{4,30}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9_]"
+                            r"+(?<![_.])$")
 
 LOCATION_REGEX = re.compile(
     r"^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),[-+]?(180(\.0+)?|((1[0-7]\d)|"
@@ -111,6 +112,12 @@ class Validation():
                                                     " can only be - draft,"
                                                     " resolved, rejected or"
                                                     " under investigation")
+        self.validation_messages["alphabetic"] = (
+            "User first name, last name can only be"
+            " alphabetic characters")
+        self.validation_messages["valid_username"] = (
+            "Username can only consist of numbers letters"
+            " and underscore characters")
     def is_string(self, var):
         """
         Method used to check if var is of a string instance
@@ -184,6 +191,22 @@ class Validation():
             strvar = strvar.rstrip()
             return strvar
         return None
+
+    def is_valid_username(self, strvar):
+        """
+        Method used check if strvar is a valid username string
+
+        Returns
+        --------
+         Boolean value - true if strvar is a valid email
+         false otherwise
+        """
+
+        if self.is_string(strvar):
+            if USERNAME_REGEX.match(strvar):
+                return True
+            return False
+        return False
 
     def is_valid_email(self, strvar):
         """
