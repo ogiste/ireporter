@@ -80,7 +80,6 @@ class TestIncidents(unittest.TestCase):
         res = self.client().post('/api/v1/incidents',
         data=json.dumps(self.redflag),content_type='application/json')
         self.assertEqual(res.status_code, 201)
-        #import pdb; pdb.set_trace()
         res = self.client().get('/api/v1/incidents/1')
         self.assertEqual(res.status_code, 200)
         data=json.loads(res.get_data().decode('utf8'))
@@ -156,7 +155,6 @@ class TestIncidents(unittest.TestCase):
         self.assertEqual(updated_incident.status_code, 200)
         data=json.loads(updated_incident.get_data().decode('utf8'))
         self.assertIn(self.msg['read'],str(data["msg"]))
-        # self.assertIn(self.location['prop_value'], str(data))
         incident_list = data["data"]
         self.assertEqual(self.location['prop_value'], incident_list[0]["location"])
 
