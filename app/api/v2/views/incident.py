@@ -5,63 +5,19 @@ from flask_restful import Resource
 
 
 # Local imports
-from app.api.helpers.auth_validation import auth_required
+from app.api.helpers.auth_validation import (auth_required, access_control,
+                                             auth_error_messages)
 from .errors import parser, get_error, Validation, error_messages
 from .helpers.incident_validation import (validate_incident_post_input,
                                           validate_incident_put_input,
-                                          validate_admin_put_input)
+                                          validate_admin_put_input,
+                                          incident_parser)
 
 
 from app.api.v2.models.incident import IncidentModel
 
-IncidentDB = IncidentModel()
+incident_db = IncidentModel()
 validator = Validation()
-incident_parser = parser.copy()
-
-incident_parser.add_argument(
-    'title', type=str,
-    required=True, location='json',
-    help='The title of the incident is a required field'
-    )
-
-incident_parser.add_argument(
-    'type', type=str, required=True,
-    choices=('red-flag', 'intervention'), location='json',
-    help='The type of the incident is a required field'
-    '- must be red-flag or intervention'
-    )
-
-incident_parser.add_argument(
-    'location',
-    type=str, required=True, location='json',
-    help='The Latitude and Longitude of the incident'
-    ' is a required field'
-    )
-
-incident_parser.add_argument(
-    'comment',
-    type=str, required=True, location='json',
-    help='The descriptive comment of the incident'
-    ' is a required field'
-    )
-
-incident_parser.add_argument(
-    'status',
-    type=str, choices=('draft', 'resolved', 'rejected', 'under investigation'),
-    location='json',
-    help='The status of the incident - can either be draft, resolved,'
-    'rejected or under investigation'
-    )
-
-incident_parser.add_argument(
-    'images', action='append', location='json',
-    help="A list of image urls related to the incident and is not required"
-    )
-
-incident_parser.add_argument(
-    'videos', action='append', location='json',
-    help="A list of video urls related to the incident and is not required"
-    )
 
 
 class IncidentView(Resource, IncidentModel):
@@ -154,7 +110,7 @@ class IncidentView(Resource, IncidentModel):
             strftime('%Y/%m/%d')
         new_incident["createdBy"] = auth["id"]
         new_incident["status"] = "draft"
-        incident_data = IncidentDB.save(new_incident)
+        incident_data = incident_db.save(new_incident)
 
         if isinstance(incident_data, dict) or isinstance(incident_data, list):
             return make_response(jsonify({
@@ -184,8 +140,8 @@ class IncidentView(Resource, IncidentModel):
                 )
 
         if id is None:
-            incidents_data = IncidentDB.get_my_incidents(auth["id"])
-            if (isinstance(incidents_data, str) and IncidentDB.message["NOT_FOUND"]
+            incidents_data = incident_db.get_my_incidents(auth["id"])
+            if (isinstance(incidents_data, str) and incident_db.message["NOT_FOUND"]
                 in incidents_data):
                 return make_response(jsonify({
                     "msg": incidents_data,
@@ -202,7 +158,16 @@ class IncidentView(Resource, IncidentModel):
                 "status_code": 200
             }), 200)
 
-        incident_results = IncidentDB.get_single_incident_by_id(id)
+        incident_owner = access_control.is_incident_owner(id, auth["id"])
+        admin = access_control.is_admin(auth["id"])
+        print(incident_owner)
+        if (incident_owner["success"] is not True
+                and admin["success"] is not True):
+            return make_response(jsonify({
+                "msg": auth_error_messages["403"],
+                "status_code": 403
+            }), 403)
+        incident_results = incident_db.get_single_incident_by_id(id)
         if isinstance(incident_results, dict):
             return make_response(jsonify({
                 "data": [incident_results],
@@ -239,10 +204,16 @@ class IncidentView(Resource, IncidentModel):
         validation_results = validate_incident_put_input(validator,
                                                          new_data,
                                                          prop)
+        incident_owner = access_control.is_incident_owner(id, auth["id"])
+        if incident_owner["success"] is not True:
+            return make_response(jsonify({
+                "msg": auth_error_messages["403"],
+                "status_code": 403
+            }), 403)
         if validation_results is not True:
             return validation_results
 
-        incident_data = IncidentDB.update_incident(
+        incident_data = incident_db.update_incident(
             id, prop, new_data["prop_value"]
         )
         if isinstance(incident_data, dict):
@@ -282,7 +253,13 @@ class IncidentView(Resource, IncidentModel):
                                   400)),
                 400)
 
-        deleted_incident = IncidentDB.delete_incident(id)
+        incident_owner = access_control.is_incident_owner(id, auth["id"])
+        if incident_owner["success"] is not True:
+            return make_response(jsonify({
+                "msg": auth_error_messages["403"],
+                "status_code": 403
+            }), 403)
+        deleted_incident = incident_db.delete_incident(id)
 
         if deleted_incident is True:
             return make_response(jsonify({
@@ -298,112 +275,5 @@ class IncidentView(Resource, IncidentModel):
                 jsonify(get_error(deleted_incident, 404)),
                 404
                 )
-
         return make_response(jsonify(get_error(error_messages["404"],
                                                404)), 404)
-
-
-class AdminView(Resource, IncidentModel):
-    """
-    AdminView used to update incident status and retrieve all incident records
-
-    Defines methods that define logic for for :
-
-        -Get all incidents
-        -Update an incident's status
-
-        Incident Record : {
-            "id": Integer,
-            "createdOn": String, # Datetime string
-            "createdBy": Integer,
-            # Integer ID of the user who created the incident
-            "title": String ,
-            "type": String,
-            "location": String, # Lat Long Coordinates
-            "status": String,
-            # Either draft,resolved,rejected or under investigation
-            "images": List, # List of image urls
-            "videos": List,# List of video urls
-            "comment": String
-        }
-
-    """
-
-    def __init__(self):
-        """
-        Constructor sets the AdminView initializes the validator and sets The
-        messages used in responses
-        """
-        self.messages = {
-            "updated": "Incident status successfully updated",
-            "read": "Incident(s) successfully retrieved"
-        }
-
-        self.status_types = {
-            "DRAFT": "draft",
-            "RESOLVED": "resolved",
-            "REJECTED": "rejected",
-            "UNDER_INVESTIGATION": "under investigation",
-        }
-
-    @auth_required
-    def get(self, auth):
-        """
-        GET method returns all incidents records
-        """
-        incidents_data = IncidentDB.get_incidents()
-        if isinstance(incidents_data, str):
-            return make_response(jsonify({
-                "msg": incidents_data,
-                "status_code": 404
-            }), 404)
-        return make_response(jsonify({
-            "data": incidents_data,
-            "msg": self.messages["read"],
-            "status_code": 200
-        }), 200)
-
-    @auth_required
-    def patch(self, auth, id):
-        """
-        PATCH endpoint that updates an incident status
-        properties using the :param :id to find the record
-        """
-        patch_parser = parser.copy()
-        patch_parser.add_argument(
-            'status', required=True, type=str,
-            choices=('draft', 'resolved', 'rejected',
-                     'under investigation'),
-            location='json',
-            help='The status of the incident - '
-            'can either be draft, resolved,'
-            'rejected or under investigation'
-        )
-        new_data = patch_parser.parse_args()
-        validation_results = validate_admin_put_input(validator, new_data)
-        if validation_results is not True:
-            return validation_results
-
-        incident_data = IncidentDB.update_incident(
-            id, "status", new_data["status"]
-        )
-        if isinstance(incident_data, dict):
-            return make_response(jsonify({
-                "data": [incident_data],
-                "msg": self.messages["updated"],
-                "status_code": 200
-            }), 200)
-
-        if (isinstance(incident_data, str)
-            and IncidentDB.message["NOT_FOUND"] in incident_data):
-            return make_response(jsonify({
-                "msg": incident_data,
-                "status_code": 404
-            }), 404)
-        if isinstance(incident_data, str):
-            return make_response(jsonify({
-                "msg": incident_data,
-                "status_code": 400
-            }), 400)
-        return make_response(
-            jsonify(get_error(error_messages["400"], 400)), 400)

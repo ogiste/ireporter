@@ -130,7 +130,7 @@ class UserModel():
             return self.message["NOT_FOUND"] + str(username) \
              + " Record could not be found or doesnot exist"
 
-    def save(self, new_user):
+    def save(self, new_user, isAdmin=None):
         """
         Creates a new user record
         by taking in a :new_user arg of type dictionary
@@ -152,6 +152,8 @@ class UserModel():
             "createdOn": new_user["createdOn"],
             "isAdmin": new_user["isAdmin"]
         }
+        if isAdmin is True:
+            new_user["isAdmin"] = True
         pw_hash = sha256_crypt.hash(new_user["password"])
         insert_user_statement = """INSERT INTO users(
         fname,lname,othername,username,email,phone,password,createdOn,isAdmin)

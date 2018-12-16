@@ -8,11 +8,57 @@ Incident DELETE method
 
 """
 from flask import make_response, jsonify
-from app.api.v1.views.errors import get_error
+from app.api.v2.views.errors import get_error, parser
 
 COMMENT_MAX = 100
 COMMENT_MIN = 3
 
+incident_parser = parser.copy()
+
+incident_parser.add_argument(
+    'title', type=str,
+    required=True, location='json',
+    help='The title of the incident is a required field'
+    )
+
+incident_parser.add_argument(
+    'type', type=str, required=True,
+    choices=('red-flag', 'intervention'), location='json',
+    help='The type of the incident is a required field'
+    '- must be red-flag or intervention'
+    )
+
+incident_parser.add_argument(
+    'location',
+    type=str, required=True, location='json',
+    help='The Latitude and Longitude of the incident'
+    ' is a required field'
+    )
+
+incident_parser.add_argument(
+    'comment',
+    type=str, required=True, location='json',
+    help='The descriptive comment of the incident'
+    ' is a required field'
+    )
+
+incident_parser.add_argument(
+    'status',
+    type=str, choices=('draft', 'resolved', 'rejected', 'under investigation'),
+    location='json',
+    help='The status of the incident - can either be draft, resolved,'
+    'rejected or under investigation'
+    )
+
+incident_parser.add_argument(
+    'images', action='append', location='json',
+    help="A list of image urls related to the incident and is not required"
+    )
+
+incident_parser.add_argument(
+    'videos', action='append', location='json',
+    help="A list of video urls related to the incident and is not required"
+    )
 
 def validate_incident_post_input(validator, new_incident):
     """

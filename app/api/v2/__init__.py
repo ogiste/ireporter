@@ -14,8 +14,8 @@ from flask_restful import Api
 # Local imports
 from .views.user import UserView
 from .views.auth import AuthView
-from .views.incident import IncidentView, AdminView
-
+from .views.incident import IncidentView
+from .views.admin import AdminView
 v2 = Blueprint("v2", __name__, url_prefix="/api/v2")
 
 api_v2 = Api(v2)
