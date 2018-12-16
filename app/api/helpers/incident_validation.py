@@ -8,11 +8,57 @@ Incident DELETE method
 
 """
 from flask import make_response, jsonify
-from app.api.v1.views.errors import get_error
+from .errors import get_error, parser
 
 COMMENT_MAX = 100
 COMMENT_MIN = 3
 
+incident_parser = parser.copy()
+
+incident_parser.add_argument(
+    'title', type=str,
+    required=True, location='json',
+    help='The title of the incident is a required field'
+    )
+
+incident_parser.add_argument(
+    'type', type=str, required=True,
+    choices=('red-flag', 'intervention'), location='json',
+    help='The type of the incident is a required field'
+    '- must be red-flag or intervention'
+    )
+
+incident_parser.add_argument(
+    'location',
+    type=str, required=True, location='json',
+    help='The Latitude and Longitude of the incident'
+    ' is a required field'
+    )
+
+incident_parser.add_argument(
+    'comment',
+    type=str, required=True, location='json',
+    help='The descriptive comment of the incident'
+    ' is a required field'
+    )
+
+incident_parser.add_argument(
+    'status',
+    type=str, choices=('draft', 'resolved', 'rejected', 'under investigation'),
+    location='json',
+    help='The status of the incident - can either be draft, resolved,'
+    'rejected or under investigation'
+    )
+
+incident_parser.add_argument(
+    'images', action='append', location='json',
+    help="A list of image urls related to the incident and is not required"
+    )
+
+incident_parser.add_argument(
+    'videos', action='append', location='json',
+    help="A list of video urls related to the incident and is not required"
+    )
 
 def validate_incident_post_input(validator, new_incident):
     """
@@ -51,8 +97,14 @@ def validate_incident_put_input(validator, new_data, prop):
     Returns
     -------
     make_response object if validation Failed
-    None object if validation Succeeded
+    True object if validation Succeeded
     """
+    if prop != "comment" and prop != "location":
+        return make_response(
+            jsonify(get_error("Cannot update "
+                              " attributes other than incident"
+                              " location and comment ",
+                              404)), 404)
     if prop == "location":
         new_data["prop_value"] = validator.\
             remove_whitespace(new_data["prop_value"])
@@ -79,4 +131,29 @@ def validate_incident_put_input(validator, new_data, prop):
             validation_messages["empty_loc_or_comment"]
         return make_response(jsonify(get_error(empty_loc_or_comment, 400)),
                              400)
+    return True
+
+
+def validate_admin_put_input(validator, new_data):
+    """
+    Function that validates the status value for update
+    takes in a validator object and new_data dictionary from the request body
+    Returns
+    -------
+    make_response object if validation Failed
+    True object if validation Succeeded
+    """
+    new_data["status"] = validator.\
+        remove_lr_whitespace(new_data["status"])
+    if id is not None and new_data["status"] != "":
+        is_valid_status = validator.\
+            is_valid_incident_status(new_data["status"])
+        if is_valid_status is not True:
+            valid_status = validator.\
+                validation_messages["valid_status"]
+            return make_response(jsonify(get_error(valid_status, 400)), 400)
+    else:
+        empty_status = validator.\
+            validation_messages["empty_status"]
+        return make_response(jsonify(get_error(empty_status, 400)), 400)
     return True

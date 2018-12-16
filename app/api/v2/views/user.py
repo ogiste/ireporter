@@ -7,9 +7,10 @@ from flask_restful import Resource
 
 # Local imports
 from app.api.helpers.auth_validation import auth_required
-from .errors import parser, get_error, Validation
-from .helpers.user_validation import (validate_user_post_input,
-                                      validate_user_put_input)
+from app.api.helpers.errors import parser, get_error, Validation
+from app.api.helpers.user_validation import (
+    validate_user_post_input,
+    validate_user_put_input)
 from app.api.v2.models.user import UserModel
 
 

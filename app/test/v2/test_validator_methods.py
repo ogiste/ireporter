@@ -3,7 +3,7 @@ Test cases for user classes
 """
 import unittest
 
-from app.api.v2.views.errors import Validation
+from app.api.helpers.errors import Validation
 
 
 class TestValidatorMethods(unittest.TestCase):

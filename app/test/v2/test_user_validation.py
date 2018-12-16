@@ -8,9 +8,9 @@ from pprint import pprint
 
 from app import create_app
 from app.db_config import connect, create_tables, drop_tables
-from app.api.v2.views.errors import Validation
-from app.api.v2.views.helpers.user_validation import (validate_user_post_input,
-                                                      validate_user_put_input)
+from app.api.helpers.errors import Validation
+from app.api.helpers.user_validation import (validate_user_post_input,
+                                             validate_user_put_input)
 
 
 class TestUserAuthentication(unittest.TestCase):

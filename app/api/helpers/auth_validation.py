@@ -9,14 +9,40 @@ from functools import wraps
 from flask import request, make_response, jsonify
 from app.db_config import connect
 from psycopg2 import IntegrityError
+from .errors import get_error
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 auth_error_messages = {}
 auth_error_messages["401"] = ("You are not authorize to access"
                               " this resource. Please sign in and try again")
-auth_error_messages["403"] = ("You do not have permissions to access this resource")
+auth_error_messages["403"] = ("You do not have permissions to access"
+                              " this resource")
+
+PASSWORD_MAX = 30
+PASSWORD_MIN = 6
 
 
+def validate_auth_post_input(validator, user_credentials):
+    """
+    Function that validates the username and password properties of a user
+
+    Returns
+    -------
+    make_response object if validation Failed
+    True Boolean if validation Succeeded
+    """
+    if not validator.is_in_limit(user_credentials["username"]):
+        return make_response(jsonify(
+            get_error(validator.validation_messages["lim_user_username"],
+                      400)), 400)
+    if not validator.is_in_limit(user_credentials["password"],
+                                 PASSWORD_MAX, PASSWORD_MIN):
+        return make_response(jsonify(
+            get_error(validator.
+                      create_limit_message("Your password", PASSWORD_MAX,
+                                           PASSWORD_MIN),
+                      400)), 400)
+    return True
 
 def auth_required(func):
     """

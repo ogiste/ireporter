@@ -5,9 +5,10 @@ from flask_restful import Resource
 
 
 # Local imports
-from .errors import parser, get_error, Validation, error_messages
-from .helpers.incident_validation import (validate_incident_post_input,
-                                          validate_incident_put_input)
+from app.api.helpers.errors import parser, get_error, Validation, error_messages
+from app.api.helpers.incident_validation import (
+    validate_incident_post_input,
+    validate_incident_put_input)
 
 
 from app.api.v1.models.incident import IncidentModel

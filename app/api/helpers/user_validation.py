@@ -6,7 +6,7 @@ user PUT method
 user POST method
 """
 from flask import make_response, jsonify
-from app.api.v2.views.errors import get_error, Validation
+from .errors import get_error, Validation
 
 FL_NAME_MAX = 30 # First name, Last name max value
 FL_NAME_MIN = 2  # First name, Last name min value
