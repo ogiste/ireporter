@@ -12,6 +12,7 @@ from instance.config import app_config
 from .api.v2 import v2 as version_two
 from app.db_config import connect, create_tables
 from app.api.helpers.error_handler_validation import status_error_messages
+from flask_cors import CORS
 
 
 def create_app(config_name="development"):
@@ -26,6 +27,7 @@ def create_app(config_name="development"):
     flask application object with settings configured
     """
     app = Flask(__name__)
+    CORS(app)
     app.url_map.strict_slashes = False
     app.config.from_object(app_config[config_name])
     app.config['BUNDLE_ERRORS'] = True
