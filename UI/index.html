@@ -3,95 +3,94 @@
   <head>
     <meta charset="utf-8">
     <title>iReporter</title>
-    <link rel="stylesheet" href="UI/css/main.css">
-    <script type="module" src="UI/js/services/user_services.js"></script>
-    <script type="module" src="UI/js/main.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+    <script type="module" src="js/services/user_services.js"></script>
+    <script type="module" src="js/main.js"></script>
   </head>
   <body>
     <div id="nav" class="nav">
-  <ul>
-    <li><a href="#home">Home</a></li>
-    <li><a href="UI/sign_up.html">Register</a></li>
-    <li><a href="UI/login.html">Login</a></li>
-  </ul>
-</div>
-<div class="container">
-  <div id="home" class="bg">
-    <div>
-      <h1>iReporter</h1>
-      <p>iReporter enables any/every citizen to bring any form of corruption to the notice of appropriate authorities and thegeneral public. Users can also report on things that needs government intervention</p>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="sign_up.html">Register</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
     </div>
-  </div>
-  <div id="register" class="bg">
-    <div class="form-container">
-      <h1>Register</h1>
-        <form class="sign_up_form" method="post">
-          <div  class="form-group">
-            <label for="Username">Username</label>
-            <input id="sign_up_username" type="text" placeholder="Username">
-          </div>
-          <div class="form-group">
-            <label for="First Name">First Name</label>
-            <input id="sign_up_fname"type="text" placeholder="First Name">
-          </div>
-          <div class="form-group">
-            <label for="Last Name">Last Name</label>
-            <input id="sign_up_lname" type="text" placeholder="Last Name">
-          </div>
-          <div class="form-group">
-            <label for="Other Name">Other Name</label>
-            <input id="sign_up_othername" type="text" placeholder="Other Name">
-          </div>
-          <div class="form-group">
-            <label for="Email">Email</label>
-            <input id="sign_up_email" type="text" placeholder="Email">
-          </div>
-          <div class="form-group">
-            <label for="Phone">Phone</label>
-            <input id="sign_up_phone" type="text" placeholder="Phone">
-          </div>
-          <div class="form-group">
-            <label for="Password">Password</label>
-            <input id="sign_up_password" type="password" placeholder="******">
-          </div>
-          <div class="form-group">
-            <button class="button-default" name="Sign Up" onclick=
-            "register()">
-            <b>Sign Up</b>
-            </button>
-          </div>
+    <div class="container">
+      <div id="home" class="bg">
+        <div>
+          <h1>iReporter</h1>
+          <p>iReporter enables any/every citizen to bring any form of corruption to the notice of appropriate authorities and thegeneral public. Users can also report on things that needs government intervention</p>
+        </div>
+      </div>
+      <div id="register" class="bg">
+        <div class="form-container">
+          <h1>Register</h1>
+            <form class="sign_up_form" method="post">
+              <div  class="form-group">
+                <label for="Username">Username</label>
+                <input id="sign_up_username" type="text" placeholder="Username">
+              </div>
+              <div class="form-group">
+                <label for="First Name">First Name</label>
+                <input id="sign_up_fname"type="text" placeholder="First Name">
+              </div>
+              <div class="form-group">
+                <label for="Last Name">Last Name</label>
+                <input id="sign_up_lname" type="text" placeholder="Last Name">
+              </div>
+              <div class="form-group">
+                <label for="Other Name">Other Name</label>
+                <input id="sign_up_othername" type="text" placeholder="Other Name">
+              </div>
+              <div class="form-group">
+                <label for="Email">Email</label>
+                <input id="sign_up_email" type="text" placeholder="Email">
+              </div>
+              <div class="form-group">
+                <label for="Phone">Phone</label>
+                <input id="sign_up_phone" type="text" placeholder="Phone">
+              </div>
+              <div class="form-group">
+                <label for="Password">Password</label>
+                <input id="sign_up_password" type="password" placeholder="******">
+              </div>
+              <div class="form-group">
+                <button class="button-default" name="Sign Up" id="register_submit">
+                <b>Sign Up</b>
+                </button>
+              </div>
 
-        </form>
+            </form>
+        </div>
+      </div>
+      <div id="login" class="bg">
+        <div class="form-container">
+          <h1>Login</h1>
+          <form class="sign_up_form" method="post">
+
+            <div>
+              <label for="Username">Username</label>
+              <input id="login_username" type="text" placeholder="Username">
+            </div>
+            <div>
+              <label for="Password">Password</label>
+              <input id="login_password" type="password" placeholder="******">
+            </div>
+            <div>
+              <button type="button" id="login_submit"class="button-default"
+              name="Login">
+                <b>Submit</b>
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      <div class="footer">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#register">Register</a></li>
+        <li><a href="#login">Login</a></li>
+      </div>
     </div>
-  </div>
-  <div id="login" class="bg">
-    <div class="form-container">
-      <h1>Login</h1>
-      <form class="sign_up_form" method="post">
-
-        <div>
-          <label for="Username">Username</label>
-          <input id="login_username" type="text" placeholder="Username">
-        </div>
-        <div>
-          <label for="Password">Password</label>
-          <input id="login_password" type="password" placeholder="******">
-        </div>
-        <div>
-          <button type="button" class="button-default" name="Login"
-            onclick="login()">
-            <b>Submit</b>
-          </button>
-        </div>
-
-      </form>
-    </div>
-  </div>
-  <div class="footer">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#register">Register</a></li>
-    <li><a href="#login">Login</a></li>
-  </div>
-</div>
   </body>
 </html>

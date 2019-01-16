@@ -1,8 +1,9 @@
 
 // import * as reqHelpers from './helpers/request_helpers';
 // import * as inputHelpers from './helpers/user_input_helpers';
-import { login } from './services/user_services.js';
+import userServices from './services/user_services.js';
 
+const { login } = userServices;
 let questMarker;
 const addressName = '';
 let lat; let lng;
