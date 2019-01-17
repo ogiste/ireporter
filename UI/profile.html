@@ -4,52 +4,48 @@
     <meta charset="utf-8">
     <title>iReporter</title>
     <link rel="stylesheet" href="./css/main.css">
-    <script type="module" src="js/services/user_services.js"></script>
+    <script type="module" src="js/profile.js"></script>
     <script type="module" src="js/main.js"></script>
   </head>
   <body>
     <div id="nav" class="nav">
-  <ul>
-    <li><a href="#home">Home</a></li>
-    <li><a href="#quests">My Red Flags/Interventions</a></li>
-    <li class="li-right"><a href="#logout">Logout</a></li>
-  </ul>
+      <ul id="main_nav_ul">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
+        <li><a href="create_quest.html">Create an incident</a></li>
+        <li class="li-right"><a id="logout_link" onclick="logout()">Logout</a></li>
+      </ul>
 </div>
 <div class="container">
   <div id="profile" class="bg">
       <div class="form-container">
-            <h1>Edit your details</h1>
-              <form class="update_user_form" action="update_user.html" method="put">
+            <h1>Your details</h1>
+              <div class="update_user_form" >
                 <div  class="form-group">
-                  <label for="Username">Username</label>
-                  <input type="text" placeholder="Username">
+                  <label for="Username">Username: </label>
+                  <p id="username"></p>
                 </div>
                 <div class="form-group">
                   <label for="First Name">First Name</label>
-                  <input type="text" placeholder="First Name">
+                  <p id="user_fname"></p>
                 </div>
                 <div class="form-group">
-                  <label for="Second Name">Second Name</label>
-                  <input type="text" placeholder="Second Name">
+                  <label for="Last Name">Last Name</label>
+                  <p id="user_lname"></p>
+                </div>
+                <div class="form-group">
+                  <label for="Other Name">Other Name</label>
+                  <p id="user_othername"></p>
                 </div>
                 <div class="form-group">
                   <label for="Email">Email</label>
-                  <input type="text" placeholder="Email">
+                  <p id="user_email"></p>
                 </div>
                 <div class="form-group">
                   <label for="Phone">Phone</label>
-                  <input type="text" placeholder="Phone">
+                  <p id="user_phone"></p>
                 </div>
-                <div class="form-group">
-                  <label for="Password">Password</label>
-                  <input type="password" placeholder="******">
-                </div>
-                <div class="form-group">
-                  <input type="submit" class="button-default" name="Update" value="submit">
-                </div>
-              </form>
-
-
+              </div>
       </div>
     </div>
 
