@@ -1,0 +1,138 @@
+
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>iReporter</title>
+    <link rel="stylesheet" href="./css/main.css">
+    <script type="module" src="js/services/user_services.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <div id="nav" class="nav">
+      <ul id="main_nav_ul">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="profile.html">My Profile</a></li>
+        <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
+        <li><a href="create_quest.html">Create an incident</a></li>
+        <li class="li-right"><a id="logout_link" href="">Logout</a></li>
+      </ul>
+</div>
+<div class="container">
+  <div id="quest_table" class="bg-alt">
+  <div class="table-container">
+    <br>
+    <div>
+      <h1>Statistics For Red-flags & Interventions</h1>
+      <table>
+        <thead>
+            <tr>
+                <th>Resolved Red-flags/Interventions </th>
+                <th>Rejected Red-flags/Interventions</th>
+                <th>Under Investigation Red-flags/Interventions</th>
+                <th>Draft Red-flad/Interventions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class=" ">
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>3</td>
+            </tr>
+        <tbody>
+    </table>
+    </div>
+
+
+    <h1>All Red-flags & Interventions</h1>
+    <div class="">
+      <b>Create a red-flag/intervention</b>
+      <button class="view-quest"><a href="#" > Create </a></button>
+    <br>
+    </div>
+    <div>
+      <div class="form-group">
+        <label for="Status Filter"><b>Red-flag/Intervention Status Filter : </b> </label>
+        <select>
+          <option value="0">All</option>
+          <option value="1">Draft</option>
+          <option value="2">Resolved</option>
+          <option value="3">Rejected</option>
+          <option value="4">Under Investigation</option>
+        </select>
+      </div>
+    </div>
+    <br>
+    <table>
+        <thead>
+            <tr>
+                <th>Created By(ID) </th>
+                <th>Red-flag/Intervetion Title</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class=" ">
+                <td>1</td>
+                <td>Bribery in Procurement</td>
+                <td>Red-flag</td>
+                <td>Bribery in procurement of office supplies for Education ministry</td>
+                <td>
+                  <select>
+                  <option value="1">Draft</option>
+                  <option value="2">Resolved</option>
+                  <option value="3">Rejected</option>
+                  <option value="4">Under Investigation</option>
+                </select>
+                </td>
+                <td><button class="view-quest"><a href="">Update</a></button><button class="view-quest"><a href="">View details</a></button></td>
+            </tr>
+            <tr class=" ">
+                <td>2</td>
+                <td>Pothole or highway</td>
+                <td>Intervention</td>
+                <td>Pothole on Uhuru highway causing damage to vehicles and safety hazard</td>
+                <td>
+                  <select>
+                  <option value="1">Draft</option>
+                  <option value="2">Resolved</option>
+                  <option value="3">Rejected</option>
+                  <option value="4">Under Investigation</option>
+                </select>
+                </td>
+                <td><button class="view-quest"><a href="">Update</a></button><button class="view-quest"><a href="">View details</a></button></td>
+            </tr>
+            <tr class=" ">
+                <td>3</td>
+                <td>Electric pole on road</td>
+                <td>Intervention</td>
+                <td>Electric pole blocking road in Siaya county, Siaya road</td>
+                <td>
+                  <select>
+                  <option value="1">Draft</option>
+                  <option value="2">Resolved</option>
+                  <option value="3">Rejected</option>
+                  <option value="4">Under Investigation</option>
+                </select>
+                </td>
+                <td><button class="view-quest"><a href="">Update</a></button><button class="view-quest"><a href="">View details</a></button></td>
+            </tr>
+        <tbody>
+    </table>
+  </div>
+</div>
+  <div class="footer">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="profile.html">My Profile</a></li>
+    <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
+    <li><a href="create_quest.html">Create an incident</a></li>
+    <li class="li-right"><a id="logout_link" href="">Logout</a></li>
+  </div>
+</div>
+  </body>
+</html>
