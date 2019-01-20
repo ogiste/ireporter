@@ -1,5 +1,5 @@
 
-
+let resStatus = '';
 let errorMessages = [];
 function getErrorString(allValidationErrors) {
   // Function to return a generated error string message from the array of
@@ -25,16 +25,17 @@ function getValidationErrorMessage(resData) {
   // recursive function that returns the message string from a response with
   // a different error message format
   if (typeof resData === 'object' && resData !== null) {
-    for (const propKey in Object.keys(resData)) {
-      if ( typeof resData[propKey] === 'object' && propKey ==="message" &&
-      resData[propKey] !== null ) {
-        console.log('propKey: ',propKey);
-        console.log('resData[propKey]: ',resData[propKey]);
-        errorMessages.push(getValidationErrorMessage(resData[propKey]));
+    const propKeys = Object.keys(resData);
+    let propName = '';
+    for (let propKey = 0; propKey < propKeys.length; propKey++) {
+      propName = propKeys[propKey];
+      if (typeof resData[propName] === 'object' && propName === 'message'
+      && resData[propName] !== null) {
+        errorMessages.push(getValidationErrorMessage(resData[propName]));
       }
-      if ( typeof resData[propKey] === 'string' &&
-      resData[propKey] !== '') {
-        return resData[propKey];
+      if (typeof resData[propName] === 'string'
+      && resData[propName] !== '') {
+        return resData[propName];
       }
     }
   }
@@ -43,34 +44,27 @@ function getValidationErrorMessage(resData) {
   errorMessages = [];
   return validationErrorMessage;
 }
-// function postData(url = '', data = {}, reqHeaders = {}) {
-//   // Function used to post data using the fetch API
-//   console.log('postData url: ', url);
-//   console.log('postData data: ', data);
-//   console.log('postData reqHeaders: ', reqHeaders);
-//   return fetch(url, {
-//     method: 'POST',
-//     mode: 'cors',
-//     headers: reqHeaders,
-//     body: JSON.stringify(data),
-//   }).then(((response) => {
-//     console.log('postData: ', response.json());
-//     // const res = response.json();
-//     // if (!Object.prototype.hasOwnProperty.call(res, 'status_code')) {
-//     //   res.status_code = response.status;
-//     // }
-//     return response.json();
-//   }));
-// }
+
 function postData(url = '', data = {}, reqHeaders = {}) {
   // Function used to post data using the fetch API
-  console.log(JSON.stringify(data));
   return fetch(url, {
     method: 'POST',
+    mode: 'cors',
     headers: reqHeaders,
     body: JSON.stringify(data),
-  }).then(response => response.json());
+  }).then((res) => {
+    resStatus = res.status;
+    return res.clone().json();
+  }).then(((response) => {
+    console.log('postData: ', response);
+    let res = response;
+    if (!Object.prototype.hasOwnProperty.call(res, 'status_code')) {
+      res['status_code'] = resStatus;
+    }
+    return res;
+  }));
 }
+
 
 function getData(url = '', reqHeaders = {}) {
   // Function used to post data using the fetch API

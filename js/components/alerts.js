@@ -1,7 +1,7 @@
 import constants from '../constants.js';
 
 const { alertIds } = constants;
-let alertTimeoutDefault = 10000;
+let alertTimeoutDefault = 6000;
 
 function removeAlert(alertId) {
   // Remove any element with id - alertId
