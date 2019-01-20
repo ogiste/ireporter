@@ -30,7 +30,6 @@ def create_app(config_name="development"):
     CORS(app)
     app.url_map.strict_slashes = False
     app.config.from_object(app_config[config_name])
-    app.config['BUNDLE_ERRORS'] = True
     conn = connect(app.config['DB_NAME'])
     create_tables(conn)
     app.register_blueprint(version_two)
