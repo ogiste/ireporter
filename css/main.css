@@ -204,8 +204,11 @@ select{
     color: black;
 }
 
+button {
+  border-style: none;
+}
+
 .button-default{
-  border-radius: 2px;
   padding: 12px;
   margin: 4px;
 }
@@ -215,7 +218,6 @@ color: white;
 font-size: 16px;
 line-height: 10px;
 padding: 21px;
-border-radius: 10px;
 font-weight: normal;
 text-decoration: none;
 font-style: normal;
@@ -225,9 +227,15 @@ background: #020202;
 }
 
 .view-quest:hover,.myButton:hover,.button-default:hover {
-background: #1a1a1a; }
+background: #706f6f;
+}
+
 .view-quest:active,.myButton:active,.button-default:active {
-background: #252525; }
+  background: #484848;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #7a7a7a;
+}
 
 .view-quest{
   padding: 11px;
@@ -285,9 +293,9 @@ table {
 }
 
 td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 14px;
 }
 
 .button-default>a,.edit-quest>a,.delete-quest>a,.view-quest>a{

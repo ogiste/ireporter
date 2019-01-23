@@ -1,12 +1,12 @@
 import authHelpers from './helpers/auth_helpers.js';
 import router from './helpers/router.js';
-import inputHelpers from './helpers/input_helpers.js';
+import domHelpers from './helpers/dom_helpers.js';
 import alerts from './components/alerts.js';
 import constants from './constants.js';
 
 const { alertIds } = constants;
 const { isAuth, getAuthProfile } = authHelpers;
-const { setElTextById } = inputHelpers;
+const { setElTextById } = domHelpers;
 const { newUrl, uiUrlFilepaths } = router;
 const { createAlert } = alerts;
 

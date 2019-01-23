@@ -1,11 +1,11 @@
 import alerts from '../components/alerts.js';
 import router from '../helpers/router.js';
 import reqHelpers from '../helpers/request_helpers.js';
-import inputHelpers from '../helpers/input_helpers.js';
+import domHelpers from '../helpers/dom_helpers.js';
 import authHelpers from '../helpers/auth_helpers.js';
 import constants from '../constants.js';
 
-const { getElTextValue } = inputHelpers;
+const { getElTextValue } = domHelpers;
 const { postData, getValidationErrorMessage } = reqHelpers;
 const { ireporterSettings, defaultHeaders, alertIds } = constants;
 const { createAlert } = alerts;
