@@ -5,7 +5,6 @@ function createDomElement(elementTag = 'div', elementText = '', elementClass = '
   const newElement = document.createElement(elementTag);
   // newElement.classList.add(`${elementClass}`);
   newElement.className += ` ${elementClass}`;
-  console.log('createDomElement className: ', newElement.className);
   newElement.id = elementId;
   const elementTextNode = document.createTextNode(elementText);
   newElement.appendChild(elementTextNode);
@@ -52,6 +51,7 @@ function getSelectedInputOption(element_id = '') {
   }
   return '';
 }
+
 
 const domHelpers = {
   getElById,
