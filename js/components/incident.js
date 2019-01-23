@@ -3,7 +3,9 @@ import reqHelpers from '../helpers/request_helpers.js';
 import domHelpers from '../helpers/dom_helpers.js';
 import authHelpers from '../helpers/auth_helpers.js';
 import constants from '../constants.js';
+import mapsApi from '../maps.js';
 
+const { geocodeLatLng, geocoder, infowindow, initMap } = mapsApi;
 const { uiUrlFilepaths } = router;
 const {
   getElTextValue,
@@ -105,10 +107,43 @@ function displaySingleIncidentDetails(incidentDetails) {
   setElTextById('incident_comment', incidentDetails.comment);
 }
 
+function addIncidentCoordinatesToMaps(incidentLocation) {
+// Function to add the google maps coordinates of an incident
+  const latLngArray = incidentLocation.split(',', 2);
+  const lat = parseFloat(latLngArray[0]);
+  const lng = parseFloat(latLngArray[1]);
+  function initNewMap() {
+    const myLatLng = {
+      lat,
+      lng,
+    };
+    const map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 10,
+      center: myLatLng
+    });
+    geocodeLatLng(geocoder, map, infowindow, myLatLng.lat, myLatLng.lng);
+  }
+  setElTextById('incident_lat', lat);
+  setElTextById('incident_lng', lng);
+  initNewMap();
+}
+
+function addIncidentEditableMap(incidentLocation) {
+// Function to add the google maps coordinates of an incident for editing
+  const latLngArray = incidentLocation.split(',', 2);
+  const lat = parseFloat(latLngArray[0]);
+  const lng = parseFloat(latLngArray[1]);
+  setElTextById('incident_lat', lat);
+  setElTextById('incident_lng', lng);
+  initMap(lat, lng);
+}
+
 const incidentComponents = {
   displaySingleIncidentDetails,
   displayIncidentTableList,
   addDeleteIncidentEventListener,
+  addIncidentCoordinatesToMaps,
+  addIncidentEditableMap,
 };
 
 export default incidentComponents;

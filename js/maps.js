@@ -7,7 +7,6 @@ const infowindow = new google.maps.InfoWindow();
 
 function geocodeLatLng(geocoder, curMap, infowindow, latVal, lngVal) {
   const latlng = { lat: latVal, lng: lngVal };
-  console.log('geocodeLatLng latlng:', latlng);
   geocoder.geocode({ location: latlng }, (results, status) => {
     if (status === 'OK') {
       if (results[0]) {
@@ -30,13 +29,22 @@ function geocodeLatLng(geocoder, curMap, infowindow, latVal, lngVal) {
   });
 }
 
-function initMap() {
+function initMap(defaultLat = '', defaultLng = '') {
   // Function used to integrate google maps api for latitude and Longitude
   // coordinates
-  map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 4,
-    center: { lat: -1.3118799370815788, lng: 36.81155887155501}
-  });
+
+  if (defaultLat !== '' && defaultLng !== '') {
+    map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 14,
+      center: { lat: defaultLat, lng: defaultLng },
+    });
+    geocodeLatLng(geocoder, map, infowindow, defaultLat, defaultLng);
+  } else {
+    map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 4,
+      center: { lat: -1.3118799370815788, lng: 36.81155887155501}
+    });
+  }
 
   // Create the search box and link it to the UI element.
   let input = document.getElementById('pac-input');

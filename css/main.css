@@ -379,9 +379,9 @@ td, th {
   width: 345px;
 }
 
-.map-container{
-  height:400px;
-  width:550px;
+.map-container {
+    height: 400px;
+    width: 500px;
 }
 #map {
   height: 100%;
