@@ -2,6 +2,8 @@ let questMarker=undefined;
 let address_name = '';
 let lat,lng;
 let map = '';
+const geocoder = new google.maps.Geocoder();
+const infowindow = new google.maps.InfoWindow();
 
 function geocodeLatLng(geocoder, curMap, infowindow, latVal, lngVal) {
   const latlng = { lat: latVal, lng: lngVal };
@@ -9,7 +11,6 @@ function geocodeLatLng(geocoder, curMap, infowindow, latVal, lngVal) {
   geocoder.geocode({ location: latlng }, (results, status) => {
     if (status === 'OK') {
       if (results[0]) {
-        map.setZoom(11);
         curMap.panTo(latlng);
         questMarker = new google.maps.Marker({
           position: latlng,
@@ -36,9 +37,6 @@ function initMap() {
     zoom: 4,
     center: { lat: -1.3118799370815788, lng: 36.81155887155501}
   });
-
-  const geocoder = new google.maps.Geocoder();
-  const infowindow = new google.maps.InfoWindow();
 
   // Create the search box and link it to the UI element.
   let input = document.getElementById('pac-input');
@@ -110,3 +108,13 @@ function placeMarkerAndPanTo(latLng, curMap) {
   });
 
 }
+
+const mapsApi = {
+  initMap,
+  geocodeLatLng,
+  geocoder,
+  infowindow,
+  placeMarkerAndPanTo,
+};
+
+export default mapsApi;

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>iReporter</title>
     <link rel="stylesheet" href="css/main.css">
-    <script type="module" src="js/services/user_services.js"></script>
+    <script type="module" src="js/view_incident.js"></script>
     <script type="module" src="js/main.js"></script>
   </head>
   <body>
@@ -18,21 +18,40 @@
       </ul>
     </div>
     <div class="container">
-      <div id="incident_container" class="">
+      <div id="incident_container" class="container-flex">
         <div>
-          <h1>Incident Details</h1>
+          <h1>Incident Details</h1><hr>
           <div>
-            <h2 id="incident_title">
-
-            </h2>
-            <div>
-              <span id="incident_type"></span>
-              <span id="incident_status"></span>
-            </div>
+            <b> Type: </b><span id="incident_type"></span>
+            <b> Status: </b><span id="incident_status"></span>
           </div>
-          <div>
-            <p id="incident_comment"></p>
-            <div><span id="incident_createdOn"></span></div>
+          <div  class="form-group">
+            <label for="Title"><b>Title</b></label>
+            <input  id="incident_title" disabled type="text" placeholder="Title">
+          </div>
+
+          <div class="form-group">
+            <label for="Comment"><b>Comment</b></label>
+            <textarea id="incident_comment" disabled type="textarea" rows="4" cols="50">
+            </textarea>
+          </div>
+          <div  class="form-group">
+            <label for="Incident Creation Date"><b>Created On</b></label>
+            <input  id="incident_createdOn" disabled type="text"
+            placeholder="Creation Date">
+          </div>
+          <div class="form-group ">
+            <label for="incident map"><b>Incident Location</b>
+            </label>
+            <div class="map-container">
+              <div id="map"></div>
+            </div>
+            <label for="Location">Location</label>
+            <input type="text" disabled id="incident_loc" placeholder="Location">
+            <label for="Latiture">Latitude</label>
+            <input type="text" disabled id="incident_lat" placeholder="Latitude">
+            <label for="Longitude">Longitude</label>
+            <input type="text" disabled id="incident_lng" placeholder="Longitude">
           </div>
         </div>
       </div>
@@ -43,5 +62,6 @@
         <li><a href="create_quest.html">Create an incident</a></li>
       </div>
     </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLjJJ8MEg85s3CU2eyQdZ_4H5Uaz0oud0&libraries=places"></script>
   </body>
 </html>

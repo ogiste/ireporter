@@ -70,9 +70,18 @@ function getData(url = '', reqHeaders = {}) {
   // Function used to post data using the fetch API
   return fetch(url, {
     method: 'GET',
-    mode: 'cors',
     headers: reqHeaders,
-  }).then(response => response.json());
+  }).then((res) => {
+    resStatus = res.status;
+    return res.clone().json();
+  }).then(((response) => {
+    console.log('getData: ', response);
+    let res = response;
+    if (!Object.prototype.hasOwnProperty.call(res, 'status_code')) {
+      res['status_code'] = resStatus;
+    }
+    return res;
+  }));
 }
 
 const reqHelpers = {
