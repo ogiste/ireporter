@@ -105,12 +105,31 @@ function createAdminIncidentRow(incidentDetails) {
   return incidentRow;
 }
 
+function displayIncidentStatusStats(incidentsDetailsArray) {
+  // Function used to count statistics for incidents based on the status of an incident
+  const statsResolvedElement = getElById('stats_resolved');
+  const statsRejectedElement = getElById('stats_rejected');
+  const statsUnderInvestigationElement = getElById('stats_under_investigation');
+  const statsDraftElement = getElById('stats_resolved');
+
+  const resolvedCount = incidentsDetailsArray.filter(incident => incident.status === 'resolved').length;
+  const rejectedCount = incidentsDetailsArray.filter(incident => incident.status === 'rejected').length;
+  const underInvestigationCount = incidentsDetailsArray.filter(incident => incident.status === 'under investigation').length;
+  const draftCount = incidentsDetailsArray.filter(incident => incident.status === 'draft').length;
+
+  statsResolvedElement.innerHTML = resolvedCount;
+  statsRejectedElement.innerHTML = rejectedCount;
+  statsUnderInvestigationElement.innerHTML = underInvestigationCount;
+  statsDraftElement.innerHTML = draftCount;
+}
+
 function displayAdminIncidentTableList(incidentsDetailsArray) {
   // Function to append a list of all incidents of a user to the incidents tables
   const incidentTbody = getElById('incidents_admin_tbody');
   let incidentRows = [];
   if (incidentsDetailsArray.length === 1) {
     incidentTbody.appendChild(createAdminIncidentRow(incidentsDetailsArray[0]));
+    displayIncidentStatusStats(incidentsDetailsArray);
     return;
   }
   if (incidentsDetailsArray.length === 0) {
@@ -119,6 +138,7 @@ function displayAdminIncidentTableList(incidentsDetailsArray) {
     incidentTbody.appendChild(incidentRows);
     return;
   }
+  displayIncidentStatusStats(incidentsDetailsArray);
   for (let i = 0; i < incidentsDetailsArray.length; i++) {
     incidentRows.push(createAdminIncidentRow(incidentsDetailsArray[i]));
   }
@@ -133,6 +153,7 @@ function displayIncidentTableList(incidentsDetailsArray) {
   let incidentRows = [];
   if (incidentsDetailsArray.length === 1) {
     incidentTbody.appendChild(createIncidentRow(incidentsDetailsArray[0]));
+    displayIncidentStatusStats(incidentsDetailsArray);
     return;
   }
   if (incidentsDetailsArray.length === 0) {
@@ -141,6 +162,7 @@ function displayIncidentTableList(incidentsDetailsArray) {
     incidentTbody.appendChild(incidentRows);
     return;
   }
+  displayIncidentStatusStats(incidentsDetailsArray);
   for (let i = 0; i < incidentsDetailsArray.length; i++) {
     incidentRows.push(createIncidentRow(incidentsDetailsArray[i]));
   }
@@ -197,6 +219,7 @@ function addIncidentEditableMap(incidentLocation) {
 const incidentComponents = {
   displaySingleIncidentDetails,
   displayIncidentTableList,
+  displayIncidentStatusStats,
   displayAdminIncidentTableList,
   addIncidentCoordinatesToMaps,
   addIncidentEditableMap,

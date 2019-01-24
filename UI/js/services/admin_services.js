@@ -48,6 +48,7 @@ function updateIncidentStatus(e) {
       }
       createAlert(data.msg,
         alertIds.success);
+      newUrl(uiUrlFilepaths.ADMIN);
     })
     .catch((error) => {
       if (error && error.msg) createAlert(error.msg, alertIds.error);

@@ -15,4 +15,3 @@ _config.yml
 .coverage
 .env
 .test.env
-.eslintrc
