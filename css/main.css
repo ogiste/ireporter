@@ -213,7 +213,7 @@ button {
   margin: 4px;
 }
 
-.view-quest,.myButton,.button-default,.edit-quest,.delete-quest {
+.update-status-quest,.view-quest,.myButton,.button-default,.edit-quest,.delete-quest {
 color: white;
 font-size: 16px;
 line-height: 10px;
@@ -242,20 +242,20 @@ background: #706f6f;
   margin:2px;
 }
 
-.edit-quest {
+.update-status-quest,.edit-quest {
   background-color: #0084c3;
   color: white;
   padding: 11px;
   margin:2px;
 }
 
-.edit-quest:hover {
+.edit-quest:hover,.update-status-quest:hover {
   background-color: #003e5c;
   color: white;
 
 }
 
-.edit-quest:active {
+.edit-quest:active, .update-status-quest:active {
   background-color: #003e5c;
   color: white;
 
@@ -423,4 +423,8 @@ td, th {
   min-height: 100%;
   justify-content: center;
   align-items: center;
+}
+
+td, th {
+  max-width: 250px;
 }

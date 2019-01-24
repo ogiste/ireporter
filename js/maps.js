@@ -2,6 +2,9 @@ let questMarker=undefined;
 let address_name = '';
 let lat,lng;
 let map = '';
+if(!google){
+  let google = '';
+}
 const geocoder = new google.maps.Geocoder();
 const infowindow = new google.maps.InfoWindow();
 

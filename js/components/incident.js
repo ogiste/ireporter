@@ -44,6 +44,24 @@ function createIncidentActionLinks(status = '', id = '', parentElement) {
   return parentElement;
 }
 
+function createIncidentStatusSelectMenu(status = '', id = '') {
+  // Function used to generate incident select menu based on
+  // an incident's status and id
+  const incidentStatusValues = ['draft', 'resolved', 'rejected', 'under investigation'];
+  const selectElement = createDomElement('select');
+  selectElement.className += ' incident-status-select';
+  selectElement.setAttribute('incidentId', id);
+  for (let i = 0; i < incidentStatusValues.length; i++) {
+    let optionTitle = (incidentStatusValues[i].charAt(0).toUpperCase() +
+    incidentStatusValues[i].slice(1));
+    let selectOption = createDomElement('option', optionTitle);
+    selectOption.value = incidentStatusValues[i];
+    selectElement.appendChild(selectOption);
+  }
+  selectElement.value = status;
+  return selectElement;
+}
+
 function createIncidentRow(incidentDetails) {
   // Function used to create a DOM row for an incident item in an incident list
   const incidentRow = createDomElement('tr');
@@ -62,13 +80,51 @@ function createIncidentRow(incidentDetails) {
   return incidentRow;
 }
 
-function addDeleteIncidentEventListener(deleteIncidentCallBack) {
-  // Function used to add event listeners to all delete buttons
-  const deleteLinks = document.getElementsByClassName('delete-quest');
-  const deleteBtns = Array.from(deleteLinks);
-  deleteBtns.forEach((element) => {
-    element.addEventListener('click', deleteIncidentCallBack);
-  });
+function createAdminIncidentRow(incidentDetails) {
+  // Function used to create a DOM row for an incident item in an incident list
+  const incidentRow = createDomElement('tr');
+  const {
+    title, type, comment, status, id,
+  } = incidentDetails;
+  const titleColumn = createDomElement('td', title);
+  const typeColumn = createDomElement('td', type);
+  const commentColumn = createDomElement('td', comment);
+  const statusColumn = createDomElement('td');
+  statusColumn.appendChild(createIncidentStatusSelectMenu(status, id));
+  const actionsColumn = createDomElement('td');
+  const updateStatusLink = createDomElement('a', 'Update Status', 'update-status-quest');
+  updateStatusLink.setAttribute('incidentId', id);
+  const viewLink = createDomElement('a', 'View', 'view-quest');
+  viewLink.href = `${uiUrlFilepaths.VIEW_INCIDENT}?incident=${id}`;
+  actionsColumn.appendChild(updateStatusLink);
+  actionsColumn.appendChild(viewLink);
+  const columnElements = [titleColumn, typeColumn, commentColumn, statusColumn, actionsColumn];
+  for (let i = 0; i < columnElements.length; i++) {
+    incidentRow.appendChild(columnElements[i]);
+  }
+  return incidentRow;
+}
+
+function displayAdminIncidentTableList(incidentsDetailsArray) {
+  // Function to append a list of all incidents of a user to the incidents tables
+  const incidentTbody = getElById('incidents_admin_tbody');
+  let incidentRows = [];
+  if (incidentsDetailsArray.length === 1) {
+    incidentTbody.appendChild(createAdminIncidentRow(incidentsDetailsArray[0]));
+    return;
+  }
+  if (incidentsDetailsArray.length === 0) {
+    incidentRows = createDomElement('td', 'No incidents created.');
+    incidentRows.rowSpan = 5;
+    incidentTbody.appendChild(incidentRows);
+    return;
+  }
+  for (let i = 0; i < incidentsDetailsArray.length; i++) {
+    incidentRows.push(createAdminIncidentRow(incidentsDetailsArray[i]));
+  }
+  for (let i = 0; i < incidentRows.length; i++) {
+    incidentTbody.appendChild(incidentRows[i]);
+  }
 }
 
 function displayIncidentTableList(incidentsDetailsArray) {
@@ -141,7 +197,7 @@ function addIncidentEditableMap(incidentLocation) {
 const incidentComponents = {
   displaySingleIncidentDetails,
   displayIncidentTableList,
-  addDeleteIncidentEventListener,
+  displayAdminIncidentTableList,
   addIncidentCoordinatesToMaps,
   addIncidentEditableMap,
 };
