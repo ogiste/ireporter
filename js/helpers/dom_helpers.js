@@ -52,6 +52,15 @@ function getSelectedInputOption(element_id = '') {
   return '';
 }
 
+function addElementClassEventListener(eventCallback, elementClass = '') {
+  // Function used to add event listeners to all delete buttons
+  const elementLinks = document.getElementsByClassName(elementClass);
+  const elementsArray = Array.from(elementLinks);
+  elementsArray.forEach((element) => {
+    element.addEventListener('click', eventCallback);
+  });
+}
+
 
 const domHelpers = {
   getElById,
@@ -59,6 +68,7 @@ const domHelpers = {
   getElTextValue,
   getSelectedInputOption,
   createDomElement,
+  addElementClassEventListener,
 };
 
 export default domHelpers;

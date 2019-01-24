@@ -7,7 +7,7 @@ import authHelpers from '../helpers/auth_helpers.js';
 import constants from '../constants.js';
 
 
-const { getElTextValue, setElTextById, getSelectedInputOption } = domHelpers;
+const { getElTextValue, setElTextById, getSelectedInputOption, addElementClassEventListener } = domHelpers;
 const { postData, patchData, getData, deleteData, getValidationErrorMessage } = reqHelpers;
 const { ireporterSettings, defaultHeaders, alertIds } = constants;
 const { createAlert } = alerts;
@@ -18,7 +18,6 @@ const {
   addIncidentEditableMap,
   displaySingleIncidentDetails,
   displayIncidentTableList,
-  addDeleteIncidentEventListener,
 } = incidentComponents;
 
 function createIncidentRecord(e) {
@@ -282,7 +281,7 @@ function getAllIncidentRecords() {
       }
       const incidents = data.data;
       displayIncidentTableList(incidents);
-      addDeleteIncidentEventListener(deleteSingleIncidentRecord);
+      addElementClassEventListener(deleteSingleIncidentRecord, 'delete-quest');
       createAlert(data.msg,
         alertIds.success);
     })

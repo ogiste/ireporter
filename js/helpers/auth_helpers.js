@@ -79,6 +79,18 @@ function checkAuthorization() {
   newUrl(uiUrlFilepaths.LOGIN);
 }
 
+function checkAdminAuthorization() {
+  // Function to redirect if user is not authorized to view current admin page
+  createAlert('loading...', alertIds.loading);
+  if (isAuth() && isAdmin()) {
+    createAlert('Page successfully loaded', alertIds.success);
+    return;
+  }
+  createAlert('You are not signed in. Please sign in to view this page',
+    alertIds.error);
+  newUrl(uiUrlFilepaths.LOGIN);
+}
+
 function removeAuth() {
   // Function to remove current user authentication details from browser i.e
   // remove authentication token, username and user id from current localStorage
@@ -98,6 +110,7 @@ const authHelpers = {
   getAuthProfile,
   isAuth,
   checkAuthorization,
+  checkAdminAuthorization,
   removeAuth,
 };
 
