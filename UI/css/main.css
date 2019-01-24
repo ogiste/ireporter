@@ -110,7 +110,7 @@ body {
 }
 
 #home {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/ivmpunity.png');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/impunity.png');
 }
 
 #register {
@@ -217,7 +217,7 @@ button {
 color: white;
 font-size: 16px;
 line-height: 10px;
-padding: 21px;
+padding: 11px;
 font-weight: normal;
 text-decoration: none;
 font-style: normal;
@@ -427,4 +427,21 @@ td, th {
 
 td, th {
   max-width: 250px;
+}
+
+#cancel_btn {
+  float:right;
+  width: 22px;
+  height: 22px;
+  font-size: 20px;
+  font-family: sans-serif;
+  background-color: black;
+  background-repeat:no-repeat;
+  border-radius: 20px;
+  text-align: center;
+  color: white;
+  cursor:pointer;
+  overflow: hidden;
+  outline:none;
+
 }
