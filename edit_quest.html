@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>iReporter</title>
+    <link rel="stylesheet" href="./css/main.css">
+    <script type="module" src="js/edit_incident.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <div id="nav" class="nav">
+  <ul id="main_nav_ul">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
+    <li><a href="create_quest.html">Create an incident</a></li>
+    <li class="li-right"><a id="logout_link"href="">Logout</a></li>
+  </ul>
+</div>
+<div class="container">
+  <div id="quest_edit" class="bg-alt">
+  <div class="form-container">
+    <h1>Edit An Incident</h1><hr>
+      <form class="quest_form" action="" method="patch">
+        <div>
+          <b> Type: </b><span id="incident_type"></span>
+          <b> Status: </b><span id="incident_status"></span>
+        </div>
+        <div  class="form-group">
+          <label for="Title"><b>Title</b></label>
+          <input  id="incident_title" disabled type="text" placeholder="Title">
+        </div>
+        <div class="form-group">
+          <h3>Comment</h3>
+          <textarea id="incident_comment" type="textarea" rows="4" cols="50">
+          </textarea>
+          <button type="button" incidentDetail="comment" id="edit_incident_comment" class="edit-quest"
+          name="Edit Incident">
+            Update Comment
+          </button>
+        </div>
+        <div class="form-group ">
+          <h3>Location</h3><hr>
+          <label for="incident map">Select a Location On The Map
+            <b> by clicking on the location of the incident</b>
+          </label>
+          <div class="map-container">
+            <input id="pac-input" class="controls" type="text"
+            placeholder="Search Box">
+            <div id="map"></div>
+          </div>
+          <label for="Location">Location</label>
+          <input type="text" disabled id="incident_loc" placeholder="Location">
+          <label for="Latiture">Latitude</label>
+          <input type="text" id="incident_lat" placeholder="Latitude">
+          <label for="Longitude">Longitude</label>
+          <input type="text" id="incident_lng" placeholder="Longitude">
+
+          <button type="button" incidentDetail="location" id="edit_incident_location" class="edit-quest"
+          name="Edit Incident">
+            Update Location
+          </button>
+        </div>
+
+      </form>
+  </div>
+</div>
+  <div class="footer">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
+    <li><a href="create_quest.html">Create an incident</a></li>
+    <li class="li-right"><a id="logout_link"href="">Logout</a></li>
+  </div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLjJJ8MEg85s3CU2eyQdZ_4H5Uaz0oud0&libraries=places"></script>
+  </body>
+</html>
