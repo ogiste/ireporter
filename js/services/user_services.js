@@ -18,6 +18,7 @@ function login(e) {
   createAlert('loading...', alertIds.loading);
   const username = getElTextValue('login_username');
   const password = getElTextValue('login_password');
+  removeAuth();
   const loginUrl = `${ireporterSettings.base_api_url}/auth`;
   postData(loginUrl, { username, password }, defaultHeaders)
     .then((data) => {
