@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>iReporter</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script type="module" src="js/services/user_services.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <div id="nav" class="nav">
+      <ul id="main_nav_ul">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="profile.html">My Profile</a></li>
+        <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
+        <li><a href="create_quest.html">Create an incident</a></li>
+        <li class="li-right"><a id="logout" href="">Logout</a></li>
+      </ul>
+    </div>
+    <div class="container">
+      <div id="incident_container" class="">
+        <div>
+          <h1>Incident Details</h1>
+          <div>
+            <h2 id="incident_title">
+
+            </h2>
+            <div>
+              <span id="incident_type"></span>
+              <span id="incident_status"></span>
+            </div>
+          </div>
+          <div>
+            <p id="incident_comment"></p>
+            <div><span id="incident_createdOn"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="profile.html">My Profile</a></li>
+        <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
+        <li><a href="create_quest.html">Create an incident</a></li>
+      </div>
+    </div>
+  </body>
+</html>
