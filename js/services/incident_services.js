@@ -216,7 +216,7 @@ function deleteSingleIncidentRecord(e) {
   const deletionConfirmationMessage = 'Are you sure you want to DELETE this incident?';
   if (window.confirm(deletionConfirmationMessage)) {
     createAlert('loading...', alertIds.loading);
-    const id = deleteLink.getAttribute('incidentId');
+    const id = deleteLink.getAttribute('incident_id');
     console.log('deleteSingleIncidentRecord id: ', id);
     const deleteIncidentUrl = `${ireporterSettings.base_api_url}/incidents/${id}`;
     defaultHeaders.set('Access-token', `Bearer ${getAuthToken()}`);
