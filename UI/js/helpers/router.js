@@ -13,7 +13,7 @@ function newUrl(urlFilepath = '') {
 function isCurrentRoute(candidateUiUrlFilePath) {
   // Function that returns a bool value based on if the current page
   // is the page for a particular route
-  if (window.location.pathname === `/UI/${candidateUiUrlFilePath}`) {
+  if (window.location.pathname === `/ireporter/UI/${candidateUiUrlFilePath}`) {
     return true;
   }
   return false;
