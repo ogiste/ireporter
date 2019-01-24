@@ -2,9 +2,9 @@ let baseUiUrl;
 const baseUrl = `${window.location.protocol}//${window.location.hostname}`;
 console.log(`port --- ${window.location.port}`);
 if (window.location.port) {
-  baseUiUrl = `${baseUrl}:${window.location.port}/UI`;
+  baseUiUrl = `${baseUrl}:${window.location.port}/ireporter/UI`;
 } else {
-  baseUiUrl = `${baseUrl}/UI`;
+  baseUiUrl = `${baseUrl}/ireporter/UI`;
 }
 
 const ireporterSettings = {
