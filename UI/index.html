@@ -8,8 +8,8 @@
   </head>
   <body>
     <div id="nav" class="nav">
-      <ul>
-        <li><a href="#home">Home</a></li>
+      <ul id="main_nav_ul">
+        <li><a class="active" href="#home">Home</a></li>
         <li><a href="sign_up.html">Register</a></li>
         <li><a href="login.html">Login</a></li>
       </ul>
@@ -24,7 +24,7 @@
       <div id="register" class="bg">
         <div class="form-container">
           <h1>Register</h1>
-            <form class="sign_up_form" method="post">
+            <form class="sign_up_form">
               <div  class="form-group">
                 <label for="Username">Username</label>
                 <input id="sign_up_username" type="text" placeholder="Username">
@@ -54,7 +54,8 @@
                 <input id="sign_up_password" type="password" placeholder="******">
               </div>
               <div class="form-group">
-                <button class="button-default" name="Sign Up" id="register_submit">
+                <button class="button-default" name="Sign Up"
+                id="register_submit" >
                 <b>Sign Up</b>
                 </button>
               </div>
@@ -65,7 +66,7 @@
       <div id="login" class="bg">
         <div class="form-container">
           <h1>Login</h1>
-          <form class="sign_up_form" method="post">
+          <form class="sign_up_form">
 
             <div>
               <label for="Username">Username</label>
@@ -77,7 +78,7 @@
             </div>
             <div>
               <button type="button" id="login_submit"class="button-default"
-              name="Login" onclick="login()">
+              name="Login">
                 <b>Submit</b>
               </button>
             </div>
@@ -91,5 +92,6 @@
         <li><a href="#login">Login</a></li>
       </div>
     </div>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLjJJ8MEg85s3CU2eyQdZ_4H5Uaz0oud0&libraries=places"></script>
   </body>
 </html>

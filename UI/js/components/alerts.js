@@ -1,13 +1,21 @@
 import constants from '../constants.js';
 
 const { alertIds } = constants;
-let alertTimeoutDefault = 10000;
+let alertTimeoutDefault = 6000;
 
 function removeAlert(alertId) {
   // Remove any element with id - alertId
   const element = document.getElementById(alertId);
   if (element !== null && element !== undefined) {
     element.parentNode.removeChild(element);
+  }
+}
+
+function removeAllAlerts(allAlertIds) {
+  // Function to clear all alerts on screen
+  const propKeys = Object.keys(allAlertIds);
+  for (let alertId = 0; alertId < propKeys.length; alertId++) {
+    removeAlert(allAlertIds[propKeys[alertId]]);
   }
 }
 
@@ -20,7 +28,7 @@ function setRemoveAlertTimeout(alertId, alertTimeout) {
 function createAlert(msg = '', alertId = 'alert_error') {
   // This function is user to create error alert by taking in an error message
   if (msg === '') return;
-  removeAlert(alertId);
+  removeAllAlerts(alertIds);
   const alertElement = document.createElement('div');
   alertElement.id = alertId;
   const alertMsg = document.createTextNode(msg);

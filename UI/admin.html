@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <title>iReporter</title>
     <link rel="stylesheet" href="./css/main.css">
-    <script type="module" src="js/services/user_services.js"></script>
+    <script type="module" src="js/admin.js"></script>
     <script type="module" src="js/main.js"></script>
   </head>
   <body>
@@ -16,7 +16,7 @@
         <li><a href="profile.html">My Profile</a></li>
         <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
         <li><a href="create_quest.html">Create an incident</a></li>
-        <li class="li-right"><a id="logout" href="">Logout</a></li>
+        <li class="li-right"><a id="logout_link" href="">Logout</a></li>
       </ul>
 </div>
 <div class="container">
@@ -28,10 +28,10 @@
       <table>
         <thead>
             <tr>
-                <th>Resolved Red-flags/Interventions </th>
-                <th>Rejected Red-flags/Interventions</th>
-                <th>Under Investigation Red-flags/Interventions</th>
-                <th>Draft Red-flad/Interventions</th>
+                <th>Resolved Incidents</th>
+                <th>Rejected Incidents</th>
+                <th>Under Incidents</th>
+                <th>Draft Incidents</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +39,7 @@
                 <td>0</td>
                 <td>0</td>
                 <td>0</td>
-                <td>3</td>
+                <td>0</td>
             </tr>
         <tbody>
     </table>
@@ -68,70 +68,26 @@
     <table>
         <thead>
             <tr>
-                <th>Created By(ID) </th>
-                <th>Red-flag/Intervetion Title</th>
+                <th>Incident Title</th>
                 <th>Type</th>
-                <th>Description</th>
+                <th>Comment</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
-            <tr class=" ">
-                <td>1</td>
-                <td>Bribery in Procurement</td>
-                <td>Red-flag</td>
-                <td>Bribery in procurement of office supplies for Education ministry</td>
-                <td>
-                  <select>
-                  <option value="1">Draft</option>
-                  <option value="2">Resolved</option>
-                  <option value="3">Rejected</option>
-                  <option value="4">Under Investigation</option>
-                </select>
-                </td>
-                <td><button class="view-quest"><a href="">Update</a></button><button class="view-quest"><a href="">View details</a></button></td>
-            </tr>
-            <tr class=" ">
-                <td>2</td>
-                <td>Pothole or highway</td>
-                <td>Intervention</td>
-                <td>Pothole on Uhuru highway causing damage to vehicles and safety hazard</td>
-                <td>
-                  <select>
-                  <option value="1">Draft</option>
-                  <option value="2">Resolved</option>
-                  <option value="3">Rejected</option>
-                  <option value="4">Under Investigation</option>
-                </select>
-                </td>
-                <td><button class="view-quest"><a href="">Update</a></button><button class="view-quest"><a href="">View details</a></button></td>
-            </tr>
-            <tr class=" ">
-                <td>3</td>
-                <td>Electric pole on road</td>
-                <td>Intervention</td>
-                <td>Electric pole blocking road in Siaya county, Siaya road</td>
-                <td>
-                  <select>
-                  <option value="1">Draft</option>
-                  <option value="2">Resolved</option>
-                  <option value="3">Rejected</option>
-                  <option value="4">Under Investigation</option>
-                </select>
-                </td>
-                <td><button class="view-quest"><a href="">Update</a></button><button class="view-quest"><a href="">View details</a></button></td>
-            </tr>
+        <tbody id="incidents_admin_tbody">
         <tbody>
     </table>
   </div>
 </div>
   <div class="footer">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#quests">My Red Flags/Interventions</a></li>
-      <li><a href="#quests">All Red Flags/Interventions</a></li>
-      <li class="li-right"><a href="#logout">Logout</a></li>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="profile.html">My Profile</a></li>
+    <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
+    <li><a href="create_quest.html">Create an incident</a></li>
+    <li class="li-right"><a id="logout_link" href="">Logout</a></li>
   </div>
 </div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLjJJ8MEg85s3CU2eyQdZ_4H5Uaz0oud0"></script>
   </body>
 </html>
