@@ -25,7 +25,7 @@ function createIncidentActionLinks(status = '', id = '', parentElement) {
         editLink = createDomElement('a', 'Edit', 'edit-quest');
         editLink.href = `${uiUrlFilepaths.EDIT_INCIDENT}?incident=${id}`;
         deleteLink = createDomElement('a', 'Delete', 'delete-quest', '');
-        deleteLink.href = `#?incident=${id}`;
+        deleteLink.setAttribute('incidentId', id);
         actionLinks = [viewLink, editLink, deleteLink];
         break;
       default:
@@ -48,7 +48,6 @@ function createIncidentRow(incidentDetails) {
   const {
     title, type, status, id,
   } = incidentDetails;
-  console.log('title: ', title);
   const titleColumn = createDomElement('td', title);
   const typeColumn = createDomElement('td', type);
   const statusColumn = createDomElement('td', status);
@@ -59,6 +58,15 @@ function createIncidentRow(incidentDetails) {
     incidentRow.appendChild(columnElements[i]);
   }
   return incidentRow;
+}
+
+function addDeleteIncidentEventListener(deleteIncidentCallBack) {
+  // Function used to add event listeners to all delete buttons
+  const deleteLinks = document.getElementsByClassName('delete-quest');
+  const deleteBtns = Array.from(deleteLinks);
+  deleteBtns.forEach((element) => {
+    element.addEventListener('click', deleteIncidentCallBack);
+  });
 }
 
 function displayIncidentTableList(incidentsDetailsArray) {
@@ -100,6 +108,7 @@ function displaySingleIncidentDetails(incidentDetails) {
 const incidentComponents = {
   displaySingleIncidentDetails,
   displayIncidentTableList,
+  addDeleteIncidentEventListener,
 };
 
 export default incidentComponents;

@@ -65,6 +65,26 @@ function postData(url = '', data = {}, reqHeaders = {}) {
   }));
 }
 
+function patchData(url = '', data = {}, reqHeaders = {}) {
+  // Function used to post data using the fetch API
+  return fetch(url, {
+    method: 'PATCH',
+    mode: 'cors',
+    headers: reqHeaders,
+    body: JSON.stringify(data),
+  }).then((res) => {
+    resStatus = res.status;
+    return res.clone().json();
+  }).then(((response) => {
+    console.log('patchData: ', response);
+    let res = response;
+    if (!Object.prototype.hasOwnProperty.call(res, 'status_code')) {
+      res['status_code'] = resStatus;
+    }
+    return res;
+  }));
+}
+
 
 function getData(url = '', reqHeaders = {}) {
   // Function used to post data using the fetch API
@@ -84,9 +104,29 @@ function getData(url = '', reqHeaders = {}) {
   }));
 }
 
+function deleteData(url = '', reqHeaders = {}) {
+  // Function used to post data using the fetch API
+  return fetch(url, {
+    method: 'DELETE',
+    headers: reqHeaders,
+  }).then((res) => {
+    resStatus = res.status;
+    return res.clone().json();
+  }).then(((response) => {
+    console.log('deleteData: ', response);
+    let res = response;
+    if (!Object.prototype.hasOwnProperty.call(res, 'status_code')) {
+      res['status_code'] = resStatus;
+    }
+    return res;
+  }));
+}
+
 const reqHelpers = {
   postData,
+  patchData,
   getData,
+  deleteData,
   getValidationErrorMessage,
 };
 

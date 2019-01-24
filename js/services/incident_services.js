@@ -8,12 +8,12 @@ import constants from '../constants.js';
 import mapsApi from '../maps.js';
 
 const { getElTextValue, setElTextById, getSelectedInputOption } = domHelpers;
-const { postData, getData, getValidationErrorMessage } = reqHelpers;
+const { postData, getData, deleteData, getValidationErrorMessage } = reqHelpers;
 const { ireporterSettings, defaultHeaders, alertIds } = constants;
 const { createAlert } = alerts;
 const { newUrl, uiUrlFilepaths } = router;
 const { removeAuth, getAuthToken, isAdmin } = authHelpers;
-const { displaySingleIncidentDetails, displayIncidentTableList } = incidentComponents;
+const { displaySingleIncidentDetails, displayIncidentTableList, addDeleteIncidentEventListener } = incidentComponents;
 const { geocodeLatLng, geocoder, infowindow } = mapsApi;
 
 function addIncidentCoordinatesToMaps(incidentLocation) {
@@ -126,19 +126,58 @@ function getSingleIncidentRecord() {
     });
 }
 
+function deleteSingleIncidentRecord(e) {
+  // // Function used to delete a single incident record
+  // e.preventDefault();
+  console.log('delete e: ', e);
+  e.preventDefault();
+  const deleteLink = e.target;
+  const deletionConfirmationMessage = 'Are you sure you want to DELETE this incident?';
+  if (window.confirm(deletionConfirmationMessage)) {
+    createAlert('loading...', alertIds.loading);
+    const id = deleteLink.getAttribute('incidentId');
+    console.log('deleteSingleIncidentRecord id: ', id);
+    const deleteIncidentUrl = `${ireporterSettings.base_api_url}/incidents/${id}`;
+    defaultHeaders.set('Access-token', `Bearer ${getAuthToken()}`);
+    deleteData(deleteIncidentUrl, defaultHeaders)
+      .then((data) => {
+        if (data.status_code && data.status_code !== 202) {
+          if (data.status_code === 403) {
+            createAlert(data.msg, alertIds.error);
+            removeAuth();
+            newUrl(uiUrlFilepaths.LOGIN);
+            return;
+          }
+          if (data.status_code === 401) {
+            createAlert(data.msg, alertIds.error);
+            removeAuth();
+            newUrl(uiUrlFilepaths.LOGIN);
+            return;
+          }
+          if (data.msg) createAlert(data.msg, alertIds.error);
+          if (data.message) {
+            createAlert(getValidationErrorMessage(data),
+              alertIds.error);
+          }
+          return;
+        }
+        createAlert(data.msg,
+          alertIds.success);
+        newUrl(uiUrlFilepaths.VIEW_ALL_INCIDENTS);
+      })
+      .catch((error) => {
+        if (error && error.msg) createAlert(error.msg, alertIds.error);
+      });
+  }
+}
+
 function getAllIncidentRecords() {
   // Function to fetch details of a single incident record
   createAlert('loading...', alertIds.loading);
-  let allIncidentsUrl = '';
-  if (isAdmin()) {
-    allIncidentsUrl = `${ireporterSettings.base_api_url}/incidents/all`;
-  } else {
-    allIncidentsUrl = `${ireporterSettings.base_api_url}/incidents/`;
-  }
+  const allIncidentsUrl = `${ireporterSettings.base_api_url}/incidents/`;
   defaultHeaders.set('Access-token', `Bearer ${getAuthToken()}`);
   getData(allIncidentsUrl, defaultHeaders)
     .then((data) => {
-      console.log('get all incidents function data: ', data);
       if (data.status_code && data.status_code !== 200) {
         if (data.status_code === 403) {
           createAlert(data.msg, alertIds.error);
@@ -160,8 +199,8 @@ function getAllIncidentRecords() {
         return;
       }
       const incidents = data.data;
-      console.log('incidents: ', incidents);
       displayIncidentTableList(incidents);
+      addDeleteIncidentEventListener(deleteSingleIncidentRecord);
       createAlert(data.msg,
         alertIds.success);
     })
@@ -174,6 +213,7 @@ const incidentServices = {
   createIncidentRecord,
   getSingleIncidentRecord,
   getAllIncidentRecords,
+  deleteSingleIncidentRecord,
 };
 
 export default incidentServices;
