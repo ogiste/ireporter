@@ -27,7 +27,7 @@ function createIncidentActionLinks(status = '', id = '', parentElement) {
         editLink = createDomElement('a', 'Edit', 'edit-quest');
         editLink.href = `${uiUrlFilepaths.EDIT_INCIDENT}?incident=${id}`;
         deleteLink = createDomElement('a', 'Delete', 'delete-quest', '');
-        deleteLink.setAttribute('incidentId', id);
+        deleteLink.setAttribute('incident_id', id);
         actionLinks = [viewLink, editLink, deleteLink];
         break;
       default:
@@ -50,7 +50,7 @@ function createIncidentStatusSelectMenu(status = '', id = '') {
   const incidentStatusValues = ['draft', 'resolved', 'rejected', 'under investigation'];
   const selectElement = createDomElement('select');
   selectElement.className += ' incident-status-select';
-  selectElement.setAttribute('incidentId', id);
+  selectElement.setAttribute('status_menu_incident_id', id);
   for (let i = 0; i < incidentStatusValues.length; i++) {
     let optionTitle = (incidentStatusValues[i].charAt(0).toUpperCase() +
     incidentStatusValues[i].slice(1));
@@ -93,7 +93,7 @@ function createAdminIncidentRow(incidentDetails) {
   statusColumn.appendChild(createIncidentStatusSelectMenu(status, id));
   const actionsColumn = createDomElement('td');
   const updateStatusLink = createDomElement('a', 'Update Status', 'update-status-quest');
-  updateStatusLink.setAttribute('incidentId', id);
+  updateStatusLink.setAttribute('incident_id', id);
   const viewLink = createDomElement('a', 'View', 'view-quest');
   viewLink.href = `${uiUrlFilepaths.VIEW_INCIDENT}?incident=${id}`;
   actionsColumn.appendChild(updateStatusLink);

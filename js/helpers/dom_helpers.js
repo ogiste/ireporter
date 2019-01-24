@@ -52,6 +52,12 @@ function getSelectedInputOption(element_id = '') {
   return '';
 }
 
+function getElementByAttribute(attributeName = '', attributeValue = '') {
+  // Function used to return the first element matching an attribute based query
+  // using the attibute name and attribute value as search parameters
+  return document.querySelector(`[${attributeName}="${attributeValue}"]`);
+}
+
 function addElementClassEventListener(eventCallback, elementClass = '') {
   // Function used to add event listeners to all delete buttons
   const elementLinks = document.getElementsByClassName(elementClass);
@@ -67,6 +73,7 @@ const domHelpers = {
   setElTextById,
   getElTextValue,
   getSelectedInputOption,
+  getElementByAttribute,
   createDomElement,
   addElementClassEventListener,
 };
