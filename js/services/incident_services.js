@@ -2,18 +2,18 @@ import alerts from '../components/alerts.js';
 import incidentComponents from '../components/incident.js';
 import router from '../helpers/router.js';
 import reqHelpers from '../helpers/request_helpers.js';
-import inputHelpers from '../helpers/input_helpers.js';
+import domHelpers from '../helpers/dom_helpers.js';
 import authHelpers from '../helpers/auth_helpers.js';
 import constants from '../constants.js';
 import mapsApi from '../maps.js';
 
-const { getElTextValue, setElTextById, getSelectedInputOption } = inputHelpers;
+const { getElTextValue, setElTextById, getSelectedInputOption } = domHelpers;
 const { postData, getData, getValidationErrorMessage } = reqHelpers;
 const { ireporterSettings, defaultHeaders, alertIds } = constants;
 const { createAlert } = alerts;
 const { newUrl, uiUrlFilepaths } = router;
-const { removeAuth, getAuthToken } = authHelpers;
-const { displaySingleIncidentDetails } = incidentComponents;
+const { removeAuth, getAuthToken, isAdmin } = authHelpers;
+const { displaySingleIncidentDetails, displayIncidentTableList } = incidentComponents;
 const { geocodeLatLng, geocoder, infowindow } = mapsApi;
 
 function addIncidentCoordinatesToMaps(incidentLocation) {
@@ -126,9 +126,54 @@ function getSingleIncidentRecord() {
     });
 }
 
+function getAllIncidentRecords() {
+  // Function to fetch details of a single incident record
+  createAlert('loading...', alertIds.loading);
+  let allIncidentsUrl = '';
+  if (isAdmin()) {
+    allIncidentsUrl = `${ireporterSettings.base_api_url}/incidents/all`;
+  } else {
+    allIncidentsUrl = `${ireporterSettings.base_api_url}/incidents/`;
+  }
+  defaultHeaders.set('Access-token', `Bearer ${getAuthToken()}`);
+  getData(allIncidentsUrl, defaultHeaders)
+    .then((data) => {
+      console.log('get all incidents function data: ', data);
+      if (data.status_code && data.status_code !== 200) {
+        if (data.status_code === 403) {
+          createAlert(data.msg, alertIds.error);
+          removeAuth();
+          newUrl(uiUrlFilepaths.LOGIN);
+          return;
+        }
+        if (data.status_code === 401) {
+          createAlert(data.msg, alertIds.error);
+          removeAuth();
+          newUrl(uiUrlFilepaths.LOGIN);
+          return;
+        }
+        if (data.msg) createAlert(data.msg, alertIds.error);
+        if (data.message) {
+          createAlert(getValidationErrorMessage(data),
+            alertIds.error);
+        }
+        return;
+      }
+      const incidents = data.data;
+      console.log('incidents: ', incidents);
+      displayIncidentTableList(incidents);
+      createAlert(data.msg,
+        alertIds.success);
+    })
+    .catch((error) => {
+      if (error && error.msg) createAlert(error.msg, alertIds.error);
+    });
+}
+
 const incidentServices = {
   createIncidentRecord,
   getSingleIncidentRecord,
+  getAllIncidentRecords,
 };
 
 export default incidentServices;

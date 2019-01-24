@@ -11,6 +11,14 @@ function removeAlert(alertId) {
   }
 }
 
+function removeAllAlerts(allAlertIds) {
+  // Function to clear all alerts on screen
+  const propKeys = Object.keys(allAlertIds);
+  for (let alertId = 0; alertId < propKeys.length; alertId++) {
+    removeAlert(allAlertIds[propKeys[alertId]]);
+  }
+}
+
 function setRemoveAlertTimeout(alertId, alertTimeout) {
   // Function used to remove an alert after alertTimeout number of seconds
 
@@ -20,8 +28,7 @@ function setRemoveAlertTimeout(alertId, alertTimeout) {
 function createAlert(msg = '', alertId = 'alert_error') {
   // This function is user to create error alert by taking in an error message
   if (msg === '') return;
-  removeAlert(alertIds.loading);
-  removeAlert(alertId);
+  removeAllAlerts(alertIds);
   const alertElement = document.createElement('div');
   alertElement.id = alertId;
   const alertMsg = document.createTextNode(msg);

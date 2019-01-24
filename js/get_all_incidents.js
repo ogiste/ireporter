@@ -1,13 +1,13 @@
 import authHelpers from './helpers/auth_helpers.js';
 import incidentServices from './services/incident_services.js';
 
-const { getSingleIncidentRecord } = incidentServices;
+const { getAllIncidentRecords } = incidentServices;
 const { checkAuthorization } = authHelpers;
 
-function loadIncidentPage() {
+function loadGetAllIncidentsPage() {
 // Function that loads create incident page
   checkAuthorization();
-  getSingleIncidentRecord();
+  getAllIncidentRecords();
 }
 
-loadIncidentPage();
+loadGetAllIncidentsPage();
