@@ -1,46 +1,53 @@
+import alerts from '../components/alerts.js';
+import router from '../helpers/router.js';
+import reqHelpers from '../helpers/request_helpers.js';
+import inputHelpers from '../helpers/input_helpers.js';
+import authHelpers from '../helpers/auth_helpers.js';
+import constants from '../constants.js';
 
-import postData from '../helpers/request_helpers';
-import getElById from '../helpers/user_input_helpers';
-import { ireporterSettings, defaultHeaders } from '../constants';
-
-class User {
-  // User class defining properties of a user object and class methods
-  // User properties:
-  //     fname: First Name (String)
-  //     lname: Second Name (String)
-  //     othername: Other Name (String)
-  //     username: Username (String)
-  //     email: Email (String)
-  //     phone: Phone (String)
-  //     isAdmin: is Administrator (Boolean)
-  //     createdOn: Created On (Datetime)
-
-  constructor(userData) {
-    // constructor to initialize user details
-    this.fname = userData.fname;
-    this.lname = userData.lname;
-    this.othername = userData.othername;
-    this.username = userData.username;
-    this.email = userData.email;
-    this.phone = userData.phone;
-    this.isAdmin = userData.isAdmin;
-    this.createdOn = userData.createdOn;
-  }
-}
+const { getElById } = inputHelpers;
+const { postData } = reqHelpers;
+const { ireporterSettings, defaultHeaders, alertIds } = constants;
+const { createAlert } = alerts;
+const { newUrl, uiUrlFilepaths } = router;
+const { setAuth, removeAuth } = authHelpers;
 
 function login() {
   // Function used to sign in user based on username and password
-  const username = getElById('login_username');
-  const password = getElById('login_password');
-  const loginUrl = `${ireporterSettings.base_url}/auth`;
+  createAlert('loading...', alertIds.loading);
+  const username = getElById('login_username').value;
+  const password = getElById('login_password').value;
+  const loginUrl = `${ireporterSettings.base_api_url}/auth`;
   postData(loginUrl, { username, password }, defaultHeaders)
-    .then(data => console.log('login function data', data))
-    .catch(error => console.log('login function error', error));
+    .then((data) => {
+      console.log('login function data', data);
+      if (data.status_code && data.status_code !== 200) {
+        if (data.msg) createAlert(data.msg, alertIds.error);
+        return;
+      }
+      createAlert(data.msg, alertIds.success);
+      const userData = data.data[0];
+      setAuth(userData);
+      newUrl(uiUrlFilepaths.PROFILE);
+    })
+    .catch(((error) => {
+      if (error && error.msg) createAlert(error.msg, alertIds.error);
+      console.log('login function error', error);
+    }));
+}
+
+function logout() {
+  // Function used to sign in user based on username and password
+  console.log('logout called..');
+  createAlert('loading...', alertIds.loading);
+  removeAuth();
+  createAlert('User logged out', alertIds.success);
+  newUrl(uiUrlFilepaths.HOME);
 }
 
 const userServices = {
-  User,
   login,
+  logout,
 };
 
 export default userServices;

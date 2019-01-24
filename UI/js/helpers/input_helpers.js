@@ -5,8 +5,13 @@ function getElById(element_id = '') {
   return document.getElementById(element_id);
 }
 
-const userInputHelpers = {
+function setElTextById(element_id = '', elementText = '') {
+  getElById(element_id).innerHTML = elementText;
+}
+
+const inputHelpers = {
   getElById,
+  setElTextById,
 };
 
-export default userInputHelpers;
+export default inputHelpers;

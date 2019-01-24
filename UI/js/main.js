@@ -1,11 +1,17 @@
 
 // import * as reqHelpers from './helpers/request_helpers';
 // import * as inputHelpers from './helpers/user_input_helpers';
-import { login } from './services/user_services.js';
+import userServices from './services/user_services.js';
+
+const { login, logout } = userServices;
 
 let questMarker;
 const addressName = '';
 let lat; let lng;
+
+window.login = login;
+window.logout = logout;
+
 function initMap() {
   const map = new google.maps.Map(document.getElementById('map'), {
     zoom: 4,

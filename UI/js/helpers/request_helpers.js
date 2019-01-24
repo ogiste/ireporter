@@ -2,11 +2,12 @@
 
 function postData(url = '', data = {}, reqHeaders = {}) {
   // Function used to post data using the fetch API
+  console.log(data);
   return fetch(url, {
     method: 'POST',
     mode: 'cors',
     headers: reqHeaders,
-    body: data,
+    body: JSON.stringify(data),
   }).then(response => response.json());
 }
 
