@@ -110,7 +110,7 @@ function displayIncidentStatusStats(incidentsDetailsArray) {
   const statsResolvedElement = getElById('stats_resolved');
   const statsRejectedElement = getElById('stats_rejected');
   const statsUnderInvestigationElement = getElById('stats_under_investigation');
-  const statsDraftElement = getElById('stats_resolved');
+  const statsDraftElement = getElById('stats_draft');
 
   const resolvedCount = incidentsDetailsArray.filter(incident => incident.status === 'resolved').length;
   const rejectedCount = incidentsDetailsArray.filter(incident => incident.status === 'rejected').length;
