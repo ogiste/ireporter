@@ -30,6 +30,15 @@ function displayAdminNavItems() {
     adminPageListItem.appendChild(adminPageLink);
     navList.appendChild(adminPageListItem);
   }
+  if (isAuth() && isAdmin() && isCurrentRoute(uiUrlFilepaths.ADMIN)) {
+    console.log('displayAdminNavItems :true');
+    console.log('pathname: ', window.location.pathname);
+    const usersPageListItem = createDomElement('li');
+    const usersPageLink = createDomElement('a', 'System Users');
+    usersPageLink.href = `${uiUrlFilepaths.USERS}`;
+    usersPageListItem.appendChild(usersPageLink);
+    navList.appendChild(usersPageListItem);
+  }
 }
 
 function displayHomeNavItems() {

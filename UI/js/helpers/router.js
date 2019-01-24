@@ -27,6 +27,7 @@ const uiUrlFilepaths = {
   NEW_INCIDENT: 'create_quest.html',
   EDIT_INCIDENT: 'edit_quest.html',
   ADMIN: 'admin.html',
+  USERS: 'users.html',
   VIEW_ALL_INCIDENTS: 'view_my_quests.html',
   VIEW_INCIDENT: 'view_quest.html',
 };

@@ -4,9 +4,11 @@ import reqHelpers from '../helpers/request_helpers.js';
 import domHelpers from '../helpers/dom_helpers.js';
 import authHelpers from '../helpers/auth_helpers.js';
 import incidentComponents from '../components/incident.js';
+import usersComponents from '../components/user.js';
 import constants from '../constants.js';
 
 const { displayAdminIncidentTableList } = incidentComponents;
+const { displayAdminUsersTableList } = usersComponents;
 const { getElementByAttribute, setElTextById, getSelectedInputOption, addElementClassEventListener } = domHelpers;
 const { patchData, getData, getValidationErrorMessage } = reqHelpers;
 const { ireporterSettings, defaultHeaders, alertIds } = constants;
@@ -93,8 +95,46 @@ function adminGetAllIncidentRecords() {
     });
 }
 
+function adminGetAllUserRecords() {
+  // Function to fetch details of a single incident record
+  createAlert('loading...', alertIds.loading);
+  const allIncidentsUrl = `${ireporterSettings.base_api_url}/users`;
+  defaultHeaders.set('Access-token', `Bearer ${getAuthToken()}`);
+  getData(allIncidentsUrl, defaultHeaders)
+    .then((data) => {
+      if (data.status_code && data.status_code !== 200) {
+        if (data.status_code === 403) {
+          createAlert(data.msg, alertIds.error);
+          removeAuth();
+          newUrl(uiUrlFilepaths.LOGIN);
+          return;
+        }
+        if (data.status_code === 401) {
+          createAlert(data.msg, alertIds.error);
+          removeAuth();
+          newUrl(uiUrlFilepaths.LOGIN);
+          return;
+        }
+        if (data.msg) createAlert(data.msg, alertIds.error);
+        if (data.message) {
+          createAlert(getValidationErrorMessage(data),
+            alertIds.error);
+        }
+        return;
+      }
+      const incidents = data.data;
+      displayAdminUsersTableList(incidents);
+      createAlert(data.msg,
+        alertIds.success);
+    })
+    .catch((error) => {
+      if (error && error.msg) createAlert(error.msg, alertIds.error);
+    });
+}
+
 const adminServices = {
   adminGetAllIncidentRecords,
+  adminGetAllUserRecords,
   updateIncidentStatus,
 };
 
