@@ -9,9 +9,8 @@
   </head>
   <body>
     <div id="nav" class="nav">
-  <ul>
+  <ul id="main_nav_ul">
     <li><a href="index.html">Home</a></li>
-    <li><a href="#register">Register</a></li>
     <li><a href="login.html">Login</a></li>
   </ul>
 </div>
@@ -19,43 +18,50 @@
   <div id="register" class="bg">
   <div class="form-container">
     <h1>Register</h1>
-      <form class="sign_up_form" action="sign_up.html" method="post">
-        <div  class="form-group">
-          <label for="Username">Username</label>
-          <input type="text" placeholder="Username">
-        </div>
-        <div class="form-group">
-          <label for="First Name">First Name</label>
-          <input type="text" placeholder="First Name">
-        </div>
-        <div class="form-group">
-          <label for="Second Name">Second Name</label>
-          <input type="text" placeholder="Second Name">
-        </div>
-        <div class="form-group">
-          <label for="Email">Email</label>
-          <input type="text" placeholder="Email">
-        </div>
-        <div class="form-group">
-          <label for="Phone">Phone</label>
-          <input type="text" placeholder="Phone">
-        </div>
-        <div class="form-group">
-          <label for="Password">Password</label>
-          <input type="password" placeholder="******">
-        </div>
-        <div class="form-group">
-          <input type="submit" class="button-default" name="Sign Up" value="SUBMIT">
-        </div>
+        <form class="sign_up_form">
+          <div  class="form-group">
+            <label for="Username">Username</label>
+            <input id="sign_up_username" type="text" placeholder="Username">
+          </div>
+          <div class="form-group">
+            <label for="First Name">First Name</label>
+            <input id="sign_up_fname"type="text" placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <label for="Last Name">Last Name</label>
+            <input id="sign_up_lname" type="text" placeholder="Last Name">
+          </div>
+          <div class="form-group">
+            <label for="Other Name">Other Name</label>
+            <input id="sign_up_othername" type="text" placeholder="Other Name">
+          </div>
+          <div class="form-group">
+            <label for="Email">Email</label>
+            <input id="sign_up_email" type="text" placeholder="Email">
+          </div>
+          <div class="form-group">
+            <label for="Phone">Phone</label>
+            <input id="sign_up_phone" type="text" placeholder="Phone">
+          </div>
+          <div class="form-group">
+            <label for="Password">Password</label>
+            <input id="sign_up_password" type="password" placeholder="******">
+          </div>
+          <div class="form-group">
+            <button class="button-default" name="Sign Up"
+            id="register_submit" >
+            <b>Sign Up</b>
+            </button>
+          </div>
 
       </form>
   </div>
 </div>
   <div class="footer">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#register">Register</a></li>
-    <li><a href="#login">Login</a></li>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="login.html">Login</a></li>
   </div>
 </div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLjJJ8MEg85s3CU2eyQdZ_4H5Uaz0oud0&libraries=places"></script>
   </body>
 </html>

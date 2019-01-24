@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>iReporter</title>
     <link rel="stylesheet" href="./css/main.css">
+    <script type="module" src="js/incident.js"></script>
     <script type="module" src="js/main.js"></script>
   </head>
   <body>
@@ -13,7 +14,7 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="profile.html">My Profile</a></li>
         <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
-        <li class="li-right"><a id="logout" href="">Logout</a></li>
+        <li class="li-right"><a id="logout_link" href="">Logout</a></li>
       </ul>
     </div>
     <div class="container">
@@ -23,40 +24,50 @@
           <form class="quest_form" action="" method="post">
             <div  class="form-group">
               <label for="Title">Title</label>
-              <input type="text" placeholder="Title">
+              <input  id="new_incident_title" type="text" placeholder="Title">
             </div>
             <div class="form-group">
-              <label for="Description">Description</label>
-              <input type="text" placeholder="Description">
+              <label for="Comment">Comment</label>
+              <textarea id="new_incident_comment" type="textarea" rows="4" cols="50">
+              </textarea>
             </div>
             <div class="form-group">
-              <select>
-                <option value="5">Red-flag</option>
-                <option value="3">Intervention</option>
+              <select id="new_incident_type">
+                <option value="red-flag">Red-flag</option>
+                <option value="intervention">Intervention</option>
               </select>
             </div>
             <div class="form-group">
               <label for="quest_images">Add an image</label>
-              <input type="file" name="quest_images" accept="image/*">
+              <input type="file" id="new_incident_images" name="quest_images"
+              accept="image/*">
             </div>
             <div class="form-group">
               <label for="quest_video">Add a video</label>
-              <input type="file" name="quest_video" accept="video/*">
+              <input type="file" id="new_incident_videos" name="quest_video"
+              accept="video/*">
             </div>
             <div class="form-group ">
-              <label for="quest_video">Select a Location On The Map</label>
+              <label for="incident map">Select a Location On The Map
+                <b> by clicking on the location of the incident</b>
+              </label>
               <div class="map-container">
+                <input id="pac-input" class="controls" type="text"
+                placeholder="Search Box">
                 <div id="map"></div>
               </div>
               <label for="Location">Location</label>
-              <input type="text" disabled id="loc" placeholder="Location">
+              <input type="text" disabled id="incident_loc" placeholder="Location">
               <label for="Latiture">Latitude</label>
-              <input type="text" disabled id="lat" placeholder="Latitude">
+              <input type="text" id="incident_lat" placeholder="Latitude">
               <label for="Longitude">Longitude</label>
-              <input type="text" disabled id="lng" placeholder="Longitude">
+              <input type="text" id="incident_lng" placeholder="Longitude">
             </div>
-            <div class="form-group">
-              <input type="submit" class="button-default" name="Create" value="Create">
+            <div>
+              <button type="button" id="new_incident_submit" class="button-default"
+              name="Login">
+                <b>Submit</b>
+              </button>
             </div>
 
           </form>
@@ -66,9 +77,9 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="profile.html">My Profile</a></li>
         <li><a href="view_my_quests.html">My Red Flags/Interventions</a></li>
+        <li class="li-right"><a id="logout_link" href="">Logout</a></li>
       </div>
     </div>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLjJJ8MEg85s3CU2eyQdZ_4H5Uaz0oud0&callback=initMap"
-    async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLjJJ8MEg85s3CU2eyQdZ_4H5Uaz0oud0&libraries=places"></script>
   </body>
 </html>

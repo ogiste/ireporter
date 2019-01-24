@@ -8,7 +8,7 @@
   </head>
   <body>
     <div id="nav" class="nav">
-  <ul>
+  <ul id="main_nav_ul">
     <li><a href="index.html">Home</a></li>
     <li><a href="sign_up.html">Register</a></li>
     <li><a href="#login">Login</a></li>
@@ -18,7 +18,7 @@
   <div id="login" class="bg">
     <div class="form-container">
       <h1>Login</h1>
-      <form class="sign_up_form" method="post">
+      <form class="sign_up_form" >
 
         <div>
           <label for="Username">Username</label>
@@ -30,7 +30,7 @@
         </div>
         <div>
           <button type="button" id="login_submit" class="button-default"
-          name="Login" onclick="login()">
+          name="Login">
             <b>Submit</b>
           </button>
         </div>
@@ -38,10 +38,11 @@
     </div>
   </div>
   <div class="footer">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#register">Register</a></li>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="sign_up.html">Register</a></li>
     <li><a href="#login">Login</a></li>
   </div>
 </div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLjJJ8MEg85s3CU2eyQdZ_4H5Uaz0oud0&libraries=places"></script>
   </body>
 </html>

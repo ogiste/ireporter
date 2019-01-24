@@ -10,6 +10,15 @@ function newUrl(urlFilepath = '') {
   location.assign(`${baseUiUrl}/${urlFilepath}`);
 }
 
+function isCurrentRoute(candidateUiUrlFilePath) {
+  // Function that returns a bool value based on if the current page
+  // is the page for a particular route
+  if (window.location.pathname === `/UI/${candidateUiUrlFilePath}`) {
+    return true;
+  }
+  return false;
+}
+
 const uiUrlFilepaths = {
   HOME: 'index.html',
   LOGIN: 'login.html',
@@ -25,6 +34,7 @@ const uiUrlFilepaths = {
 const router = {
   newUrl,
   uiUrlFilepaths,
+  isCurrentRoute,
 };
 
 export default router;

@@ -9,11 +9,13 @@ if (window.location.port) {
 
 const ireporterSettings = {
   base_api_url: 'https://ireporter-ao.herokuapp.com/api/v2',
+  base_api_local: 'http://127.0.0.1:5000/api/v2',
   baseUiUrl: `${baseUiUrl}`,
 };
 
 // export ireporterSettings;
 const defaultHeaders = new Headers({
+  Accept: 'application/json',
   'Content-Type': 'application/json',
 });
 
