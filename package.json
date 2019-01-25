@@ -1,0 +1,27 @@
+{
+  "name": "ireporter-ao",
+  "version": "1.0.0",
+  "description": "A web based system for reporting on corruption and public services needs and requests in Africa.",
+  "main": "index.js",
+  "devDependencies": {
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "coveralls": "^3.0.2",
+    "faker": "^4.1.0",
+    "jest": "^23.6.0",
+    "puppeteer": "^1.11.0"
+  },
+  "scripts": {
+    "coveralls": "jest --coverage",
+    "test": "jest --coverage --detectOpenHandles"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ogiste/ireporter.git"
+  },
+  "author": "Alfred Opon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ogiste/ireporter/issues"
+  },
+  "homepage": "https://github.com/ogiste/ireporter#readme"
+}
