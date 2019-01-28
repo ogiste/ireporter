@@ -11,7 +11,7 @@
     "puppeteer": "^1.11.0"
   },
   "scripts": {
-    "coveralls": "jest --coverage",
+    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
     "test": "jest --coverage --detectOpenHandles"
   },
   "repository": {
