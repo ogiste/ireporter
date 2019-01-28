@@ -1,4 +1,6 @@
 UI/images
+node_modules/
+coverage/
 app/
 venv/
 bin/
@@ -15,3 +17,4 @@ _config.yml
 .coverage
 .env
 .test.env
+package-lock.json
