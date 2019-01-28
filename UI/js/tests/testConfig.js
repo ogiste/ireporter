@@ -9,5 +9,5 @@ export default {
     adminPanelUrl: 'https://ogiste.github.io/ireporter/UI/admin.html',
     systemUsersUrl: 'https://ogiste.github.io/ireporter/UI/users.html',
   },
-  testTimeoutMs: 150000,
+  testTimeoutMs: 250000,
 };
