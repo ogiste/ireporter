@@ -1,5 +1,6 @@
 UI/images
 node_modules/
+coverage/
 app/
 venv/
 bin/
