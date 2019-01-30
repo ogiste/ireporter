@@ -228,7 +228,7 @@ class AccessControl(object):
 
     def is_admin(self, auth_user_id):
         """
-        Method that verifies current user as the owner of a record to be updated
+        Verifies current user as the owner of a record to be updated
         or viewed
 
         Returns
@@ -248,12 +248,12 @@ class AccessControl(object):
             result = self.cursor.fetchone()
             if result is not None:
                 return {"is_owner": True, "success": True}
-            error = (self.messages["NOT_FOUND"] + str(id) +\
-                     "Record could not be found or doesnot exist")
+            error = (self.messages["NOT_FOUND"] + str(id)
+                     + " Record could not be found or doesnot exist")
             return {"error": error, "success": False}
         except IntegrityError as e:
-            error = (self.messages["NOT_FOUND"] + str(id) +\
-                     "Record could not be found or doesnot exist")
+            error = (self.messages["NOT_FOUND"] + str(id)
+                     + " Record could not be found or doesnot exist")
             return {"error": error, "success": False}
         except Exception as e:
             return {"error": str(e), "success": False}

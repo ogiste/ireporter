@@ -31,7 +31,7 @@ incident_parser.add_argument(
 incident_parser.add_argument(
     'location',
     type=str, required=True, location='json',
-    help='The Latitude and Longitude of the incident'
+    help='The Latitude and Longitude location coordinates of the incident'
     ' is a required field'
     )
 
@@ -48,16 +48,6 @@ incident_parser.add_argument(
     location='json',
     help='The status of the incident - can either be draft, resolved,'
     'rejected or under investigation'
-    )
-
-incident_parser.add_argument(
-    'images', action='append', location='json',
-    help="A list of image urls related to the incident and is not required"
-    )
-
-incident_parser.add_argument(
-    'videos', action='append', location='json',
-    help="A list of video urls related to the incident and is not required"
     )
 
 
@@ -112,7 +102,7 @@ def validate_incident_put_input(validator, new_data, prop):
     if prop == "comment":
         new_data["prop_value"] = validator.\
             remove_lr_whitespace(new_data["prop_value"])
-    if id is not None and prop is not None and new_data["prop_value"] != "":
+    if prop is not None and new_data["prop_value"] != "":
         is_valid_location = validator.is_valid_location(new_data["prop_value"])
         if prop == "location" and not is_valid_location:
             return make_response(jsonify(
@@ -146,7 +136,7 @@ def validate_admin_put_input(validator, new_data):
     """
     new_data["status"] = validator.\
         remove_lr_whitespace(new_data["status"])
-    if id is not None and new_data["status"] != "":
+    if new_data["status"] != "":
         is_valid_status = validator.\
             is_valid_incident_status(new_data["status"])
         if is_valid_status is not True:
