@@ -71,7 +71,10 @@ class TestUser(unittest.TestCase):
         }
 
         self.messages = {
-            "created": "User successfully created"
+            "deleted": "Account was successfully deleted",
+            "created": "Your account was successfully created",
+            "updated": "Your account was successfully updated",
+            "read": "Account details successfully retrieved"
         }
 
         # Create user

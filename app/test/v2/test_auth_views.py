@@ -63,8 +63,14 @@ class TestAuth(unittest.TestCase):
             "password": "11ssdfa"
         }
         self.messages = {
-            "created": "User successfully created",
-            "authenticated": "User successfully signed in"
+            "created": "Your account was successfully created",
+            "read": "Account details successfully retrieved",
+            "authenticated": "Successfully signed in!",
+            "failed": ("Could not sign you in,"
+                       "ensure you have the right entered"
+                       " the right username and password"),
+            "not_found": ("User doesnot exist, "
+                          "please check the username spelling.")
         }
 
         # Create user 1
