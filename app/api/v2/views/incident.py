@@ -14,9 +14,7 @@ from app.api.helpers.incident_validation import (
     validate_incident_put_input,
     incident_parser
 )
-from app.api.helpers.error_handler_validation import (
-    is_valid_json,
-    status_error_messages)
+from app.api.helpers.error_handler_validation import is_valid_json
 
 
 from app.api.v2.models.incident import IncidentModel
@@ -84,7 +82,7 @@ class IncidentView(Resource, IncidentModel):
                 404
                 )
         if not is_valid_json(request.get_data()):
-            abort(400, message=status_error_messages["400"], status_code=400)
+            abort(400, message=error_messages["BAD_JSON"], status_code=400)
         new_incident = incident_parser.parse_args(strict=True)
         new_incident["title"] = validator.remove_lr_whitespace(
             new_incident["title"]
@@ -98,13 +96,18 @@ class IncidentView(Resource, IncidentModel):
         new_incident["location"] = validator.remove_whitespace(
             new_incident["location"]
         )
-        non_empty_items = [new_incident["title"], new_incident["type"],
-                           new_incident["comment"], new_incident["location"]]
+        non_empty_items = {
+            "title": new_incident["title"],
+            "type": new_incident["type"],
+            "comment": new_incident["comment"],
+            "location": new_incident["location"]
+            }
         for incident_item in non_empty_items:
-            if incident_item == "" or incident_item is None:
+            item_val = non_empty_items[incident_item]
+            if item_val == "" or item_val is None:
+                empty_item_err = "Incident %s cannot be empty" % incident_item
                 return make_response(jsonify(
-                    get_error("Incident title,type,"
-                              " comment and location cannot be empty strings",
+                    get_error(empty_item_err,
                               400)), 400)
 
         validation_results = validate_incident_post_input(validator,
@@ -133,10 +136,10 @@ class IncidentView(Resource, IncidentModel):
                                                400)), 400)
 
     @auth_required
-    def get(self, auth, id=None, prop=None):
+    def get(self, auth, incident_id=None, prop=None):
         """
-        GET method returns all incidents if :param :id is None or a single
-        incident if :param :id is an integer
+        GET method returns all incidents if :param :incident_id is None or a
+        single incident if :param :incident_id is an integer
         """
         if prop is not None:
             return make_response(
@@ -145,10 +148,10 @@ class IncidentView(Resource, IncidentModel):
                     404)), 404
                 )
 
-        if id is None:
+        if incident_id is None:
             incidents_data = incident_db.get_my_incidents(auth["id"])
-            if (isinstance(incidents_data, str) and incident_db.message["NOT_FOUND"]
-                in incidents_data):
+            if (isinstance(incidents_data, str)
+                    and incident_db.message["NOT_FOUND"] in incidents_data):
                 return make_response(jsonify({
                     "msg": incidents_data,
                     "status_code": 404
@@ -164,7 +167,8 @@ class IncidentView(Resource, IncidentModel):
                 "status_code": 200
             }), 200)
 
-        incident_owner = access_control.is_incident_owner(id, auth["id"])
+        incident_owner = access_control.is_incident_owner(incident_id,
+                                                          auth["id"])
         admin = access_control.is_admin(auth["id"])
         if (incident_owner["success"] is not True
                 and admin["success"] is not True):
@@ -172,7 +176,7 @@ class IncidentView(Resource, IncidentModel):
                 "msg": auth_error_messages["403"],
                 "status_code": 403
             }), 403)
-        incident_results = incident_db.get_single_incident_by_id(id)
+        incident_results = incident_db.get_single_incident_by_id(incident_id)
         if isinstance(incident_results, dict):
             return make_response(jsonify({
                 "data": [incident_results],
@@ -190,18 +194,18 @@ class IncidentView(Resource, IncidentModel):
             )
 
     @auth_required
-    def patch(self, auth, id, prop=None):
+    def patch(self, auth, incident_id, prop=None):
         """
         PATCH endpoint that updates an incident comment or location
-        properties using the :param :id to find the record and :param :prop to
+        properties using the :param :incident_id to find the record and :param :prop to
         identify which incident property to update.
         """
         if prop is None:
             return make_response(jsonify(get_error(error_messages["404"],
-
                                                    404)), 404)
         if not is_valid_json(request.get_data()):
-            abort(400, message=status_error_messages["400"], status_code=400)
+            abort(400, message=error_messages["BAD_JSON"],
+                  status_code=400)
         patch_parser = parser.copy()
         patch_parser.add_argument('prop_value', type=str, required=True,
                                   location='json',
@@ -211,7 +215,7 @@ class IncidentView(Resource, IncidentModel):
         validation_results = validate_incident_put_input(validator,
                                                          new_data,
                                                          prop)
-        incident_owner = access_control.is_incident_owner(id, auth["id"])
+        incident_owner = access_control.is_incident_owner(incident_id, auth["id"])
         if incident_owner["success"] is not True:
             return make_response(jsonify({
                 "msg": auth_error_messages["403"],
@@ -221,7 +225,7 @@ class IncidentView(Resource, IncidentModel):
             return validation_results
 
         incident_data = incident_db.update_incident(
-            id, prop, new_data["prop_value"]
+            incident_id, prop, new_data["prop_value"]
         )
         if isinstance(incident_data, dict):
             return make_response(jsonify({
@@ -238,9 +242,9 @@ class IncidentView(Resource, IncidentModel):
             jsonify(get_error(error_messages["400"], 400)), 400)
 
     @auth_required
-    def delete(self, auth, id, prop=None):
+    def delete(self, auth, incident_id, prop=None):
         """
-        DELETE endpoint that deletes a single incident using the :param :id
+        DELETE endpoint that deletes a single incident using the :param :incident_id
         to identify which incident to delete
         """
         delete_parser = parser.copy()
@@ -253,25 +257,25 @@ class IncidentView(Resource, IncidentModel):
                                   "Check your URL"
                                   " and parameters provided",
                                   404)), 404)
-        if id is None:
+        if incident_id is None:
             return make_response(
                 jsonify(get_error("Cannot delete incident"
                                   " without a valid id",
                                   400)),
                 400)
 
-        incident_owner = access_control.is_incident_owner(id, auth["id"])
+        incident_owner = access_control.is_incident_owner(incident_id, auth["id"])
         if incident_owner["success"] is not True:
             return make_response(jsonify({
                 "msg": auth_error_messages["403"],
                 "status_code": 403
             }), 403)
-        deleted_incident = incident_db.delete_incident(id)
+        deleted_incident = incident_db.delete_incident(incident_id)
 
         if deleted_incident is True:
             return make_response(jsonify({
                 "data": [{
-                    "id": id
+                    "id": incident_id
                     }],
                 "msg": self.messages["deleted"],
                 "status_code": 202

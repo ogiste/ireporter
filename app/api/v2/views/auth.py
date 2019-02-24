@@ -6,13 +6,16 @@ from flask import make_response, jsonify, request
 from flask_restful import Resource, abort
 
 # Local imports
-from app.api.helpers.errors import parser, get_error, Validation
+from app.api.helpers.errors import (parser,
+                                    get_error,
+                                    Validation,
+                                    error_messages)
 from app.api.v2.models.user import UserModel
 from app.api.helpers.auth_validation import (generate_token,
                                              validate_auth_post_input)
 from app.api.helpers.error_handler_validation import (
-    is_valid_json,
-    status_error_messages)
+    is_valid_json
+    )
 
 auth_parser = parser.copy()
 
@@ -46,9 +49,12 @@ class AuthView(Resource, UserModel):
         db_name = os.getenv("DB_NAME", default="ireporter")
         self.db = UserModel(db_name)
         self.messages = {
-            "authenticated": "User successfully signed in",
-            "failed": "Could not sign you in,ensure you have the right entered the right username and password",
-            "not_found": "User doesnot exist, please check the username spelling."
+            "authenticated": "Successfully signed in!",
+            "failed": ("Could not sign you in,"
+                       "ensure you have the right entered"
+                       " the right username and password"),
+            "not_found": ("User doesnot exist, "
+                          "please check the username spelling.")
         }
 
     def post(self):
@@ -60,10 +66,10 @@ class AuthView(Resource, UserModel):
         A JSON response to the user once created
         """
         if not is_valid_json(request.get_data()):
-            abort(400, message=status_error_messages["400"], status_code=400)
+            abort(400, message=error_messages["BAD_JSON"], status_code=400)
         user_credentials = auth_parser.parse_args(strict=True)
         user_credentials["username"] = validator.remove_whitespace(
-            user_credentials["username"]
+            user_credentials["username"].lower()
         )
         non_empty_items = [user_credentials["username"],
                            user_credentials["password"]]

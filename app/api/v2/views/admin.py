@@ -12,8 +12,8 @@ from app.api.helpers.incident_validation import (validate_admin_put_input)
 from app.api.v2.models.incident import IncidentModel
 from app.api.v2.models.user import UserModel
 from app.api.helpers.error_handler_validation import (
-    is_valid_json,
-    status_error_messages)
+    is_valid_json
+    )
 
 incident_db = IncidentModel()
 user_db = UserModel()
@@ -144,7 +144,7 @@ class AdminView(Resource):
         properties using the :param :id to find the record
         """
         if not is_valid_json(request.get_data()):
-            abort(400, message=status_error_messages["400"], status_code=400)
+            abort(400, message=error_messages["BAD_JSON"], status_code=400)
         admin = access_control.is_admin(auth["id"])
         if admin["success"] is not True:
             return make_response(jsonify({

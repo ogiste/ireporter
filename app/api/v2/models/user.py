@@ -1,8 +1,8 @@
 
 from app.db_config import connect
-from pprint import pprint
 from psycopg2 import IntegrityError
 from passlib.hash import sha256_crypt
+from app.api.helpers.user_model_errors import get_duplicate_message
 
 
 def get_all_users(user_tuples, get_formated_user_dict):
@@ -240,6 +240,6 @@ class UserModel():
             self.cursor.execute(insert_user_statement)
             return self.get_single_user_by_username(new_user["username"])
         except IntegrityError as e:
-            return self.message["DUPLICATE"]
+            return get_duplicate_message(e.pgerror)
         except Exception as e:
             return self.message["NOT_CREATED"]

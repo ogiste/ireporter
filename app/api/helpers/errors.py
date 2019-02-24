@@ -44,7 +44,8 @@ NAME_MAX = 30
 NAME_MIN = 4
 
 error_messages = {
-    "404": "Requested URL is invalid and no resource could be found :O ",
+    "BAD_JSON": "Bad request. Request object was not a valid json object. ",
+    "404": "Requested URL is invalid and no resource could be found. ",
     "400": "Bad request. Ensure all inputs and parameters are valid. ",
     "401": "Unauthorized request was made."
     " Please sign in before making this request",
@@ -88,7 +89,7 @@ class Validation():
         self.validation_messages["lim_incident_title"] = "Incident title\
          cannot be greater than 30 characters and less than 4"
         self.validation_messages["lim_user_username"] = (
-            "Username cannot be greater than 30 characters and less than 4"
+            "Usernames cannot be greater than 30 characters and less than 4"
         )
         valid_loc = ("Incident location"
                      " must be a valid string of lat and long coordinates")
@@ -96,27 +97,27 @@ class Validation():
                                 " or comment provide a valid string")
         self.validation_messages["valid_incident_location"] = valid_loc
         self.validation_messages["valid_user_email"] = (
-            "User email must be a valid email address e.g abc@gmail.com"
+            "Your email must be a valid email address e.g abc@gmail.com"
         )
         self.validation_messages["valid_user_phone"] = (
-            "User phone number must be in the form of +245700111222"
+            "Your phone number must be in the form of +245700111222"
         )
         self.validation_messages["valid_user_password"] = (
-            "A user password must be a minimum of six characters,"
-            " at least one letter and one number"
+            "Your password must be a minimum of six characters,"
+            " and have at least one letter and one number"
         )
         self.validation_messages["empty_loc_or_comment"] = empty_loc_or_comment
-        self.validation_messages["empty_status"] = ("Status of an incident"
+        self.validation_messages["empty_status"] = ("Status of your incident"
                                                     " cannot be empty")
         self.validation_messages["valid_status"] = ("Status of an incident"
                                                     " can only be - draft,"
                                                     " resolved, rejected or"
                                                     " under investigation")
         self.validation_messages["alphabetic"] = (
-            "User first name, last name can only be"
+            "Your first name, last name can only be"
             " alphabetic characters")
         self.validation_messages["valid_username"] = (
-            "Username can only consist of numbers letters"
+            "Your username can only consist of numbers letters"
             " and underscore characters")
 
     def is_string(self, var):
