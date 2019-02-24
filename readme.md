@@ -1,4 +1,5 @@
 [![tested with jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
+[![Coverage Status](https://coveralls.io/repos/github/ogiste/ireporter/badge.svg)](https://coveralls.io/github/ogiste/ireporter)
 [![Build Status](https://travis-ci.org/ogiste/ireporter.svg?branch=gh-pages)](https://travis-ci.org/ogiste/ireporter)
 #### iReporter - A web based system for reporting on corruption and public services needs and requests.
 
